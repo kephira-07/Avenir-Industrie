@@ -512,8 +512,7 @@ function AppContent() {
             <Menu size={24} strokeWidth={2.5}/>
           </button>
           <div className="flex flex-col cursor-pointer shrink-0" onClick={() => {setView('home'); setActiveCategory('Tout'); setSearch(''); window.scrollTo(0,0);}}>
-            <h1 className="text-xs md:text-2xl font-black text-[#002D5A] leading-none uppercase tracking-tighter">AFRI-TECH</h1>
-            <span className="text-[5px] md:text-[8px] font-black uppercase text-[#D0A050] tracking-[0.4em] block mt-0.5 hidden sm:block">USA Direct Import</span>
+            <Image  src="/logoah.jpeg"  alt="Logoah" width={200} height={150}  />
           </div>
         </div>
 

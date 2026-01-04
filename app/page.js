@@ -19,8 +19,11 @@ const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || ""; 
 const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "afri_tech_preset"; 
 
-const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "22878987000";
-const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "&Ahmed@/\|*005=+";
+const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "2250700000000";
+const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "&Ahmed@/*005=+";
+
+
+
 
 // --- LOGIQUE API SUPABASE ---
 const createApi = (supabase) => ({
@@ -413,7 +416,6 @@ const AdminDashboard = ({ products, categories, onRefresh, onBack, api }) => {
 };
 
 // --- APP CONTENT ---
-
 function AppContent() {
   const [sb, setSb] = useState(null);
   const [categories, setCategories] = useState([]);
@@ -434,7 +436,11 @@ function AppContent() {
     const script = document.createElement('script');
     script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7/dist/umd/supabase.js';
     script.async = true;
-    script.onload = () => { if (window.supabase && SUPABASE_URL) setSb(window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)); };
+    script.onload = () => { 
+      if (window.supabase && SUPABASE_URL) {
+        setSb(window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY));
+      }
+    };
     document.head.appendChild(script);
     
     const clickOutside = (e) => { if (searchRef.current && !searchRef.current.contains(e.target)) setShowSuggestions(false); };
@@ -505,24 +511,30 @@ function AppContent() {
         .animate-fade-in { animation: fade-in 0.4s ease-out; }
       `}</style>
 
-      {/* Header Premium Responsive */}
-      <header className="sticky top-0 z-[600] bg-white/95 backdrop-blur-xl border-b border-gray-100 px-3 md:px-12 py-4 flex items-center justify-between shadow-sm gap-2">
-        <div className="flex items-center gap-1 md:gap-4 shrink-0 flex-nowrap">
-          <button onClick={() => setIsMenuOpen(true)} className="p-2 text-[#002D5A] hover:bg-gray-100 rounded-full transition-all active:scale-90 shrink-0">
+      {/* Header Premium Responsive avec Retour à la ligne pour la barre de recherche sur mobile */}
+      <header className="sticky top-0 z-[600] bg-white/95 backdrop-blur-xl border-b border-gray-100 px-3 md:px-12 py-3 md:py-4 flex flex-wrap items-center justify-between shadow-sm gap-y-3">
+        <div className="flex items-center gap-1 md:gap-4 shrink-0">
+          <button onClick={() => setIsMenuOpen(true)} className="p-2 text-[#002D5A] hover:bg-gray-100 rounded-full transition-all active:scale-90">
             <Menu size={24} strokeWidth={2.5}/>
           </button>
           <div className="flex flex-col cursor-pointer shrink-0" onClick={() => {setView('home'); setActiveCategory('Tout'); setSearch(''); window.scrollTo(0,0);}}>
-            <Image  src="/logoah.jpeg"  alt="Logoah" width={200} height={150}  />
-          </div>
+             <div className="flex flex-col cursor-pointer" onClick={() => {setView('home'); setActiveCategory('Tout'); setSearch(''); window.scrollTo(0,0);}}>
+             <div className="flex items-center gap-2">
+             
+              <img src="/logoah.jpeg" className="h-8 md:h-12 w-auto" alt="Logoah" />
+              </div>
+            </div>
+             </div>
         </div>
 
-        <div className="flex-1 max-w-[500px] relative" ref={searchRef}>
-          <div className="flex items-center bg-gray-50 border border-gray-100 rounded-[2rem] px-3 md:px-6 py-2 gap-2 focus-within:bg-white focus-within:border-[#D0A050]/50 transition-all shadow-sm">
+        {/* Barre de Recherche (order-last sur mobile) */}
+        <div className="order-last w-full sm:order-none sm:w-auto sm:flex-1 sm:max-w-[500px] relative px-1 sm:px-0" ref={searchRef}>
+          <div className="flex items-center bg-gray-50 border border-gray-100 rounded-[2rem] px-4 md:px-6 py-2.5 gap-2 focus-within:bg-white focus-within:border-[#D0A050]/50 transition-all shadow-sm">
             <Search size={16} className="text-gray-400 shrink-0" />
-            <input type="text" placeholder="Chercher..." className="bg-transparent border-none text-[10px] md:text-sm w-full focus:ring-0 p-0 font-medium" value={search} onChange={e => {setSearch(e.target.value); setShowSuggestions(true);}} onFocus={() => setShowSuggestions(true)} />
+            <input type="text" placeholder="Rechercher une pépite..." className="bg-transparent border-none text-xs md:text-sm w-full focus:ring-0 p-0 font-medium" value={search} onChange={e => {setSearch(e.target.value); setShowSuggestions(true);}} onFocus={() => setShowSuggestions(true)} />
           </div>
           {showSuggestions && searchSuggestions.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-3xl shadow-2xl border border-gray-50 overflow-hidden z-[800] animate-fade-in">
+            <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-3xl shadow-2xl border border-gray-50 overflow-hidden z-[800] animate-fade-in mx-1 sm:mx-0">
               {searchSuggestions.map(p => (
                 <div key={p.id} onClick={() => {setSelectedProduct(p); setView('detail'); setShowSuggestions(false); setSearch(''); window.scrollTo(0,0);}} className="flex items-center gap-4 p-4 hover:bg-gray-50 cursor-pointer border-b last:border-0 transition-all">
                   <img src={p.image_urls?.[0]} className="w-12 h-12 rounded-xl object-cover bg-gray-50 border shadow-sm" alt="" />
@@ -537,20 +549,20 @@ function AppContent() {
           )}
         </div>
 
-        <div className="flex items-center gap-1 md:gap-4 shrink-0 flex-nowrap">
-          <button onClick={() => {setView('about'); window.scrollTo(0,0);}} className="flex items-center gap-1 text-[8px] md:text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-[#002D5A] p-1.5 transition-all">
+        <div className="flex items-center gap-1 md:gap-4 shrink-0">
+          <button onClick={() => {setView('about'); window.scrollTo(0,0);}} className="flex items-center gap-1 text-[8px] md:text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-[#002D5A] p-2 transition-all">
             <Info size={18} className="md:hidden" />
             <span className="hidden md:inline">À Propos</span>
           </button>
-          <button onClick={() => setIsCartOpen(true)} className="relative p-2.5 md:p-4 bg-[#002D5A] text-white rounded-full shadow-2xl border-4 border-[#D0A050]/10 active:scale-90 transition-all shrink-0">
+          <button onClick={() => setIsCartOpen(true)} className="relative p-2.5 md:p-4 bg-[#002D5A] text-white rounded-full shadow-2xl border-4 border-[#D0A050]/10 active:scale-90 transition-all">
             <ShoppingBag size={18} className="md:w-6 md:h-6" />
             {cart.length > 0 && <span className="absolute -top-1 -right-1 bg-[#D0A050] text-[#002D5A] text-[9px] font-black w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center border-2 border-white shadow-lg">{cart.length}</span>}
           </button>
         </div>
       </header>
 
-      {/* Catégories Responsive */}
-      <div className="border-b bg-white sticky top-[65px] md:top-[81px] z-40 overflow-x-auto no-scrollbar">
+      {/* Barre de Catégories Responsive (Scroll horizontal) - Dynamique depuis Supabase */}
+      <div className="border-b bg-white sticky top-[120px] sm:top-[81px] z-40 overflow-x-auto no-scrollbar transition-all">
         <div className="max-w-7xl mx-auto flex gap-6 md:gap-10 px-6 md:px-12 py-4 md:py-6 whitespace-nowrap">
           <button onClick={() => setActiveCategory("Tout")} className={`text-[10px] md:text-xs font-black uppercase tracking-widest relative pb-1 transition-all ${activeCategory === "Tout" ? 'text-[#002D5A]' : 'text-gray-300'}`}>Tout</button>
           {categories.map(c => (
@@ -570,18 +582,18 @@ function AppContent() {
           </div>
           <div className="flex items-center gap-4 py-3 px-6 bg-gray-50 rounded-2xl border shadow-sm self-start animate-fade-in">
             <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Tri par Prix :</span>
-            <button onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')} className="text-[10px] font-black text-[#002D5A] flex items-center gap-2 uppercase tracking-widest active:scale-95">
+            <button onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')} className="text-[10px] font-black text-[#002D5A] flex items-center gap-2 uppercase tracking-widest active:scale-95 transition-all">
               {sortOrder === 'asc' ? 'Croissant' : 'Décroissant'} <ChevronDown size={14} className={`transition-all ${sortOrder === 'desc' ? 'rotate-180' : ''}`}/>
             </button>
           </div>
         </div>
 
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-40 opacity-20"><Loader2 size={60} className="animate-spin mb-4 text-[#002D5A]"/><p className="font-black uppercase text-xs tracking-widest text-center">Chargement...</p></div>
+          <div className="flex flex-col items-center justify-center py-40 opacity-20"><Loader2 size={60} className="animate-spin mb-4 text-[#002D5A]"/><p className="font-black uppercase text-xs tracking-widest text-center">Accès Cloud...</p></div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 pb-32">
             {filtered.map(p => (
-              <div key={p.id} onClick={() => {setSelectedProduct(p); setView('detail'); window.scrollTo(0,0);}} className="group bg-white rounded-[3rem] md:rounded-[3.5rem] overflow-hidden border shadow-sm hover:shadow-2xl transition-all duration-700 cursor-pointer p-8 md:p-10 animate-fade-in">
+              <div key={p.id} onClick={() => {setSelectedProduct(p); setView('detail'); window.scrollTo(0,0);}} className="group bg-white rounded-[3rem] md:rounded-[3.5rem] overflow-hidden border shadow-sm hover:shadow-2xl transition-all duration-700 cursor-pointer p-8 md:p-10">
                 <div className="aspect-square bg-gray-50 overflow-hidden relative rounded-[2.5rem] mb-10 border shadow-inner">
                   <img src={p.image_urls?.[0]} alt={p.nom} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
                   <div className={`absolute top-4 left-4 px-4 py-1.5 rounded-xl text-[8px] font-black text-white shadow-lg ${p.type_dispo === 'STOCK' ? 'bg-green-500' : 'bg-rose-600'}`}>
@@ -605,47 +617,36 @@ function AppContent() {
       <footer className="bg-[#002D5A] text-white pt-24 pb-12 px-8 rounded-t-[4rem] md:rounded-t-[6rem] font-sans mt-20">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-16 mb-20 text-center md:text-left">
           <div className="space-y-8">
-            <h2 className="text-3xl font-black tracking-tighter uppercase">AFRI-TECH</h2>
-            <p className="text-gray-400 text-sm max-w-xs mx-auto md:mx-0">Importation directe premium USA & Europe.</p>
+            <h2 className="text-3xl font-black tracking-tighter uppercase google-sans-header">AFRI-TECH</h2>
+            <p className="text-gray-400 text-sm leading-relaxed max-w-xs mx-auto md:mx-0 font-medium">Direct USA & Europe Importation pour l'Afrique.</p>
             <div className="flex justify-center md:justify-start gap-4">
-               <div className="p-4 bg-white/5 rounded-2xl hover:bg-[#D0A050] transition-all cursor-pointer"><Facebook size={20}/></div>
-               <div className="p-4 bg-white/5 rounded-2xl hover:bg-[#D0A050] transition-all cursor-pointer"><Instagram size={20}/></div>
+               <div className="p-4 bg-white/5 rounded-2xl hover:bg-[#D0A050] transition-all cursor-pointer shadow-lg"><Facebook size={20}/></div>
+               <div className="p-4 bg-white/5 rounded-2xl hover:bg-[#D0A050] transition-all cursor-pointer shadow-lg"><Instagram size={20}/></div>
             </div>
+          </div>
+          <div className="space-y-8">
+            <h4 className="text-[#D0A050] font-black uppercase text-[10px] tracking-[0.4em]">Rayons</h4>
+            <ul className="space-y-4 text-sm font-bold opacity-60">
+              {categories.slice(0, 5).map(c => <li key={c.id} className="cursor-pointer hover:text-[#D0A050]" onClick={() => {setActiveCategory(c.name); window.scrollTo(0,0);}}>{c.name}</li>)}
+            </ul>
           </div>
           <div className="space-y-8">
             <h4 className="text-[#D0A050] font-black uppercase text-[10px] tracking-[0.4em]">Société</h4>
             <ul className="space-y-4 text-sm font-bold opacity-60">
-              <li className="cursor-pointer hover:text-[#D0A050]" onClick={()=>setView('about')}>À Propos</li>
+              <li className="cursor-pointer hover:text-[#D0A050]" onClick={()=>setView('about')}>À Propos d'Afri-Tech</li>
               <li className="cursor-pointer hover:text-white" onClick={()=>setView('admin')}>Admin</li>
             </ul>
           </div>
-          <div className="space-y-8 md:col-span-2">
-            <h4 className="text-[#D0A050] font-black uppercase text-[10px] tracking-[0.4em]">Contact Abidjan</h4>
+          <div className="space-y-8 md:col-span-1">
+            <h4 className="text-[#D0A050] font-black uppercase text-[10px] tracking-[0.4em]">Contact</h4>
             <p className="text-xl font-black">{WHATSAPP_NUMBER.replace('225', '+225 ')}</p>
-            <p className="text-gray-400 text-sm font-medium">Plateau, Immeuble Trade Center, Abidjan.</p>
+            <p className="text-gray-400 text-sm font-medium leading-relaxed">Plateau, Avenue Nogues, Immeuble Trade Center, Abidjan.</p>
           </div>
         </div>
+        <p className="text-[9px] text-gray-600 uppercase text-center border-t border-white/5 pt-10 font-black tracking-[0.5em] tracking-widest">© 2024 AFRI-TECH GROUP . L'EXCELLENCE SANS FRONTIÈRES</p>
       </footer>
 
-      {/* Menu Mobile */}
-      {isMenuOpen && (
-        <div className="fixed inset-0 z-[1000] flex">
-          <div className="absolute inset-0 bg-[#002D5A]/80 backdrop-blur-md" onClick={() => setIsMenuOpen(false)}></div>
-          <div className="relative w-[300px] max-w-[85%] bg-white h-full shadow-2xl animate-slide-in p-10 flex flex-col font-sans no-scrollbar overflow-y-auto">
-             <div className="flex justify-between items-center mb-16">
-                <h2 className="text-3xl font-black text-[#002D5A] uppercase">Menu</h2>
-                <button onClick={() => setIsMenuOpen(false)} className="p-3 bg-gray-100 rounded-full text-gray-400"><X size={20}/></button>
-             </div>
-             <nav className="flex flex-col gap-10">
-                <button onClick={()=>{setActiveCategory("Tout"); setIsMenuOpen(false); setView('home'); setSearch(''); window.scrollTo(0,0);}} className={`text-left font-black text-2xl ${activeCategory === "Tout" ? 'text-[#002D5A]' : 'text-gray-300'}`}>Toutes les Pépites</button>
-                {categories.map(c => <button key={c.id} onClick={()=>{setActiveCategory(c.name); setIsMenuOpen(false); setView('home'); setSearch(''); window.scrollTo(0,0);}} className={`text-left font-black text-2xl transition-all ${activeCategory === c.name ? 'text-[#002D5A]' : 'text-gray-300'}`}>{c.name}</button>)}
-                <div className="pt-10 border-t border-gray-100"><button onClick={()=>{setView('about'); setIsMenuOpen(false);}} className="text-left font-black text-2xl text-gray-300">Notre Processus</button></div>
-             </nav>
-          </div>
-        </div>
-      )}
-
-      {/* Drawer Panier avec +/- Quantité (CORRIGÉ) */}
+      {/* Drawer Panier avec +/- Quantité */}
       {isCartOpen && (
         <div className="fixed inset-0 z-[1000] flex justify-end">
           <div className="absolute inset-0 bg-[#002D5A]/85 backdrop-blur-md" onClick={() => setIsCartOpen(false)}></div>
@@ -657,7 +658,7 @@ function AppContent() {
              <div className="flex-1 space-y-6">
                 {cart.length === 0 ? (
                   <div className="text-center py-40 opacity-10 flex flex-col items-center">
-                    <ShoppingCart size={120} strokeWidth={0.5}/><p className="mt-8 font-black uppercase text-sm tracking-[0.3em] font-sans">Panier Vide</p>
+                    <ShoppingCart size={120} strokeWidth={0.5}/><p className="mt-8 font-black uppercase text-sm tracking-[0.3em] font-sans">Votre panier est vide</p>
                   </div>
                 ) : cart.map((item) => (
                   <div key={item.cartId} className="flex gap-4 md:gap-6 items-center bg-gray-50 p-6 rounded-[2.5rem] border shadow-sm relative animate-fade-in">
@@ -689,8 +690,26 @@ function AppContent() {
           </div>
         </div>
       )}
-      
+
       <Nudge api={apiInstance} />
+
+      {/* Menu Mobile - Dynamique depuis Supabase */}
+      {isMenuOpen && (
+        <div className="fixed inset-0 z-[1000] flex">
+          <div className="absolute inset-0 bg-[#002D5A]/80 backdrop-blur-md" onClick={() => setIsMenuOpen(false)}></div>
+          <div className="relative w-[300px] max-w-[85%] bg-white h-full shadow-2xl animate-slide-in p-10 flex flex-col font-sans no-scrollbar overflow-y-auto">
+             <div className="flex justify-between items-center mb-16">
+                <h2 className="text-3xl font-black text-[#002D5A] google-sans-header uppercase">Menu</h2>
+                <button onClick={() => setIsMenuOpen(false)} className="p-3 bg-gray-100 rounded-full text-gray-400"><X size={20}/></button>
+             </div>
+             <nav className="flex flex-col gap-10">
+                <button onClick={()=>{setActiveCategory("Tout"); setIsMenuOpen(false); setView('home'); setSearch(''); window.scrollTo(0,0);}} className={`text-left font-black text-2xl ${activeCategory === "Tout" ? 'text-[#002D5A]' : 'text-gray-300'}`}>Toutes les Pépites</button>
+                {categories.map(c => <button key={c.id} onClick={()=>{setActiveCategory(c.name); setIsMenuOpen(false); setView('home'); setSearch(''); window.scrollTo(0,0);}} className={`text-left font-black text-2xl transition-all ${activeCategory === c.name ? 'text-[#002D5A]' : 'text-gray-300'}`}>{c.name}</button>)}
+                <div className="pt-10 border-t border-gray-100"><button onClick={()=>{setView('about'); setIsMenuOpen(false);}} className="text-left font-black text-2xl text-gray-300 transition-colors hover:text-[#002D5A]">Notre Processus</button></div>
+             </nav>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

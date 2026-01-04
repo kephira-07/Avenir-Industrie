@@ -14,14 +14,13 @@ import {
  * CONFIGURATION SUPABASE & CLOUDINARY
  * Remplacez les chaînes vides par vos clés réelles.
  */
-const SUPABASE_URL = "https://xqlmplazawrepkockqjl.supabase.co"; 
-const SUPABASE_ANON_KEY = "sb_publishable_r0CM8yHMQJBicV_CuNCyJw_xT06o9Rx";
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || ""; 
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || ""; 
+const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "afri_tech_preset"; 
 
-const CLOUDINARY_CLOUD_NAME = "dah7pozxr";
-const CLOUDINARY_UPLOAD_PRESET = "industie_avenir_preset";
-
-const WHATSAPP_NUMBER = "22891253109";
-const ADMIN_PASSWORD = "ADMIN_AFRITECH"; 
+const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "22878987000";
+const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "&Ahmed@/\|*005=+";
 
 // --- LOGIQUE API SUPABASE ---
 const createApi = (supabase) => ({

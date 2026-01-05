@@ -18,8 +18,7 @@ const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || ""; 
 const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || ""; 
-const WHATSAPP_NUMBER = process.env.MWHATSAPP_NUMBER || "";
-const ADMIN_PASSWORD = process.env.MADMIN_PASSWORD || "";
+const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "";
 
 
 // --- LOGIQUE API SUPABASE ---
@@ -279,16 +278,44 @@ const CheckoutPage = ({ cart, total, onBack, api }) => {
 };
 
 // --- ADMIN DASHBOARD ---
-const AdminDashboard = ({ products, categories, onRefresh, onBack, api }) => {
-  const [isLogged, setIsLogged] = useState(false);
-  const [pass, setPass] = useState('');
+const AdminDashboard = ({ products, categories, onRefresh, onBack, api, sb }) => {
+  const [user, setUser] = useState(null);
+  const [authForm, setAuthForm] = useState({ email: '', pass: '' });
+  const [authLoading, setAuthLoading] = useState(false);
+  
   const [editing, setEditing] = useState(null);
   const [saving, setSaving] = useState(false);
   const [newCatName, setNewCatName] = useState('');
   const [showCatList, setShowCatList] = useState(false);
 
+  // Vérifier la session à l'ouverture
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { user } } = await sb.auth.getUser();
+      setUser(user);
+    };
+    if (sb) checkUser();
+  }, [sb]);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setAuthLoading(true);
+    const { data, error } = await sb.auth.signInWithPassword({
+      email: authForm.email,
+      password: authForm.pass
+    });
+    setAuthLoading(false);
+    if (error) alert("Erreur d'accès : " + error.message);
+    else setUser(data.user);
+  };
+
+  const handleLogout = async () => {
+    await sb.auth.signOut();
+    setUser(null);
+  };
+
   const openCloudinary = (index) => {
-    if (!window.cloudinary) return;
+    if (!window.cloudinary) return alert("Le module d'image n'est pas chargé.");
     window.cloudinary.openUploadWidget({
       cloudName: CLOUDINARY_CLOUD_NAME, uploadPreset: CLOUDINARY_UPLOAD_PRESET,
       sources: ['local', 'url', 'camera'], multiple: false,
@@ -308,40 +335,45 @@ const AdminDashboard = ({ products, categories, onRefresh, onBack, api }) => {
     const success = await api.upsertProduct(cleaned);
     setSaving(false);
     if (success) { setEditing(null); onRefresh(); }
-    else alert("Erreur.");
+    else alert("Erreur sauvegarde.");
   };
 
-  const handleAddCat = async () => {
-    if (!newCatName) return;
-    const success = await api.addCategory(newCatName);
-    if(success) { setNewCatName(''); onRefresh(); }
-  };
-
-  if (!isLogged) {
+  // 1. Ecran de Connexion Sécurisé
+  if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#002D5A] p-6 font-sans">
         <div className="bg-white p-10 rounded-[3rem] shadow-2xl w-full max-w-md text-center border-4 border-[#D0A050]">
           <Lock className="mx-auto text-[#D0A050] mb-6" size={48} />
-          <h2 className="text-2xl font-black text-[#002D5A] mb-8 uppercase">Gestion</h2>
-          <input type="password" placeholder="Clé Admin" className="w-full bg-gray-100 p-5 rounded-2xl mb-4 text-center border-none" onChange={e => setPass(e.target.value)} />
-          <button onClick={() => pass === ADMIN_PASSWORD ? setIsLogged(true) : alert("Refusé")} className="w-full bg-[#002D5A] text-white py-5 rounded-2xl font-black uppercase shadow-xl active:scale-95 transition-all">Connexion</button>
-          <button onClick={onBack} className="mt-4 text-gray-400 font-bold hover:text-black">Quitter</button>
+          <h2 className="text-2xl font-black text-[#002D5A] mb-8 uppercase tracking-tighter">Accès Admin</h2>
+          <form onSubmit={handleLogin} className="space-y-4">
+             <input required type="email" placeholder="Email Admin" className="w-full bg-gray-100 p-5 rounded-2xl border-none focus:ring-2 focus:ring-[#D0A050]" value={authForm.email} onChange={e => setAuthForm({...authForm, email: e.target.value})} />
+             <input required type="password" placeholder="Mot de passe" className="w-full bg-gray-100 p-5 rounded-2xl border-none focus:ring-2 focus:ring-[#D0A050]" value={authForm.pass} onChange={e => setAuthForm({...authForm, pass: e.target.value})} />
+             <button disabled={authLoading} type="submit" className="w-full bg-[#002D5A] text-white py-5 rounded-2xl font-black uppercase shadow-xl active:scale-95 transition-all flex items-center justify-center gap-3">
+               {authLoading ? <Loader2 className="animate-spin" /> : "Connexion Sécurisée"}
+             </button>
+          </form>
+          <button onClick={onBack} className="mt-6 text-gray-400 font-bold hover:text-black transition-colors">Retour Boutique</button>
         </div>
       </div>
     );
   }
 
+  // 2. Dashboard Réel
   return (
-    <div className="min-h-screen bg-gray-50 font-sans pb-20 p-4 md:p-12">
+    <div className="min-h-screen bg-gray-50 font-sans pb-20 p-4 md:p-12 animate-fade-in">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-12">
-        <h2 className="text-3xl font-black text-[#002D5A] uppercase tracking-tighter">Console Admin</h2>
+        <div>
+          <h2 className="text-3xl font-black text-[#002D5A] uppercase tracking-tighter leading-none">Console de Gestion</h2>
+          <p className="text-[10px] font-black text-[#D0A050] uppercase mt-2 tracking-widest">Connecté en tant que : {user.email}</p>
+        </div>
         <div className="flex flex-wrap gap-3">
+          <button onClick={handleLogout} className="p-4 bg-white rounded-2xl shadow-sm border text-red-500 flex items-center gap-2 hover:bg-red-50 transition-all font-black text-xs uppercase tracking-widest"><LogOut size={18}/> Déconnexion</button>
           <div className="bg-white p-2 rounded-2xl shadow-sm border flex items-center gap-2">
              <input placeholder="Nouvelle catégorie" className="bg-transparent border-none text-xs px-4 focus:ring-0 w-32 md:w-48" value={newCatName} onChange={e=>setNewCatName(e.target.value)} />
-             <button onClick={handleAddCat} className="bg-[#D0A050] p-2 rounded-xl text-[#002D5A]"><Plus size={18}/></button>
+             <button onClick={async () => { await api.addCategory(newCatName); setNewCatName(''); onRefresh(); }} className="bg-[#D0A050] p-2 rounded-xl text-[#002D5A]"><Plus size={18}/></button>
           </div>
-          <button onClick={() => setShowCatList(!showCatList)} className="p-4 bg-white rounded-2xl shadow-sm border text-[#002D5A]"><Settings size={20}/></button>
-          <button onClick={onBack} className="p-4 bg-white rounded-full shadow-md text-red-500"><X/></button>
+          <button onClick={() => setShowCatList(!showCatList)} className="p-4 bg-white rounded-2xl shadow-sm border text-[#002D5A] hover:bg-gray-50 transition-colors"><Settings size={20}/></button>
+          <button onClick={onBack} className="p-4 bg-white rounded-full shadow-md text-[#002D5A]"><X/></button>
         </div>
       </div>
 
@@ -349,8 +381,8 @@ const AdminDashboard = ({ products, categories, onRefresh, onBack, api }) => {
         <div className="bg-white rounded-3xl p-6 shadow-xl border mb-8 animate-fade-in grid grid-cols-2 md:grid-cols-4 gap-4">
             {categories.map(c => (
               <div key={c.id} className="flex justify-between items-center bg-gray-50 p-3 rounded-xl">
-                <span className="text-xs font-bold text-[#002D5A] truncate">{c.name}</span>
-                <button onClick={async () => { if(window.confirm("Supprimer ?")) { await api.deleteCategory(c.id); onRefresh(); } }} className="text-red-400"><Trash2 size={14}/></button>
+                <span className="text-xs font-bold text-[#002D5A] truncate pr-2">{c.name}</span>
+                <button onClick={async () => { if(window.confirm("Supprimer la catégorie ?")) { await api.deleteCategory(c.id); onRefresh(); } }} className="text-red-400 hover:text-red-600 transition-colors"><Trash2 size={14}/></button>
               </div>
             ))}
         </div>
@@ -359,14 +391,14 @@ const AdminDashboard = ({ products, categories, onRefresh, onBack, api }) => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <button onClick={() => setEditing({ nom: '', categorie: categories[0]?.name, type_dispo: 'STOCK', description: '', image_urls: ['', '', '', '', ''] })} className="bg-white border-4 border-dashed border-gray-200 rounded-[2.5rem] p-10 flex flex-col items-center justify-center hover:border-[#D0A050] transition-all group aspect-square">
           <Plus size={40} className="text-gray-300 group-hover:text-[#D0A050] mb-2" />
-          <span className="font-black text-gray-400 text-xs">AJOUTER ARTICLE</span>
+          <span className="font-black text-gray-400 text-xs uppercase tracking-widest text-center">Ajouter un produit</span>
         </button>
         {products.map(p => (
           <div key={p.id} className="bg-white p-5 rounded-[2.5rem] shadow-sm flex flex-col items-center group relative border border-white hover:border-gray-200 transition-all">
-            <button onClick={async () => { if(window.confirm("Supprimer ?")) { await api.deleteProduct(p.id); onRefresh(); } }} className="absolute top-4 right-4 p-2 bg-red-50 rounded-full text-red-500 shadow-md opacity-0 group-hover:opacity-100 transition-all"><Trash2 size={16}/></button>
+            <button onClick={async () => { if(window.confirm("Supprimer l'article ?")) { await api.deleteProduct(p.id); onRefresh(); } }} className="absolute top-4 right-4 p-2 bg-red-50 rounded-full text-red-500 shadow-md opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500 hover:text-white"><Trash2 size={16}/></button>
             <img src={p.image_urls?.[0]} className="w-full aspect-square rounded-3xl object-cover mb-4 bg-gray-50 shadow-inner" alt="" />
             <p className="font-black text-[#002D5A] uppercase text-[10px] truncate w-full text-center px-2">{p.nom}</p>
-            <button onClick={() => setEditing({ ...p, image_urls: [...(p.image_urls || []), '', '', '', '', ''].slice(0, 5) })} className="mt-4 w-full py-2 bg-gray-50 rounded-xl text-[#D0A050] font-bold text-[10px] uppercase">Modifier</button>
+            <button onClick={() => setEditing({ ...p, image_urls: [...(p.image_urls || []), '', '', '', '', ''].slice(0, 5) })} className="mt-4 w-full py-2 bg-gray-50 rounded-xl text-[#D0A050] font-bold text-[10px] uppercase tracking-widest transition-all">Modifier</button>
           </div>
         ))}
       </div>
@@ -375,20 +407,20 @@ const AdminDashboard = ({ products, categories, onRefresh, onBack, api }) => {
         <div className="fixed inset-0 z-[1000] bg-[#002D5A]/95 backdrop-blur-md flex items-center justify-center p-4">
           <div className="bg-white w-full max-w-4xl rounded-[3.5rem] p-8 md:p-12 shadow-2xl max-h-[90vh] overflow-y-auto no-scrollbar animate-fade-in relative">
             <button onClick={() => setEditing(null)} className="absolute top-8 right-8 p-3 bg-gray-100 rounded-full hover:bg-red-50 transition-all"><X size={20}/></button>
-            <h3 className="text-2xl font-black text-[#002D5A] mb-8 uppercase tracking-tighter">Édition Fiche</h3>
+            <h3 className="text-2xl font-black text-[#002D5A] mb-8 uppercase tracking-tighter">Édition Article</h3>
             <form onSubmit={handleSave} className="grid grid-cols-1 lg:grid-cols-2 gap-10">
               <div className="space-y-6">
-                <input required className="w-full bg-gray-50 p-4 rounded-xl border-none" value={editing.nom} onChange={e=>setEditing({...editing, nom:e.target.value})} placeholder="Nom Produit" />
+                <input required className="w-full bg-gray-50 p-4 rounded-xl border-none" value={editing.nom} onChange={e=>setEditing({...editing, nom:e.target.value})} placeholder="Désignation" />
                 <select className="w-full bg-gray-50 p-4 rounded-xl font-bold border-none" value={editing.categorie} onChange={e=>setEditing({...editing, categorie:e.target.value})}>
                   {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
                 </select>
-                <textarea className="w-full bg-gray-50 p-4 rounded-xl h-44 border-none" value={editing.description} onChange={e=>setEditing({...editing, description:e.target.value})} placeholder="Détails techniques..." />
+                <textarea className="w-full bg-gray-50 p-4 rounded-xl h-44 border-none font-sans" value={editing.description} onChange={e=>setEditing({...editing, description:e.target.value})} placeholder="Description complète..." />
               </div>
               <div className="space-y-6">
                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Images (Max 5)</p>
                 <div className="grid grid-cols-5 gap-2">
                   {editing.image_urls.map((url, i) => (
-                    <button key={i} type="button" onClick={() => openCloudinary(i)} className={`aspect-square rounded-xl border-2 border-dashed flex flex-col items-center justify-center overflow-hidden ${i === 0 ? 'border-[#D0A050] bg-orange-50' : 'border-gray-200 bg-gray-50'}`}>
+                    <button key={i} type="button" onClick={() => openCloudinary(i)} className={`aspect-square rounded-xl border-2 border-dashed flex flex-col items-center justify-center overflow-hidden transition-all ${i === 0 ? 'border-[#D0A050] bg-orange-50' : 'border-gray-200 bg-gray-50 hover:border-[#D0A050]'}`}>
                       {url ? <img src={url} className="w-full h-full object-cover" alt="" /> : <ImageIcon size={18} className="text-gray-300"/>}
                     </button>
                   ))}
@@ -398,10 +430,10 @@ const AdminDashboard = ({ products, categories, onRefresh, onBack, api }) => {
                     <option value="STOCK">STOCK ABIDJAN</option>
                     <option value="COMMANDE">IMPORT USA</option>
                   </select>
-                  <input type="number" className="w-full bg-gray-50 p-4 rounded-xl font-black border-none" value={editing.prix_standard || editing.prix_avion || ''} onChange={e=>setEditing({...editing, prix_standard:e.target.value})} placeholder="Prix (FCFA)" />
+                  <input type="number" className="w-full bg-gray-50 p-4 rounded-xl font-black border-none text-[#002D5A]" value={editing.prix_standard || editing.prix_avion || ''} onChange={e=>setEditing({...editing, prix_standard:e.target.value})} placeholder="Prix de vente (F)" />
                 </div>
                 <button disabled={saving} type="submit" className="w-full bg-[#002D5A] text-white py-6 rounded-2xl font-black uppercase shadow-xl active:scale-95 transition-all">
-                  {saving ? <Loader2 className="animate-spin mx-auto"/> : "ENREGISTRER SUR LE CLOUD"}
+                  {saving ? <Loader2 className="animate-spin mx-auto"/> : "ENREGISTRER SUR CLOUD"}
                 </button>
               </div>
             </form>

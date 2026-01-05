@@ -17,10 +17,10 @@ import {
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || ""; 
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || ""; 
-const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "afri_tech_preset"; 
+const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || ""; 
 
-const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "2250700000000";
-const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "&Ahmed@/*005=+";
+const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "";
+const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "";
 
 
 
@@ -432,17 +432,39 @@ function AppContent() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const searchRef = useRef(null);
 
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7/dist/umd/supabase.js';
-    script.async = true;
-    script.onload = () => { 
-      if (window.supabase && SUPABASE_URL) {
-        setSb(window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY));
-      }
+ useEffect(() => {
+    const scripts = [
+      { id: 'supabase-js', src: 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7/dist/umd/supabase.js' },
+      { id: 'cloudinary-js', src: 'https://upload-widget.cloudinary.com/global/all.js' }
+    ];
+
+    const loadScript = (s) => {
+      return new Promise((resolve) => {
+        if (document.getElementById(s.id)) return resolve();
+        const script = document.createElement('script');
+        script.id = s.id;
+        script.src = s.src;
+        script.async = true;
+        script.crossOrigin = "anonymous";
+        script.onload = resolve;
+        document.head.appendChild(script);
+      });
     };
-    document.head.appendChild(script);
-    
+
+    Promise.all(scripts.map(loadScript)).then(() => {
+      if (window.supabase && CONFIG.supabaseUrl && CONFIG.supabaseKey) {
+        try {
+          setSb(window.supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey));
+        } catch (e) {
+          setErrorMsg("Erreur d'initialisation Supabase.");
+          setLoading(false);
+        }
+      } else if (!CONFIG.supabaseUrl) {
+        setErrorMsg("Veuillez configurer votre SUPABASE_URL en haut du code.");
+        setLoading(false);
+      }
+    });
+
     const clickOutside = (e) => { if (searchRef.current && !searchRef.current.contains(e.target)) setShowSuggestions(false); };
     document.addEventListener('mousedown', clickOutside);
     return () => document.removeEventListener('mousedown', clickOutside);

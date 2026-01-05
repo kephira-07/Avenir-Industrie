@@ -18,16 +18,8 @@ const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || ""; 
 const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || ""; 
-
-<<<<<<< HEAD
 const WHATSAPP_NUMBER = process.env.MWHATSAPP_NUMBER || "";
 const ADMIN_PASSWORD = process.env.MADMIN_PASSWORD || "";
-=======
-const WHATSAPP_NUMBER = process.env.WHATSAPP_NUMBER || "";
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "";
->>>>>>> 2f910ebfd2771ea2fee72a33a0d8a06eaf3493da
-
-
 
 
 // --- LOGIQUE API SUPABASE ---

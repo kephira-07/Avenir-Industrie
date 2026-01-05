@@ -6,7 +6,7 @@ import {
   Menu, Search, Facebook, Instagram, ArrowLeft, Truck, Send, 
   Loader2, Heart, Bell, Phone, MapPin, User, Mail, ShieldCheck, 
   History, FileText, ChevronDown, ListChecks, Globe, ChevronRight,
-  Settings, Plus, Minus, Edit3, Image as ImageIcon, Save, Lock, Trash2, Info, LogOut
+  Settings, Plus, Minus, Edit3, Image as ImageIcon, Save, Lock, Trash2, Info, LogOut,Sparkles,Zap
 } from 'lucide-react';
 
 
@@ -111,29 +111,147 @@ const Nudge = ({ api }) => {
   );
 };
 
-const AboutPage = ({ onBack }) => (
-  <div className="min-h-screen bg-white animate-fade-in pb-20 font-sans">
-    <div className="sticky top-0 bg-white/95 backdrop-blur-md z-[700] px-4 md:px-6 py-4 border-b flex items-center gap-4">
-      <button onClick={onBack} className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"><ArrowLeft size={20}/></button>
-      <h2 className="text-xl font-black text-[#002D5A]">À Propos</h2>
-    </div>
-    <div className="max-w-4xl mx-auto px-6 mt-12 space-y-16">
-      <section className="space-y-6 text-center md:text-left">
-        <h2 className="text-3xl font-black text-[#002D5A] flex items-center justify-center md:justify-start gap-4"><Globe className="text-[#D0A050]" /> Processus Direct</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-8 bg-gray-50 rounded-[2.5rem] border border-gray-100 shadow-sm"><p className="text-4xl font-black text-[#D0A050] mb-4">01</p><p className="font-bold">Sourcing USA/EU</p></div>
-          <div className="p-8 bg-gray-50 rounded-[2.5rem] border border-gray-100 shadow-sm"><p className="text-4xl font-black text-[#D0A050] mb-4">02</p><p className="font-bold">Transit Express</p></div>
-          <div className="p-8 bg-gray-50 rounded-[2.5rem] border border-gray-100 shadow-sm"><p className="text-4xl font-black text-[#D0A050] mb-4">03</p><p className="font-bold">Livraison Locale</p></div>
-        </div>
-      </section>
-      <section className="p-10 bg-[#002D5A] rounded-[3rem] text-white">
-        <h2 className="text-2xl font-black mb-4">SAV & Garanties</h2>
-        <p className="opacity-70 text-sm leading-relaxed">Tous nos produits bénéficient d'une garantie SAV locale de 12 mois. Afri-Tech SARL, Abidjan Plateau.</p>
-      </section>
-    </div>
-  </div>
-);
+const HeroSection = () => {
+  return (
+    <div className="relative bg-[#002D5A] overflow-hidden py-20 md:py-10 px-6">
+      {/* Image de fond avec animation Ken Burns */}
+      <div className="absolute inset-0 z-0">
+        <img 
+          src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&q=80&w=2000" 
+          alt="Import Logistique" 
+          className="w-full h-full object-cover opacity-30 scale-110 animate-ken-burns"
+        />
+        {/* Overlay Dégradé pour la lisibilité */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#002D5A] via-[#002D5A]/80 to-transparent"></div>
+      </div>
 
+      <div className="max-w-7xl mx-auto relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="space-y-8 animate-fade-in-up">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
+            
+            <span className="text-[10px] md:text-xs font-black text-white uppercase tracking-widest">Importation Directe USA & Chine</span>
+          </div>
+          
+          <h1 className="text-4xl md:text-7xl font-black text-white leading-[1.1] tracking-tighter">
+            Le monde est <br /> votre <span className="text-[#D0A050]">boutique.</span>
+          </h1>
+          
+          <p className="text-gray-200 text-lg md:text-xl max-w-xl leading-relaxed font-medium">
+            l'usine des produits et toutes les categories d'articles que vous recherchez, livrés rapidement et en toute sécurité, où que vous soyez au TOGO.
+          </p>
+
+          <div className="flex flex-wrap gap-4 pt-4">
+             <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm p-4 rounded-3xl border border-white/10 shadow-xl">
+                <div className="p-3 bg-[#D0A050] text-[#002D5A] rounded-2xl shadow-lg"><Zap size={20}/></div>
+                <div><p className="text-white font-black text-sm uppercase">Livraison</p><p className="text-xs text-gray-300">10-12j (Avion)</p></div>
+             </div>
+             <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm p-4 rounded-3xl border border-white/10 shadow-xl">
+                <div className="p-3 bg-[#D0A050] text-[#002D5A] rounded-2xl shadow-lg"><ShieldCheck size={20}/></div>
+                <div><p className="text-white font-black text-sm uppercase">Garantie</p><p className="text-xs text-gray-300">SAV local certifié</p></div>
+             </div>
+          </div>
+        </div>
+
+        <div className="hidden lg:flex justify-center relative animate-float">
+           <div className="relative z-10 bg-gradient-to-tr from-[#D0A050] to-amber-200 aspect-square w-[450px] rounded-[4rem] shadow-2xl flex items-center justify-center p-1.5 overflow-hidden">
+              <div className="bg-[#002D5A] w-full h-full rounded-[3.8rem] flex flex-col items-center justify-center p-12 text-center space-y-6">
+                 <Globe size={130} className="text-[#D0A050] animate-spin-slow" />
+                 <h2 className="text-2xl font-black text-white uppercase tracking-widest leading-tight">Sourcing <br/>Sans Limites</h2>
+                 <p className="text-sm text-gray-400">Électronique, Automobile, Industriel. Nous trouvons, nous livrons.</p>
+              </div>
+           </div>
+           {/* Éléments décoratifs flottants */}
+           <div className="absolute top-0 right-10 w-20 h-20 bg-[#D0A050]/20 rounded-full blur-2xl animate-pulse"></div>
+           <div className="absolute bottom-10 left-10 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl animate-pulse"></div>
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes ken-burns {
+          0% { transform: scale(1); }
+          50% { transform: scale(1.1); }
+          100% { transform: scale(1); }
+        }
+        @keyframes fade-in-up {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes float {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-20px); }
+        }
+        .animate-ken-burns { animation: ken-burns 20s ease-in-out infinite; }
+        .animate-fade-in-up { animation: fade-in-up 0.8s ease-out forwards; }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        .animate-spin-slow { animation: spin-slow 30s linear infinite; }
+        @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      `}</style>
+    </div>
+  );
+};
+
+
+const AboutPage = ({ onBack, sectionId }) => {
+  useEffect(() => {
+    if (sectionId) {
+      const el = document.getElementById(sectionId);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [sectionId]);
+
+  return (
+    <div className="min-h-screen bg-white animate-fade-in pb-20">
+      <div className="sticky top-0 bg-white/95 backdrop-blur-md z-50 px-6 py-4 border-b flex items-center gap-4">
+        <button onClick={onBack} className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"><ArrowLeft size={20}/></button>
+        <h2 className="text-xl font-black text-[#002D5A] google-sans-header">À Propos</h2>
+      </div>
+      <div className="max-w-4xl mx-auto px-6 mt-12 space-y-24 font-sans">
+        <section id="processus" className="space-y-6 scroll-mt-24">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-orange-100 text-[#D0A050] rounded-2xl flex items-center justify-center"><Globe size={24}/></div>
+            <h2 className="text-3xl font-black text-[#002D5A] google-sans-header">Processus Importation</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="p-6 bg-gray-50 rounded-3xl border border-gray-100 space-y-3">
+              <span className="text-3xl font-black text-[#D0A050]">01</span>
+              <p className="text-gray-600">Sourcing direct auprès des usines internationales.</p>
+            </div>
+            <div className="p-6 bg-gray-50 rounded-3xl border border-gray-100 space-y-3">
+              <span className="text-3xl font-black text-[#D0A050]">02</span>
+              <p className="text-gray-600">Transport au choix : Avion (rapide) ou Bateau (économique).</p>
+            </div>
+            <div className="p-6 bg-gray-50 rounded-3xl border border-gray-100 space-y-3">
+              <span className="text-3xl font-black text-[#D0A050]">03</span>
+              <p className="text-gray-600">Dédouanement et livraison locale assurée.</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="suivi" className="space-y-6 scroll-mt-24">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-orange-100 text-[#D0A050] rounded-2xl flex items-center justify-center"><History size={24}/></div>
+            <h2 className="text-3xl font-black text-[#002D5A] google-sans-header">Suivi de Commande</h2>
+          </div>
+          <div className="bg-[#002D5A] p-10 rounded-[3rem] text-white">
+             <p className="text-lg opacity-80 mb-8">Consultez le statut de votre expédition avec votre code de suivi.</p>
+             <button className="bg-[#D0A050] text-[#002D5A] px-8 py-4 rounded-2xl font-black active:scale-95">SUIVRE COLIS</button>
+          </div>
+        </section>
+
+        <section id="legal" className="space-y-6 scroll-mt-24">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-orange-100 text-[#D0A050] rounded-2xl flex items-center justify-center"><ShieldCheck size={24}/></div>
+            <h2 className="text-3xl font-black text-[#002D5A] google-sans-header">Mentions Légales</h2>
+          </div>
+          <div className="prose text-gray-500 space-y-4">
+             <p>L'INDUSTRIE DE L'AVENIR. RCCM ABJ-2024-B-XXXX.</p>
+             <p>Tous les équipements électroniques bénéficient d'une garantie SAV locale de 12 mois.</p>
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+};
 const ProductDetail = ({ product, onBack, onAddToCart }) => {
   const [activeImg, setActiveImg] = useState(product.image_urls?.[0] || '');
   const [mode, setMode] = useState('AVION');
@@ -550,7 +668,7 @@ function AppContent() {
              <div className="flex flex-col cursor-pointer" onClick={() => {setView('home'); setActiveCategory('Tout'); setSearch(''); window.scrollTo(0,0);}}>
              <div className="flex items-center gap-2">
              
-              <img src="/logoah.jpeg" className="h-8 md:h-12 w-auto" alt="Logoah" />
+              <img src="/logoah.jpeg" className="h-13 md:h-19 w-auto" alt="Logoah" />
               </div>
             </div>
              </div>
@@ -589,6 +707,7 @@ function AppContent() {
           </button>
         </div>
       </header>
+      <HeroSection/>
 
       {/* Barre de Catégories Responsive (Scroll horizontal) - Dynamique depuis Supabase */}
       <div className="border-b bg-white sticky top-[120px] sm:top-[81px] z-40 overflow-x-auto no-scrollbar transition-all">
@@ -602,7 +721,7 @@ function AppContent() {
           ))}
         </div>
       </div>
-
+     
       <main className="max-w-7xl mx-auto px-4 md:px-12 py-10 min-h-screen animate-fade-in">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-16">
           <div className="space-y-2">
@@ -646,8 +765,8 @@ function AppContent() {
       <footer className="bg-[#002D5A] text-white pt-24 pb-12 px-8 rounded-t-[4rem] md:rounded-t-[6rem] font-sans mt-20">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-16 mb-20 text-center md:text-left">
           <div className="space-y-8">
-            <h2 className="text-3xl font-black tracking-tighter uppercase google-sans-header">AFRI-TECH</h2>
-            <p className="text-gray-400 text-sm leading-relaxed max-w-xs mx-auto md:mx-0 font-medium">Direct USA & Europe Importation pour l'Afrique.</p>
+            <h2 className="text-3xl font-black tracking-tighter uppercase google-sans-header">Industrie de l'avenir</h2>
+            <p className="text-gray-400 text-sm leading-relaxed max-w-xs mx-auto md:mx-0 font-medium">vente.</p>
             <div className="flex justify-center md:justify-start gap-4">
                <div className="p-4 bg-white/5 rounded-2xl hover:bg-[#D0A050] transition-all cursor-pointer shadow-lg"><Facebook size={20}/></div>
                <div className="p-4 bg-white/5 rounded-2xl hover:bg-[#D0A050] transition-all cursor-pointer shadow-lg"><Instagram size={20}/></div>
@@ -662,17 +781,17 @@ function AppContent() {
           <div className="space-y-8">
             <h4 className="text-[#D0A050] font-black uppercase text-[10px] tracking-[0.4em]">Société</h4>
             <ul className="space-y-4 text-sm font-bold opacity-60">
-              <li className="cursor-pointer hover:text-[#D0A050]" onClick={()=>setView('about')}>À Propos d'Afri-Tech</li>
+              <li className="cursor-pointer hover:text-[#D0A050]" onClick={()=>setView('about')}>À Propos de l'industrie de l'avenir</li>
               <li className="cursor-pointer hover:text-white" onClick={()=>setView('admin')}>Admin</li>
             </ul>
           </div>
           <div className="space-y-8 md:col-span-1">
             <h4 className="text-[#D0A050] font-black uppercase text-[10px] tracking-[0.4em]">Contact</h4>
             <p className="text-xl font-black">{WHATSAPP_NUMBER.replace('225', '+225 ')}</p>
-            <p className="text-gray-400 text-sm font-medium leading-relaxed">Plateau, Avenue Nogues, Immeuble Trade Center, Abidjan.</p>
+            <p className="text-gray-400 text-sm font-medium leading-relaxed">lome TOGO.</p>
           </div>
         </div>
-        <p className="text-[9px] text-gray-600 uppercase text-center border-t border-white/5 pt-10 font-black tracking-[0.5em] tracking-widest">© 2024 AFRI-TECH GROUP . L'EXCELLENCE SANS FRONTIÈRES</p>
+        <p className="text-[9px] text-gray-600 uppercase text-center border-t border-white/5 pt-10 font-black tracking-[0.5em] tracking-widest">© 2024 l'industie de l'avenir . L'EXCELLENCE SANS FRONTIÈRES</p>
       </footer>
 
       {/* Drawer Panier avec +/- Quantité */}

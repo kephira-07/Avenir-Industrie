@@ -6,7 +6,7 @@ import {
   Menu, Search, Facebook, Instagram, ArrowLeft, Truck, Send, 
   Loader2, Heart, Bell, Phone, MapPin, User, Mail, ShieldCheck, 
   History, FileText, ChevronDown, ListChecks, Globe, ChevronRight,
-  Settings, Plus, Minus, Edit3, Image as ImageIcon, Save, Lock, Trash2, Info, 
+  Settings, Plus, Minus, Edit3, Image as ImageIcon, Save, Lock, Trash2, Info, LogOut
 } from 'lucide-react';
 
 
@@ -282,40 +282,43 @@ const AdminDashboard = ({ products, categories, onRefresh, onBack, api, sb }) =>
   const [user, setUser] = useState(null);
   const [authForm, setAuthForm] = useState({ email: '', pass: '' });
   const [authLoading, setAuthLoading] = useState(false);
-  
   const [editing, setEditing] = useState(null);
   const [saving, setSaving] = useState(false);
   const [newCatName, setNewCatName] = useState('');
   const [showCatList, setShowCatList] = useState(false);
 
-  // Vérifier la session à l'ouverture
+  // Vérifier la session. Si sb est null (pas encore chargé), on attend.
   useEffect(() => {
+    if (!sb) return;
     const checkUser = async () => {
-      const { data: { user } } = await sb.auth.getUser();
-      setUser(user);
+      try {
+        const { data: { user } } = await sb.auth.getUser();
+        setUser(user);
+      } catch (e) { console.error("Auth check error", e); }
     };
-    if (sb) checkUser();
+    checkUser();
   }, [sb]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    if (!sb) return alert("Veuillez patienter, connexion en cours...");
     setAuthLoading(true);
     const { data, error } = await sb.auth.signInWithPassword({
       email: authForm.email,
       password: authForm.pass
     });
     setAuthLoading(false);
-    if (error) alert("Erreur d'accès : " + error.message);
+    if (error) alert("Accès refusé : " + error.message);
     else setUser(data.user);
   };
 
   const handleLogout = async () => {
-    await sb.auth.signOut();
+    if (sb) await sb.auth.signOut();
     setUser(null);
   };
 
   const openCloudinary = (index) => {
-    if (!window.cloudinary) return alert("Le module d'image n'est pas chargé.");
+    if (!window.cloudinary) return alert("Module d'image indisponible.");
     window.cloudinary.openUploadWidget({
       cloudName: CLOUDINARY_CLOUD_NAME, uploadPreset: CLOUDINARY_UPLOAD_PRESET,
       sources: ['local', 'url', 'camera'], multiple: false,
@@ -335,10 +338,9 @@ const AdminDashboard = ({ products, categories, onRefresh, onBack, api, sb }) =>
     const success = await api.upsertProduct(cleaned);
     setSaving(false);
     if (success) { setEditing(null); onRefresh(); }
-    else alert("Erreur sauvegarde.");
+    else alert("Échec de sauvegarde.");
   };
 
-  // 1. Ecran de Connexion Sécurisé
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#002D5A] p-6 font-sans">
@@ -348,32 +350,31 @@ const AdminDashboard = ({ products, categories, onRefresh, onBack, api, sb }) =>
           <form onSubmit={handleLogin} className="space-y-4">
              <input required type="email" placeholder="Email Admin" className="w-full bg-gray-100 p-5 rounded-2xl border-none focus:ring-2 focus:ring-[#D0A050]" value={authForm.email} onChange={e => setAuthForm({...authForm, email: e.target.value})} />
              <input required type="password" placeholder="Mot de passe" className="w-full bg-gray-100 p-5 rounded-2xl border-none focus:ring-2 focus:ring-[#D0A050]" value={authForm.pass} onChange={e => setAuthForm({...authForm, pass: e.target.value})} />
-             <button disabled={authLoading} type="submit" className="w-full bg-[#002D5A] text-white py-5 rounded-2xl font-black uppercase shadow-xl active:scale-95 transition-all flex items-center justify-center gap-3">
-               {authLoading ? <Loader2 className="animate-spin" /> : "Connexion Sécurisée"}
+             <button disabled={authLoading || !sb} type="submit" className="w-full bg-[#002D5A] text-white py-5 rounded-2xl font-black uppercase shadow-xl active:scale-95 transition-all flex items-center justify-center gap-3">
+               {authLoading ? <Loader2 className="animate-spin" /> : "Se Connecter"}
              </button>
           </form>
-          <button onClick={onBack} className="mt-6 text-gray-400 font-bold hover:text-black transition-colors">Retour Boutique</button>
+          <button onClick={onBack} className="mt-6 text-gray-400 font-bold hover:text-black">Quitter</button>
         </div>
       </div>
     );
   }
 
-  // 2. Dashboard Réel
   return (
     <div className="min-h-screen bg-gray-50 font-sans pb-20 p-4 md:p-12 animate-fade-in">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-12">
         <div>
-          <h2 className="text-3xl font-black text-[#002D5A] uppercase tracking-tighter leading-none">Console de Gestion</h2>
-          <p className="text-[10px] font-black text-[#D0A050] uppercase mt-2 tracking-widest">Connecté en tant que : {user.email}</p>
+          <h2 className="text-3xl font-black text-[#002D5A] uppercase tracking-tighter leading-none">Gestion Boutique</h2>
+          <p className="text-[10px] font-black text-[#D0A050] uppercase mt-2 tracking-widest">{user.email}</p>
         </div>
         <div className="flex flex-wrap gap-3">
-          <button onClick={handleLogout} className="p-4 bg-white rounded-2xl shadow-sm border text-red-500 flex items-center gap-2 hover:bg-red-50 transition-all font-black text-xs uppercase tracking-widest"><LogOut size={18}/> Déconnexion</button>
+          <button onClick={handleLogout} className="p-4 bg-white rounded-2xl shadow-sm border text-red-500 flex items-center gap-2 hover:bg-red-50 transition-all font-black text-[10px] uppercase tracking-widest"><LogOut size={16}/> Déconnexion</button>
           <div className="bg-white p-2 rounded-2xl shadow-sm border flex items-center gap-2">
              <input placeholder="Nouvelle catégorie" className="bg-transparent border-none text-xs px-4 focus:ring-0 w-32 md:w-48" value={newCatName} onChange={e=>setNewCatName(e.target.value)} />
              <button onClick={async () => { await api.addCategory(newCatName); setNewCatName(''); onRefresh(); }} className="bg-[#D0A050] p-2 rounded-xl text-[#002D5A]"><Plus size={18}/></button>
           </div>
           <button onClick={() => setShowCatList(!showCatList)} className="p-4 bg-white rounded-2xl shadow-sm border text-[#002D5A] hover:bg-gray-50 transition-colors"><Settings size={20}/></button>
-          <button onClick={onBack} className="p-4 bg-white rounded-full shadow-md text-[#002D5A]"><X/></button>
+          <button onClick={onBack} className="p-4 bg-white rounded-full shadow-md text-red-500 hover:bg-red-50 transition-colors"><X/></button>
         </div>
       </div>
 
@@ -391,14 +392,14 @@ const AdminDashboard = ({ products, categories, onRefresh, onBack, api, sb }) =>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <button onClick={() => setEditing({ nom: '', categorie: categories[0]?.name, type_dispo: 'STOCK', description: '', image_urls: ['', '', '', '', ''] })} className="bg-white border-4 border-dashed border-gray-200 rounded-[2.5rem] p-10 flex flex-col items-center justify-center hover:border-[#D0A050] transition-all group aspect-square">
           <Plus size={40} className="text-gray-300 group-hover:text-[#D0A050] mb-2" />
-          <span className="font-black text-gray-400 text-xs uppercase tracking-widest text-center">Ajouter un produit</span>
+          <span className="font-black text-gray-400 text-xs uppercase tracking-widest text-center">Nouveau Produit</span>
         </button>
         {products.map(p => (
           <div key={p.id} className="bg-white p-5 rounded-[2.5rem] shadow-sm flex flex-col items-center group relative border border-white hover:border-gray-200 transition-all">
             <button onClick={async () => { if(window.confirm("Supprimer l'article ?")) { await api.deleteProduct(p.id); onRefresh(); } }} className="absolute top-4 right-4 p-2 bg-red-50 rounded-full text-red-500 shadow-md opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500 hover:text-white"><Trash2 size={16}/></button>
             <img src={p.image_urls?.[0]} className="w-full aspect-square rounded-3xl object-cover mb-4 bg-gray-50 shadow-inner" alt="" />
             <p className="font-black text-[#002D5A] uppercase text-[10px] truncate w-full text-center px-2">{p.nom}</p>
-            <button onClick={() => setEditing({ ...p, image_urls: [...(p.image_urls || []), '', '', '', '', ''].slice(0, 5) })} className="mt-4 w-full py-2 bg-gray-50 rounded-xl text-[#D0A050] font-bold text-[10px] uppercase tracking-widest transition-all">Modifier</button>
+            <button onClick={() => setEditing({ ...p, image_urls: [...(p.image_urls || []), '', '', '', '', ''].slice(0, 5) })} className="mt-4 w-full py-2 bg-gray-50 rounded-xl text-[#D0A050] font-bold text-[10px] uppercase tracking-widest transition-all hover:bg-[#002D5A] hover:text-white">Modifier</button>
           </div>
         ))}
       </div>
@@ -414,10 +415,10 @@ const AdminDashboard = ({ products, categories, onRefresh, onBack, api, sb }) =>
                 <select className="w-full bg-gray-50 p-4 rounded-xl font-bold border-none" value={editing.categorie} onChange={e=>setEditing({...editing, categorie:e.target.value})}>
                   {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
                 </select>
-                <textarea className="w-full bg-gray-50 p-4 rounded-xl h-44 border-none font-sans" value={editing.description} onChange={e=>setEditing({...editing, description:e.target.value})} placeholder="Description complète..." />
+                <textarea className="w-full bg-gray-50 p-4 rounded-xl h-44 border-none font-sans" value={editing.description} onChange={e=>setEditing({...editing, description:e.target.value})} placeholder="Description détaillée..." />
               </div>
               <div className="space-y-6">
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Images (Max 5)</p>
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Galerie Photos (Max 5)</p>
                 <div className="grid grid-cols-5 gap-2">
                   {editing.image_urls.map((url, i) => (
                     <button key={i} type="button" onClick={() => openCloudinary(i)} className={`aspect-square rounded-xl border-2 border-dashed flex flex-col items-center justify-center overflow-hidden transition-all ${i === 0 ? 'border-[#D0A050] bg-orange-50' : 'border-gray-200 bg-gray-50 hover:border-[#D0A050]'}`}>
@@ -428,12 +429,12 @@ const AdminDashboard = ({ products, categories, onRefresh, onBack, api, sb }) =>
                 <div className="grid grid-cols-2 gap-4 pt-4 border-t">
                   <select className="w-full bg-gray-50 p-4 rounded-xl font-bold border-none" value={editing.type_dispo} onChange={e=>setEditing({...editing, type_dispo:e.target.value})}>
                     <option value="STOCK">STOCK ABIDJAN</option>
-                    <option value="COMMANDE">IMPORT USA</option>
+                    <option value="COMMANDE">IMPORT DIRECT USA</option>
                   </select>
                   <input type="number" className="w-full bg-gray-50 p-4 rounded-xl font-black border-none text-[#002D5A]" value={editing.prix_standard || editing.prix_avion || ''} onChange={e=>setEditing({...editing, prix_standard:e.target.value})} placeholder="Prix de vente (F)" />
                 </div>
                 <button disabled={saving} type="submit" className="w-full bg-[#002D5A] text-white py-6 rounded-2xl font-black uppercase shadow-xl active:scale-95 transition-all">
-                  {saving ? <Loader2 className="animate-spin mx-auto"/> : "ENREGISTRER SUR CLOUD"}
+                  {saving ? <Loader2 className="animate-spin mx-auto"/> : "ENREGISTRER SUR LE CLOUD"}
                 </button>
               </div>
             </form>
@@ -443,7 +444,6 @@ const AdminDashboard = ({ products, categories, onRefresh, onBack, api, sb }) =>
     </div>
   );
 };
-
 // --- APP CONTENT ---
 function AppContent() {
   const [sb, setSb] = useState(null);

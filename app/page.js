@@ -848,7 +848,7 @@ function AppContent() {
           <div className="relative w-[300px] max-w-[85%] bg-white h-full shadow-2xl animate-slide-in p-10 flex flex-col font-sans no-scrollbar overflow-y-auto">
              <div className="flex justify-between items-center mb-16">
                 <h2 className="text-3xl font-black text-[#002D5A] google-sans-header uppercase">Menu</h2>
-                <button onClick={() => setIsMenuOpen(false)} className="p-3 bg-gray-100 rounded-full text-gray-400"><X size={20}/></button>
+                <button onClick={() => setIsMenuOpen(false)} className="p-3 bg-red-100 rounded-full text-red-400"><X size={500}/></button>
              </div>
              <nav className="flex flex-col gap-10">
                 <button onClick={()=>{setActiveCategory("Tout"); setIsMenuOpen(false); setView('home'); setSearch(''); window.scrollTo(0,0);}} className={`text-left font-black text-2xl ${activeCategory === "Tout" ? 'text-[#002D5A]' : 'text-gray-300'}`}>Toutes les Pépites</button>

@@ -732,9 +732,9 @@ function AppContent() {
       {/* Barre de Catégories Responsive (Scroll horizontal) - Dynamique depuis Supabase */}
       <div className="border-b bg-white sticky top-[120px] sm:top-[81px] z-40 overflow-x-auto no-scrollbar transition-all">
         <div className="max-w-7xl mx-auto flex gap-6 md:gap-10 px-6 md:px-12 py-4 md:py-6 whitespace-nowrap">
-          <button onClick={() => setActiveCategory("Tout")} className={`text-[10px] md:text-xs font-black uppercase tracking-widest relative pb-1 transition-all ${activeCategory === "Tout" ? 'text-[#002D5A]' : 'text-gray-300'}`}>Tout</button>
+          <button onClick={() => setActiveCategory("Tout")} className={`text-[10px] md:text-xs font-black uppercase tracking-widest relative pb-1 transition-all ${activeCategory === "Tout" ? 'text-[#002D5A]' : 'text-blue-500'}`}>Tout</button>
           {categories.map(c => (
-            <button key={c.id} onClick={() => setActiveCategory(c.name)} className={`text-[10px] md:text-xs font-black uppercase tracking-widest relative pb-1 transition-all ${activeCategory === c.name ? 'text-[#002D5A]' : 'text-gray-300 hover:text-gray-400'}`}>
+            <button key={c.id} onClick={() => setActiveCategory(c.name)} className={`text-[10px] md:text-xs font-black Karla-font uppercase tracking-widest relative pb-1 transition-all ${activeCategory === c.name ? 'text-[#002D5A]' : 'text-blue-500 hover:text-gray-400'}`}>
               {c.name}
               {activeCategory === c.name && <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#D0A050] rounded-full"></div>}
             </button>
@@ -868,7 +868,7 @@ function AppContent() {
           <div className="relative w-75 max-w-[85%] bg-blue-950 h-full shadow-2xl animate-slide-in p-10 flex flex-col font-sans no-scrollbar overflow-y-auto">
              <div className="flex justify-between items-center mb-16">
                 <h2 className="text-3xl font-black  text-white tracking-tighter  leading-none roboto-font uppercase">Menu</h2>
-                <button onClick={() => setIsMenuOpen(false)} className="p-3 bg-grid-100 lato-font rounded-full text-grid-400"><X size={20}/></button>
+                <button onClick={() => setIsMenuOpen(false)} className="p-3 bg-grid-100 lato-font rounded-full text-white"><X size={20}/></button>
              </div>
              <nav className="flex flex-col gap-10">
                 <button onClick={()=>{setActiveCategory("Tout"); setIsMenuOpen(false); setView('home'); setSearch(''); window.scrollTo(0,0);}} className={`text-left font-medium karla-font text-xl ${activeCategory === "Tout" ? 'underline decoration-[#D4AF37] decoration-4 underline-offset-8 text-white'  : 'text-white'}`}>Toutes les Pépites</button>

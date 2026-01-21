@@ -871,9 +871,27 @@ function AppContent() {
                 <button onClick={() => setIsMenuOpen(false)} className="p-3 bg-grid-100 lato-font rounded-full text-grid-400"><X size={20}/></button>
              </div>
              <nav className="flex flex-col gap-10">
-                <button onClick={()=>{setActiveCategory("Tout"); setIsMenuOpen(false); setView('home'); setSearch(''); window.scrollTo(0,0);}} className={`text-left font-medium karla-font text-xl ${activeCategory === "Tout" ? 'text-white' : 'text-red-500'}`}>Toutes les Pépites</button>
-                {categories.map(c => <button key={c.id} onClick={()=>{setActiveCategory(c.name); setIsMenuOpen(false); setView('home'); setSearch(''); window.scrollTo(0,0);}} className={`text-left  Bitter-font text-2xl transition-all ${activeCategory === c.name ? ' text-white' : 'text-red-500'}`}>{c.name}</button>)}
-                <div className="pt-10 border-t border-gray-100"><button onClick={()=>{setView('about'); setIsMenuOpen(false);}} className="text-left font-black text-xl  text-blue-950 transition-colors ">Notre Processus</button></div>
+                <button onClick={()=>{setActiveCategory("Tout"); setIsMenuOpen(false); setView('home'); setSearch(''); window.scrollTo(0,0);}} className={`text-left font-medium karla-font text-xl ${activeCategory === "Tout" ? 'underline decoration-[#D4AF37] decoration-4 underline-offset-8 text-white'  : 'text-white'}`}>Toutes les Pépites</button>
+                {categories.map(c => (
+  <button 
+    key={c.id} 
+    onClick={() => {
+      setActiveCategory(c.name); 
+      setIsMenuOpen(false); 
+      setView('home'); 
+      setSearch(''); 
+      window.scrollTo(0, 0);
+    }} 
+    className={`text-left Bitter-font text-2xl transition-all text-white 
+      ${activeCategory === c.name 
+        ? 'underline decoration-[#D4AF37] decoration-4 underline-offset-8' 
+        : 'hover:underline hover:decoration-[#D4AF37]/50'
+      }`}
+  >
+    {c.name}
+  </button>
+))}
+                <div className="pt-10 border-t border-gray-100"><button onClick={()=>{setView('about'); setIsMenuOpen(false);}} className="text-left font-medium text-xl  text-white transition-colors ">Notre Processus</button></div>
              </nav>
           </div>
         </div>

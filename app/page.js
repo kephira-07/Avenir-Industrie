@@ -6,7 +6,7 @@ import {
   Menu, Search, Facebook, Instagram, ArrowLeft, Truck, Send, 
   Loader2, Heart, Bell, Phone, MapPin, User, Mail, ShieldCheck, 
   History, FileText, ChevronDown, ListChecks, Globe, ChevronRight,
-  Settings, Plus, Minus, Edit3, Image as ImageIcon, Save, Lock, Trash2, Info, LogOut,Sparkles,Zap
+  Settings, Plus, Minus, Edit3, Image as ImageIcon, Save, Lock, Trash2, Info, LogOut,Sparkles,Zap,CircleQuestionMark
 } from 'lucide-react';
 
 
@@ -113,7 +113,7 @@ const Nudge = ({ api }) => {
 
 const HeroSection = () => {
   return (
-    <div className="relative bg-[#002D5A] overflow-hidden py-20 md:py-10 px-6">
+    <div className="relative bg-[#2269af] overflow-hidden py-20 md:py-10 px-6">
       {/* Image de fond avec animation Ken Burns */}
       <div className="absolute inset-0 z-0">
         <img 
@@ -133,13 +133,12 @@ const HeroSection = () => {
           </div>
           
           <h1 className="text-4xl md:text-7xl font-black text-white leading-[1.1] tracking-tighter">
-            Le monde est <br /> votre <span className="text-[#D0A050]">boutique.</span>
+          <span className="text-[#D0A050]">Commandez vos produits  </span>  de qualite chez nous  
           </h1>
           
           <p className="text-gray-200 text-lg md:text-xl max-w-xl leading-relaxed font-medium">
-            l'usine des produits et toutes les categories d'articles que vous recherchez, livrés rapidement et en toute sécurité, où que vous soyez au TOGO.
+            Ici a l'Industie de l'Avenir vous pouvez commander des produit depuis la Chine et quantite que vous Voulez,et il y aussi des produits diponible en boutique pour vous.
           </p>
-
           <div className="flex flex-wrap gap-4 pt-4">
              <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm p-4 rounded-3xl border border-white/10 shadow-xl">
                 <div className="p-3 bg-[#D0A050] text-[#002D5A] rounded-2xl shadow-lg"><Zap size={20}/></div>
@@ -147,7 +146,7 @@ const HeroSection = () => {
              </div>
              <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm p-4 rounded-3xl border border-white/10 shadow-xl">
                 <div className="p-3 bg-[#D0A050] text-[#002D5A] rounded-2xl shadow-lg"><ShieldCheck size={20}/></div>
-                <div><p className="text-white font-black text-sm uppercase">Garantie</p><p className="text-xs text-gray-300">SAV local certifié</p></div>
+                <div><p className="text-white font-black text-sm uppercase">diponible</p><p className="text-xs text-gray-300">SAV local certifié</p></div>
              </div>
           </div>
         </div>
@@ -156,7 +155,7 @@ const HeroSection = () => {
            <div className="relative z-10 bg-gradient-to-tr from-[#D0A050] to-amber-200 aspect-square w-[450px] rounded-[4rem] shadow-2xl flex items-center justify-center p-1.5 overflow-hidden">
               <div className="bg-[#002D5A] w-full h-full rounded-[3.8rem] flex flex-col items-center justify-center p-12 text-center space-y-6">
                  <Globe size={130} className="text-[#D0A050] animate-spin-slow" />
-                 <h2 className="text-2xl font-black text-white uppercase tracking-widest leading-tight">Sourcing <br/>Sans Limites</h2>
+                 <h2 className="text-2xl font-black text-white uppercase tracking-widest leading-tight">Commander <br/>Sans Limites</h2>
                  <p className="text-sm text-gray-400">Électronique, Automobile, Industriel. Nous trouvons, nous livrons.</p>
               </div>
            </div>
@@ -203,9 +202,29 @@ const AboutPage = ({ onBack, sectionId }) => {
     <div className="min-h-screen bg-white animate-fade-in pb-20">
       <div className="sticky top-0 bg-white/95 backdrop-blur-md z-50 px-6 py-4 border-b flex items-center gap-4">
         <button onClick={onBack} className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"><ArrowLeft size={20}/></button>
-        <h2 className="text-xl font-black text-[#002D5A] google-sans-header">À Propos</h2>
+        <h2 className="text-xl font-black text-[#135290] google-sans-header">À Propos</h2>
       </div>
       <div className="max-w-4xl mx-auto px-6 mt-12 space-y-24 font-sans">
+
+        <section id="nous" className="space-y-6 scroll-mt-24">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-orange-100 text-[#D0A050] rounded-2xl flex items-center justify-center"><CircleQuestionMark size={24}/></div>
+            <h2 className="text-3xl font-black text-[#002D5A] google-sans-header">Qui somme nous</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="p-6 bg-gray-50 rounded-3xl border border-gray-100 space-y-3">
+              <span className="text-3xl font-black text-[#D0A050]">01</span>
+              <p className="text-gray-600">Les industries de l'avenir est une plateforme de vente et d’importation créée pour simplifier l’accès aux produits du monde entier, tout en proposant des articles disponibles localement..</p>
+            </div>
+             <div className="p-6 bg-gray-50 rounded-3xl border border-gray-100 space-y-3">
+              <span className="text-3xl font-black text-[#D0A050]">03</span>
+              <p className="text-gray-600"> Nous combinons :importation directe depuis les usines (USA & Chine) vente locale sur le terrain accompagnement personnalisé</p>
+            </div>
+
+          </div>
+        </section>
+        
+  
         <section id="processus" className="space-y-6 scroll-mt-24">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-orange-100 text-[#D0A050] rounded-2xl flex items-center justify-center"><Globe size={24}/></div>

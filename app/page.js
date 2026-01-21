@@ -734,7 +734,7 @@ function AppContent() {
         <div className="max-w-7xl mx-auto flex gap-6 md:gap-10 px-6 md:px-12 py-4 md:py-6 whitespace-nowrap">
           <button onClick={() => setActiveCategory("Tout")} className={`text-[10px] md:text-xs font-black uppercase tracking-widest relative pb-1 transition-all ${activeCategory === "Tout" ? 'text-[#002D5A]' : 'text-blue-500'}`}>Tout</button>
           {categories.map(c => (
-            <button key={c.id} onClick={() => setActiveCategory(c.name)} className={`text-[10px] md:text-xs font-black Karla-font uppercase tracking-widest relative pb-1 transition-all ${activeCategory === c.name ? 'text-[#002D5A]' : 'text-blue-500 hover:text-gray-400'}`}>
+            <button key={c.id} onClick={() => setActiveCategory(c.name)} className={`text-[10px] md:text-xs  Alegreya-font uppercase tracking-widest relative pb-1 transition-all ${activeCategory === c.name ? 'text-[#002D5A]' : 'text-gray-500 hover:text-blue-700'}`}>
               {c.name}
               {activeCategory === c.name && <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#D0A050] rounded-full"></div>}
             </button>

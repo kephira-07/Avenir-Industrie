@@ -132,7 +132,7 @@ const HeroSection = () => {
             <span className="text-[10px] md:text-xs font-black text-white uppercase tracking-widest">Importation Directe USA & Chine</span>
           </div>
           
-          <h1 className="text-4xl md:text-7xl font-medium text-white leading-[1.1] tracking-tighter Savate-font">
+          <h1 className="text-3xl md:text-7xl font-medium text-white leading-[1.1] tracking-tighter Savate-font">
           <span className="text-[#D0A050]">Commandez vos produits  </span>  de qualite chez nous  
           </h1>
           

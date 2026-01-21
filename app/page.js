@@ -867,12 +867,12 @@ function AppContent() {
           <div className="absolute inset-0 bg-blend-soft-light backdrop-blur-md" onClick={() => setIsMenuOpen(false)}></div>
           <div className="relative w-75 max-w-[85%] bg-blue-950 h-full shadow-2xl animate-slide-in p-10 flex flex-col font-sans no-scrollbar overflow-y-auto">
              <div className="flex justify-between items-center mb-16">
-                <h2 className="text-3xl font-black  text-white tracking-tighter  leading-noneroboto-font uppercase">Menu</h2>
+                <h2 className="text-3xl font-black  text-white tracking-tighter  leading-none roboto-font uppercase">Menu</h2>
                 <button onClick={() => setIsMenuOpen(false)} className="p-3 bg-grid-100 lato-font rounded-full text-grid-400"><X size={20}/></button>
              </div>
              <nav className="flex flex-col gap-10">
-                <button onClick={()=>{setActiveCategory("Tout"); setIsMenuOpen(false); setView('home'); setSearch(''); window.scrollTo(0,0);}} className={`text-left font-black text-2xl ${activeCategory === "Tout" ? 'text-white' : 'text-red-500'}`}>Toutes les Pépites</button>
-                {categories.map(c => <button key={c.id} onClick={()=>{setActiveCategory(c.name); setIsMenuOpen(false); setView('home'); setSearch(''); window.scrollTo(0,0);}} className={`text-left font-black text-2xl transition-all ${activeCategory === c.name ? ' text-white' : 'text-red-500'}`}>{c.name}</button>)}
+                <button onClick={()=>{setActiveCategory("Tout"); setIsMenuOpen(false); setView('home'); setSearch(''); window.scrollTo(0,0);}} className={`text-left font-medium karla-font text-xl ${activeCategory === "Tout" ? 'text-white' : 'text-red-500'}`}>Toutes les Pépites</button>
+                {categories.map(c => <button key={c.id} onClick={()=>{setActiveCategory(c.name); setIsMenuOpen(false); setView('home'); setSearch(''); window.scrollTo(0,0);}} className={`text-left  Bitter-font text-2xl transition-all ${activeCategory === c.name ? ' text-white' : 'text-red-500'}`}>{c.name}</button>)}
                 <div className="pt-10 border-t border-gray-100"><button onClick={()=>{setView('about'); setIsMenuOpen(false);}} className="text-left font-black text-xl  text-blue-950 transition-colors ">Notre Processus</button></div>
              </nav>
           </div>

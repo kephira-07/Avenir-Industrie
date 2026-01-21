@@ -132,11 +132,11 @@ const HeroSection = () => {
             <span className="text-[10px] md:text-xs font-black text-white uppercase tracking-widest">Importation Directe USA & Chine</span>
           </div>
           
-          <h1 className="text-4xl md:text-7xl font-black text-white leading-[1.1] tracking-tighter">
+          <h1 className="text-4xl md:text-7xl font-medium text-white leading-[1.1] tracking-tighter Savate-font">
           <span className="text-[#D0A050]">Commandez vos produits  </span>  de qualite chez nous  
           </h1>
           
-          <p className="text-gray-200 text-lg md:text-xl max-w-xl leading-relaxed font-medium">
+          <p className="text-gray-200 text-lg md:text-xl max-w-xl leading-relaxed font-thin Karla-font">
             Ici a l'Industie de l'Avenir vous pouvez commander des produit depuis la Chine et quantite que vous Voulez,et il y aussi des produits diponible en boutique pour vous.
           </p>
           <div className="flex flex-wrap gap-4 pt-4">

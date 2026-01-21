@@ -286,7 +286,7 @@ const ProductDetail = ({ product, onBack, onAddToCart }) => {
     <div className="min-h-screen bg-white animate-fade-in pb-20 font-sans overflow-x-hidden">
       <div className="sticky top-0 bg-white/95 backdrop-blur-md z-[700] px-4 md:px-6 py-4 border-b flex items-center justify-between">
         <button onClick={onBack} className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"><ArrowLeft size={20}/></button>
-        <span className="text-[10px] font-black uppercase text-[#D0A050]">Vitrine Afri-Tech</span>
+        <span className="text-[10px] font-black uppercase text-[#D0A050]">Vitrine </span>
         <div className="w-10" />
       </div>
       <div className="max-w-6xl mx-auto px-4 md:px-6 mt-8">
@@ -363,7 +363,7 @@ const CheckoutPage = ({ cart, total, onBack, api }) => {
 
   const handleWhatsApp = () => {
     if(!form.nom || !form.tel) return alert("Veuillez remplir votre nom et numéro.");
-    const text = `*COMMANDE AFRI-TECH*%0A-----------------%0A${cart.map(i => `• ${i.nom} (${i.mode}) x${i.quantity}`).join('%0A')}%0A-----------------%0A*TOTAL : ${total.toLocaleString()} FCFA*%0A%0A*Client :* ${form.nom}%0A*Tél :* ${form.tel}%0A*Lieu :* ${form.adresse}`;
+    const text = `*COMMANDE Industrie-Avenir*%0A-----------------%0A${cart.map(i => `• ${i.nom} (${i.mode}) x${i.quantity}`).join('%0A')}%0A-----------------%0A*TOTAL : ${total.toLocaleString()} FCFA*%0A%0A*Client :* ${form.nom}%0A*Tél :* ${form.tel}%0A*Lieu :* ${form.adresse}`;
     window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${text}`;
   };
 
@@ -634,6 +634,8 @@ function AppContent() {
 
   const filtered = useMemo(() => {
     let res = products.filter(p => (activeCategory === "Tout" || p.categorie === activeCategory) && p.nom.toLowerCase().includes(search.toLowerCase()));
+    const prix_avion=25000;
+    const prix_bateau=20000;
     return res.sort((a, b) => {
       const pa = Number(a.prix_standard || a.prix_avion || a.prix_bateau || 0);
       const pb = Number(b.prix_standard || b.prix_avion || b.prix_bateau || 0);

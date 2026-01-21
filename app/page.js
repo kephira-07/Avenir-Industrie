@@ -634,8 +634,7 @@ function AppContent() {
 
   const filtered = useMemo(() => {
     let res = products.filter(p => (activeCategory === "Tout" || p.categorie === activeCategory) && p.nom.toLowerCase().includes(search.toLowerCase()));
-    const prix_avion=25000;
-    const prix_bateau=20000;
+  
     return res.sort((a, b) => {
       const pa = Number(a.prix_standard || a.prix_avion || a.prix_bateau || 0);
       const pb = Number(b.prix_standard || b.prix_avion || b.prix_bateau || 0);
@@ -864,17 +863,17 @@ function AppContent() {
 
       {/* Menu Mobile - Dynamique depuis Supabase */}
       {isMenuOpen && (
-        <div className="fixed inset-0 z-[1000] flex">
-          <div className="absolute inset-0 bg-[#002D5A]/80 backdrop-blur-md" onClick={() => setIsMenuOpen(false)}></div>
-          <div className="relative w-[300px] max-w-[85%] bg-white h-full shadow-2xl animate-slide-in p-10 flex flex-col font-sans no-scrollbar overflow-y-auto">
+        <div className="fixed inset-0 z-1000 flex">
+          <div className="absolute inset-0 bg-transparent backdrop-blur-md" onClick={() => setIsMenuOpen(false)}></div>
+          <div className="relative w-75 max-w-[85%] bg-white h-full shadow-2xl animate-slide-in p-10 flex flex-col font-sans no-scrollbar overflow-y-auto">
              <div className="flex justify-between items-center mb-16">
-                <h2 className="text-3xl font-black text-[#002D5A] google-sans-header uppercase">Menu</h2>
-                <button onClick={() => setIsMenuOpen(false)} className="p-3 bg-grid-100 rounded-full text-grid-400"><X size={20}/></button>
+                <h2 className="text-3xl font-black  text-blue-950 roboto-font uppercase">Menu</h2>
+                <button onClick={() => setIsMenuOpen(false)} className="p-3 bg-grid-100 lato-font rounded-full text-grid-400"><X size={20}/></button>
              </div>
              <nav className="flex flex-col gap-10">
-                <button onClick={()=>{setActiveCategory("Tout"); setIsMenuOpen(false); setView('home'); setSearch(''); window.scrollTo(0,0);}} className={`text-left font-black text-2xl ${activeCategory === "Tout" ? 'text-[#002D5A]' : 'text-gray-300'}`}>Toutes les Pépites</button>
-                {categories.map(c => <button key={c.id} onClick={()=>{setActiveCategory(c.name); setIsMenuOpen(false); setView('home'); setSearch(''); window.scrollTo(0,0);}} className={`text-left font-black text-2xl transition-all ${activeCategory === c.name ? 'text-[#002D5A]' : 'text-gray-300'}`}>{c.name}</button>)}
-                <div className="pt-10 border-t border-gray-100"><button onClick={()=>{setView('about'); setIsMenuOpen(false);}} className="text-left font-black text-2xl text-gray-300 transition-colors hover:text-[#002D5A]">Notre Processus</button></div>
+                <button onClick={()=>{setActiveCategory("Tout"); setIsMenuOpen(false); setView('home'); setSearch(''); window.scrollTo(0,0);}} className={`text-left font-black text-2xl ${activeCategory === "Tout" ? 'text-[#002D5A]' : 'underline-offset-2'}`}>Toutes les Pépites</button>
+                {categories.map(c => <button key={c.id} onClick={()=>{setActiveCategory(c.name); setIsMenuOpen(false); setView('home'); setSearch(''); window.scrollTo(0,0);}} className={`text-left font-black text-2xl transition-all ${activeCategory === c.name ? ' text-blue-950' : 'underline-offset-2'}`}>{c.name}</button>)}
+                <div className="pt-10 border-t border-gray-100"><button onClick={()=>{setView('about'); setIsMenuOpen(false);}} className="text-left font-black text-xl  text-blue-950 transition-colors ">Notre Processus</button></div>
              </nav>
           </div>
         </div>

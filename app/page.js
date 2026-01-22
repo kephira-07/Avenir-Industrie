@@ -761,7 +761,7 @@ function AppContent() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 pb-32">
             {filtered.map(p => (
-              <div key={p.id} onClick={() => {setSelectedProduct(p); setView('detail'); window.scrollTo(0,0);}} className="group bg-white rounded-[3rem] md:rounded-[3.5rem] overflow-hidden border shadow-sm hover:shadow-2xl transition-all duration-700 cursor-pointer">
+              <div key={p.id} onClick={() => {setSelectedProduct(p); setView('detail'); window.scrollTo(0,0);}} className="group bg-white rounded-[3rem] md:rounded-[3.5rem] overflow-hidden border shadow-sm hover:shadow-2xl transition-all duration-700 cursor-pointer p-4 md:p-5">
                 <div className="aspect-square bg-gray-50 overflow-hidden relative rounded-[2.5rem] mb-10 border shadow-inner">
                   <img src={p.image_urls?.[0]} alt={p.nom} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
                   <div className={`absolute top-4 left-4 px-4 py-1.5 rounded-xl text-[8px] font-black text-white shadow-lg ${p.type_dispo === 'STOCK' ? 'bg-green-500' : 'bg-rose-600'}`}>

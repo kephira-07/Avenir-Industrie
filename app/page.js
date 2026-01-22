@@ -759,12 +759,12 @@ function AppContent() {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-40 opacity-20"><Loader2 size={60} className="animate-spin mb-4 text-[#002D5A]"/><p className="font-black uppercase text-xs tracking-widest text-center">Accès Cloud...</p></div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 pb-32"> {/* MODIFIÉ : + de colonnes, gap réduit */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 pb-32"> {/* MODIFIÉ : + de colonnes, gap réduit */}
   {filtered.map(p => (
     <div 
       key={p.id} 
       onClick={() => {setSelectedProduct(p); setView('detail'); window.scrollTo(0,0);}} 
-      className="group bg-white rounded-[2rem] md:rounded-[2.5rem] overflow-hidden border shadow-sm hover:shadow-xl transition-all duration-700 cursor-pointer p-4 md:p-6" // MODIFIÉ : arrondis et padding réduits
+      className="group bg-white rounded-[2rem] md:rounded-[2.5rem] overflow-hidden border shadow-sm hover:shadow-xl transition-all duration-700 cursor-pointer p-2 md:p-3" // MODIFIÉ : arrondis et padding réduits
     >
       <div className="aspect-square bg-gray-50 overflow-hidden relative rounded-[1.5rem] mb-6 border shadow-inner"> {/* MODIFIÉ : marge basse réduite */}
         <img 

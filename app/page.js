@@ -759,26 +759,40 @@ function AppContent() {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-40 opacity-20"><Loader2 size={60} className="animate-spin mb-4 text-[#002D5A]"/><p className="font-black uppercase text-xs tracking-widest text-center">Accès Cloud...</p></div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 pb-32">
-            {filtered.map(p => (
-              <div key={p.id} onClick={() => {setSelectedProduct(p); setView('detail'); window.scrollTo(0,0);}} className="group bg-white rounded-[3rem] md:rounded-[3.5rem] overflow-hidden border shadow-sm hover:shadow-2xl transition-all duration-700 cursor-pointer p-4 md:p-5">
-                <div className="aspect-square bg-gray-50 overflow-hidden relative rounded-[2.5rem] mb-10 border shadow-inner">
-                  <img src={p.image_urls?.[0]} alt={p.nom} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
-                  <div className={`absolute top-4 left-4 px-4 py-1.5 rounded-xl text-[8px] font-black text-white shadow-lg ${p.type_dispo === 'STOCK' ? 'bg-green-500' : 'bg-rose-600'}`}>
-                    {p.type_dispo === 'STOCK' ? 'EN STOCK' : 'SUR COMMANDE'}
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  <p className="text-[#D0A050] text-[9px] font-black uppercase tracking-[0.4em]">{p.categorie}</p>
-                  <h3 className="text-xl md:text-2xl font-black text-[#002D5A] truncate uppercase tracking-tight">{p.nom}</h3>
-                  <div className="flex justify-between items-center pt-8 border-t border-gray-100">
-                    <p className="text-2xl md:text-3xl font-black text-[#002D5A] tracking-tighter">{(Number(p.prix_standard || p.prix_avion))?.toLocaleString()} F</p>
-                    <div className="p-5 bg-gray-50 rounded-[2rem] group-hover:bg-[#D0A050] group-hover:text-[#002D5A] transition-all shadow-inner"><ArrowRight size={24}/></div>
-                  </div>
-                </div>
-              </div>
-            ))}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 pb-32"> {/* MODIFIÉ : + de colonnes, gap réduit */}
+  {filtered.map(p => (
+    <div 
+      key={p.id} 
+      onClick={() => {setSelectedProduct(p); setView('detail'); window.scrollTo(0,0);}} 
+      className="group bg-white rounded-[2rem] md:rounded-[2.5rem] overflow-hidden border shadow-sm hover:shadow-xl transition-all duration-700 cursor-pointer p-4 md:p-6" // MODIFIÉ : arrondis et padding réduits
+    >
+      <div className="aspect-square bg-gray-50 overflow-hidden relative rounded-[1.5rem] mb-6 border shadow-inner"> {/* MODIFIÉ : marge basse réduite */}
+        <img 
+          src={p.image_urls?.[0]} 
+          alt={p.nom} 
+          className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
+        />
+        <div className={`absolute top-3 left-3 px-3 py-1 rounded-lg text-[7px] font-black text-white shadow-lg ${p.type_dispo === 'STOCK' ? 'bg-green-500' : 'bg-rose-600'}`}>
+          {p.type_dispo === 'STOCK' ? 'EN STOCK' : 'SUR COMMANDE'}
+        </div>
+      </div>
+
+      <div className="space-y-2"> {/* MODIFIÉ : espace entre les textes réduit */}
+        <p className="text-[#D0A050] text-[7px] font-black uppercase tracking-[0.3em]">{p.categorie}</p>
+        <h3 className="text-sm md:text-lg font-black text-[#002D5A] truncate uppercase tracking-tight">{p.nom}</h3>
+        
+        <div className="flex justify-between items-center pt-4 border-t border-gray-100"> {/* MODIFIÉ : padding-top réduit */}
+          <p className="text-lg md:text-xl font-black text-[#002D5A] tracking-tighter">
+            {(Number(p.prix_standard || p.prix_avion))?.toLocaleString()} F
+          </p>
+          <div className="p-3 bg-gray-50 rounded-2xl group-hover:bg-[#D0A050] group-hover:text-white transition-all shadow-inner"> {/* MODIFIÉ : bouton plus petit */}
+            <ArrowRight size={18}/>
           </div>
+        </div>
+      </div>
+    </div>
+  ))}
+</div>
         )}
       </main>
 

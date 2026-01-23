@@ -885,10 +885,33 @@ function AppContent() {
                 <button onClick={() => setIsMenuOpen(false)} className="p-3 bg-grid-100 lato-font rounded-full text-white"><X size={20}/></button>
              </div>
              <nav className="flex flex-col gap-10">
-                <button onClick={()=>{setActiveCategory("Tout"); setIsMenuOpen(false); setView('home'); setSearch(''); window.scrollTo(0,0);}} className={`text-left font-medium karla-font text-xl ${activeCategory === "Tout" ? 'underline decoration-[#D4AF37] decoration-4 underline-offset-8 text-white'  : 'text-white'}`}>Toutes les Pépites</button>
+                <button onClick={()=>{setActiveCategory("Tout"); setIsMenuOpen(false); setView('all'); setSearch('');}} className={`text-left font-medium karla-font text-xl ${activeCategory === "Tout" ? 'underline decoration-[#D4AF37] decoration-4 underline-offset-8 text-white'  : 'text-white'}`}>Toutes les Pépites</button>
                 {categories.map(c => (
-              <button  key={c.id} onClick={() => { setActiveCategory(c.name); setIsMenuOpen(false); setView('home');   setSearch('');  window.scrollTo(0, 0);   }}   className={`text-left Bitter-font text-2xl transition-all text-white  ${activeCategory === c.name  ? 'underline decoration-[#D4AF37] decoration-4 underline-offset-8' : 'hover:underline hover:decoration-[#D4AF37]/50'   }`}
-              >    {c.name}  </button>))}
+              <button  
+    key={c.id} 
+    onClick={() => { 
+      setActiveCategory(c.name); 
+      setIsMenuOpen(false); 
+      setView('home');   
+      setSearch(''); 
+      
+      // Nouvelle logique de scroll :
+      // On utilise setTimeout pour laisser le temps au menu de se fermer
+      setTimeout(() => {
+        const element = document.getElementById(c.id); // Utilise l'ID de la catégorie
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100); 
+    }}   
+    className={`text-left Bitter-font text-2xl transition-all text-white ${
+      activeCategory === c.name  
+      ? 'underline decoration-[#D4AF37] decoration-4 underline-offset-8' 
+      : 'hover:underline hover:decoration-[#D4AF37]/50'
+    }`}
+  >    
+    {c.name}  
+  </button>))}
                 <div className="pt-10 border-t border-gray-100"><button onClick={()=>{setView('about'); setIsMenuOpen(false);}} className="text-left font-medium text-xl  text-white transition-colors ">Notre Processus</button></div>
              </nav>
           </div>

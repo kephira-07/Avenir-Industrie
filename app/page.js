@@ -892,7 +892,7 @@ function AppContent() {
     onClick={() => { 
       setActiveCategory(c.name); 
       setIsMenuOpen(false); 
-      setView('home');   
+      setView(c.name);   
       setSearch(''); 
       
       // Nouvelle logique de scroll :

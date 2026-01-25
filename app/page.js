@@ -121,15 +121,14 @@ const HeroSection = () => {
           alt="Import Logistique" 
           className="w-full h-full object-cover opacity-30 scale-110 animate-ken-burns"
         />
-        {/* Overlay Dégradé pour la lisibilité */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#002D5A] via-[#002D5A]/80 to-transparent"></div>
+        
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        <div className="space-y-8 animate-fade-in-up">
+        <div className="space-y-8 animate-fade-in-up bg-amber-300" >
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
             
-            <span className="text-[10px] md:text-xs font-black text-white uppercase tracking-widest">Importation Directe USA & Chine</span>
+            <span className="text-[10px] md:text-xs font-black text-white uppercase tracking-widest">NN</span>
           </div>
           
           <h1 className="text-3xl md:text-7xl font-medium text-white leading-[1.1] tracking-tighter Savate-font">
@@ -152,13 +151,7 @@ const HeroSection = () => {
         </div>
 
         <div className="hidden lg:flex justify-center relative animate-float">
-           <div className="relative z-10 bg-gradient-to-tr from-[#D0A050] to-amber-200 aspect-square w-[450px] rounded-[4rem] shadow-2xl flex items-center justify-center p-1.5 overflow-hidden">
-              <div className="bg-[#002D5A] w-full h-full rounded-[3.8rem] flex flex-col items-center justify-center p-12 text-center space-y-6">
-                 <Globe size={130} className="text-[#D0A050] animate-spin-slow" />
-                 <h2 className="text-2xl font-black text-white uppercase tracking-widest leading-tight">Commander <br/>Sans Limites</h2>
-                 <p className="text-sm text-gray-400">Électronique, Automobile, Industriel. Nous trouvons, nous livrons.</p>
-              </div>
-           </div>
+           
            {/* Éléments décoratifs flottants */}
            <div className="absolute top-0 right-10 w-20 h-20 bg-[#D0A050]/20 rounded-full blur-2xl animate-pulse"></div>
            <div className="absolute bottom-10 left-10 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl animate-pulse"></div>
@@ -766,7 +759,7 @@ function AppContent() {
       onClick={() => {setSelectedProduct(p); setView('detail'); window.scrollTo(0,0);}} 
       className="group bg-white rounded-[2rem] md:rounded-[2.5rem] overflow-hidden border shadow-sm hover:shadow-xl transition-all duration-700 cursor-pointer p-2 md:p-3" // MODIFIÉ : arrondis et padding réduits
     >
-      <div className="aspect-square bg-gray-50 overflow-hidden relative rounded-[1.5rem] mb-6 border shadow-inner"> {/* MODIFIÉ : marge basse réduite */}
+      <div className="card bg-base-100 w-96 shadow-sm"> {/* MODIFIÉ : marge basse réduite */}
         <img 
           src={p.image_urls?.[0]} 
           alt={p.nom} 
@@ -885,7 +878,7 @@ function AppContent() {
                 <button onClick={() => setIsMenuOpen(false)} className="p-3 bg-grid-100 lato-font rounded-full text-white"><X size={20}/></button>
              </div>
              <nav className="flex flex-col gap-10">
-                <button onClick={()=>{setActiveCategory("Tout"); setIsMenuOpen(false); setView('home'); setSearch(''); window.scrollTo(850,850);}} className={`text-left font-medium karla-font text-xl ${activeCategory === "Tout" ? 'underline decoration-[#D4AF37] decoration-4 underline-offset-8 text-white'  : 'text-white'}`}>Toutes les Pépites</button>
+                <button onClick={()=>{setActiveCategory("Tout"); setIsMenuOpen(false); setView('home'); setSearch(''); window.scrollTo(850,80);}} className={`text-left font-medium karla-font text-xl ${activeCategory === "Tout" ? 'underline decoration-[#D4AF37] decoration-4 underline-offset-8 text-white'  : 'text-white'}`}>Toutes les Pépites</button>
                 {categories.map(c => (
               <button  key={c.id} onClick={() => { setActiveCategory(c.name); setIsMenuOpen(false); setView('home');   setSearch('');  window.scrollTo(0, 0);   }}   className={`text-left Bitter-font text-2xl transition-all text-white  ${activeCategory === c.name  ? 'underline decoration-[#D4AF37] decoration-4 underline-offset-8' : 'hover:underline hover:decoration-[#D4AF37]/50'   }`}
               >    {c.name}  </button>))}

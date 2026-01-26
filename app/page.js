@@ -19,6 +19,7 @@ const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || ""; 
 const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || ""; 
 const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "";
+const Num="22891253109"; // Remplacez par votre numéro WhatsApp complet avec indicatif pays
 
 
 // --- LOGIQUE API SUPABASE ---
@@ -295,9 +296,9 @@ const ProductDetail = ({ product, onBack, onAddToCart }) => {
             <div className="aspect-square rounded-[3.5rem] overflow-hidden bg-gray-50 border shadow-xl">
               <img src={activeImg} alt={product.nom} className="w-full h-full object-cover transition-all duration-500" />
             </div>
-            <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
+            <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
               {product.image_urls?.map((url, i) => (
-                <button key={i} onClick={() => setActiveImg(url)} className={`w-16 h-16 md:w-20 md:h-20 rounded-2xl overflow-hidden border-4 shrink-0 transition-all ${activeImg === url ? 'border-[#D0A050] scale-105' : 'border-transparent opacity-60'}`}>
+                <button key={i} onClick={() => setActiveImg(url)} className={`w-20 h-20 md:w-23 md:h-23 rounded-xl overflow-hidden border-4 shrink-0 transition-all ${activeImg === url ? 'border-[#D0A050] scale-105' : 'border-transparent opacity-60'}`}>
                   <img src={url} className="w-full h-full object-cover" alt="" />
                 </button>
               ))}
@@ -364,7 +365,7 @@ const CheckoutPage = ({ cart, total, onBack, api }) => {
   const handleWhatsApp = () => {
     if(!form.nom || !form.tel) return alert("Veuillez remplir votre nom et numéro.");
     const text = `*COMMANDE Industrie-Avenir*%0A-----------------%0A${cart.map(i => `• ${i.nom} (${i.mode}) x${i.quantity}`).join('%0A')}%0A-----------------%0A*TOTAL : ${total.toLocaleString()} FCFA*%0A%0A*Client :* ${form.nom}%0A*Tél :* ${form.tel}%0A*Lieu :* ${form.adresse}`;
-    window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${text}`;
+    window.location.href = `https://wa.me/${WHATSAPP_NUMBER & Num}?text=${text}`;
   };
 
   if (done) return (

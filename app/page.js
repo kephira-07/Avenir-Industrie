@@ -296,9 +296,9 @@ const ProductDetail = ({ product, onBack, onAddToCart }) => {
             <div className="aspect-square rounded-[3.5rem] overflow-hidden bg-gray-50 border shadow-xl">
               <img src={activeImg} alt={product.nom} className="w-full h-full object-cover transition-all duration-500" />
             </div>
-            <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
+            <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
               {product.image_urls?.map((url, i) => (
-                <button key={i} onClick={() => setActiveImg(url)} className={`w-20 h-20 md:w-23 md:h-23 rounded-xl overflow-hidden border-4 shrink-0 transition-all ${activeImg === url ? 'border-[#D0A050] scale-105' : 'border-transparent opacity-60'}`}>
+                <button key={i} onClick={() => setActiveImg(url)} className={`w-16 h-16 md:w-20 md:h-20 rounded-2xl overflow-hidden border-4 shrink-0 transition-all ${activeImg === url ? 'border-[#D0A050] scale-105' : 'border-transparent opacity-60'}`}>
                   <img src={url} className="w-full h-full object-cover" alt="" />
                 </button>
               ))}

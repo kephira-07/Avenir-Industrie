@@ -825,7 +825,7 @@ function AppContent() {
         .animate-fade-in { animation: fade-in 0.4s ease-out; }
       `}</style>
           {/* Header Public Premium avec Suggestions et Prix */}
-<header className={`fixed top-0 left-0 right-0 z-[600] transition-all duration-500 ease-in-out transform ${showHeader ? 'translate-y-0' : '-translate-y-full'} ${isScrolled ? 'bg-white/90 backdrop-blur-xl shadow-lg border-b border-[#D4AF37]/30 py-3' : 'bg-blue-500 py-5'}`}>
+<header className={`fixed top-0 left-0 right-0 z-[600] transition-all duration-500 ease-in-out transform ${showHeader ? 'translate-y-0' : '-translate-y-full'} ${isScrolled ? 'bg-white/90 backdrop-blur-xl shadow-lg border-b border-[#D4AF37]/30 py-3' : 'bg-blue-800 py-5'}`}>
         <div className="max-w-7xl mx-auto px-4 md:px-12 flex flex-wrap items-center justify-between gap-y-3">
           <div className="flex items-center gap-1 md:gap-4 shrink-0">
             <button onClick={() => setIsMenuOpen(true)} className={`p-2 rounded-full transition-all active:scale-90 ${isScrolled ? 'text-[#0A1A3A] hover:bg-gray-100' : 'text-white hover:bg-white/10'}`}>

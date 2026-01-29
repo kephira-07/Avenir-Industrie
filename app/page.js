@@ -415,31 +415,40 @@ const CheckoutPage = ({ cart, total, onBack, api }) => {
   );
 };
 
-// --- ADMIN DASHBOARD ---
+// --- DASHBOARD ADMIN SÉCURISÉ & MODERNISÉ ---
 const AdminDashboard = ({ products, categories, onRefresh, onBack, api, sb }) => {
   const [user, setUser] = useState(null);
   const [authForm, setAuthForm] = useState({ email: '', pass: '' });
   const [authLoading, setAuthLoading] = useState(false);
+  const [adminSearch, setAdminSearch] = useState(''); // Barre de recherche admin
   const [editing, setEditing] = useState(null);
   const [saving, setSaving] = useState(false);
   const [newCatName, setNewCatName] = useState('');
   const [showCatList, setShowCatList] = useState(false);
 
-  // Vérifier la session. Si sb est null (pas encore chargé), on attend.
+  // Vérification sécurisée de sb.auth
   useEffect(() => {
-    if (!sb) return;
+    if (!sb || !sb.auth) return;
     const checkUser = async () => {
       try {
         const { data: { user } } = await sb.auth.getUser();
         setUser(user);
-      } catch (e) { console.error("Auth check error", e); }
+      } catch (e) { console.error("Auth error", e); }
     };
     checkUser();
   }, [sb]);
 
+  // Filtrage des produits pour la recherche admin
+  const filteredAdminProducts = useMemo(() => {
+    return products.filter(p => 
+      p.nom.toLowerCase().includes(adminSearch.toLowerCase()) || 
+      p.categorie.toLowerCase().includes(adminSearch.toLowerCase())
+    );
+  }, [products, adminSearch]);
+
   const handleLogin = async (e) => {
     e.preventDefault();
-    if (!sb) return alert("Veuillez patienter, connexion en cours...");
+    if (!sb || !sb.auth) return alert("Service de connexion non prêt.");
     setAuthLoading(true);
     const { data, error } = await sb.auth.signInWithPassword({
       email: authForm.email,
@@ -451,7 +460,7 @@ const AdminDashboard = ({ products, categories, onRefresh, onBack, api, sb }) =>
   };
 
   const handleLogout = async () => {
-    if (sb) await sb.auth.signOut();
+    if (sb && sb.auth) await sb.auth.signOut();
     setUser(null);
   };
 
@@ -481,98 +490,166 @@ const AdminDashboard = ({ products, categories, onRefresh, onBack, api, sb }) =>
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#002D5A] p-6 font-sans">
-        <div className="bg-white p-10 rounded-[3rem] shadow-2xl w-full max-w-md text-center border-4 border-[#D0A050]">
-          <Lock className="mx-auto text-[#D0A050] mb-6" size={48} />
-          <h2 className="text-2xl font-black text-[#002D5A] mb-8 uppercase tracking-tighter">Accès Admin</h2>
+      <div className="min-h-screen flex items-center justify-center bg-[#0A1A3A] p-6 font-sans">
+        <div className="bg-white p-10 rounded-[3rem] shadow-2xl w-full max-w-md text-center border-t-8 border-[#D4AF37]">
+          <Lock className="mx-auto text-[#0A1A3A] mb-6" size={56} />
+          <h2 className="text-3xl font-black text-[#0A1A3A] mb-8 uppercase tracking-tighter roboto-font">Espace Privé</h2>
           <form onSubmit={handleLogin} className="space-y-4">
-             <input required type="email" placeholder="Email Admin" className="w-full bg-gray-100 p-5 rounded-2xl border-none focus:ring-2 focus:ring-[#D0A050]" value={authForm.email} onChange={e => setAuthForm({...authForm, email: e.target.value})} />
-             <input required type="password" placeholder="Mot de passe" className="w-full bg-gray-100 p-5 rounded-2xl border-none focus:ring-2 focus:ring-[#D0A050]" value={authForm.pass} onChange={e => setAuthForm({...authForm, pass: e.target.value})} />
-             <button disabled={authLoading || !sb} type="submit" className="w-full bg-[#002D5A] text-white py-5 rounded-2xl font-black uppercase shadow-xl active:scale-95 transition-all flex items-center justify-center gap-3">
-               {authLoading ? <Loader2 className="animate-spin" /> : "Se Connecter"}
+             <input required type="email" placeholder="Email Admin" className="w-full bg-gray-100 p-5 rounded-2xl border-none focus:ring-2 focus:ring-[#D4AF37] outline-none" value={authForm.email} onChange={e => setAuthForm({...authForm, email: e.target.value})} />
+             <input required type="password" placeholder="Mot de passe" className="w-full bg-gray-100 p-5 rounded-2xl border-none focus:ring-2 focus:ring-[#D4AF37] outline-none" value={authForm.pass} onChange={e => setAuthForm({...authForm, pass: e.target.value})} />
+             <button disabled={authLoading || !sb} type="submit" className="w-full bg-[#0A1A3A] text-white py-5 rounded-2xl font-black uppercase shadow-xl flex items-center justify-center gap-3 active:scale-95 transition-all">
+               {authLoading ? <Loader2 className="animate-spin" /> : "ACCÉDER AU DASHBOARD"}
              </button>
           </form>
-          <button onClick={onBack} className="mt-6 text-gray-400 font-bold hover:text-black">Quitter</button>
+          <button onClick={onBack} className="mt-8 text-gray-400 font-bold hover:text-[#0A1A3A] transition-colors uppercase text-xs tracking-widest">Retour au site</button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans pb-20 p-4 md:p-12 animate-fade-in">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-12">
+    <div className="min-h-screen bg-[#F4F7FA] font-sans pb-20 p-4 md:p-12 animate-fade-in roboto-font">
+      {/* Header Admin */}
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 mb-12 bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
         <div>
-          <h2 className="text-3xl font-black text-[#002D5A] uppercase tracking-tighter leading-none">Gestion Boutique</h2>
-          <p className="text-[10px] font-black text-[#D0A050] uppercase mt-2 tracking-widest">{user.email}</p>
-        </div>
-        <div className="flex flex-wrap gap-3">
-          <button onClick={handleLogout} className="p-4 bg-white rounded-2xl shadow-sm border text-red-500 flex items-center gap-2 hover:bg-red-50 transition-all font-black text-[10px] uppercase tracking-widest"><LogOut size={16}/> Déconnexion</button>
-          <div className="bg-white p-2 rounded-2xl shadow-sm border flex items-center gap-2">
-             <input placeholder="Nouvelle catégorie" className="bg-transparent border-none text-xs px-4 focus:ring-0 w-32 md:w-48" value={newCatName} onChange={e=>setNewCatName(e.target.value)} />
-             <button onClick={async () => { await api.addCategory(newCatName); setNewCatName(''); onRefresh(); }} className="bg-[#D0A050] p-2 rounded-xl text-[#002D5A]"><Plus size={18}/></button>
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+            <h2 className="text-3xl font-black text-[#0A1A3A] uppercase tracking-tighter leading-none">Gestionnaire Boutique</h2>
           </div>
-          <button onClick={() => setShowCatList(!showCatList)} className="p-4 bg-white rounded-2xl shadow-sm border text-[#002D5A] hover:bg-gray-50 transition-colors"><Settings size={20}/></button>
-          <button onClick={onBack} className="p-4 bg-white rounded-full shadow-md text-red-500 hover:bg-red-50 transition-colors"><X/></button>
+          <p className="text-[10px] font-bold text-[#D4AF37] uppercase tracking-[0.2em]">Session : {user.email}</p>
+        </div>
+        
+        <div className="flex flex-wrap items-center gap-4 w-full lg:w-auto">
+          {/* BARRE DE RECHERCHE ADMIN (NOUVEAU) */}
+          <div className="relative flex-1 lg:w-80">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+            <input 
+              type="text" 
+              placeholder="Rechercher un produit..." 
+              className="w-full bg-gray-50 border border-gray-200 rounded-2xl py-3.5 pl-12 pr-4 text-sm focus:bg-white focus:border-[#D4AF37] outline-none transition-all shadow-inner"
+              value={adminSearch}
+              onChange={(e) => setAdminSearch(e.target.value)}
+            />
+          </div>
+
+          <button onClick={handleLogout} className="p-4 bg-red-50 rounded-2xl text-red-600 hover:bg-red-600 hover:text-white transition-all font-black text-[10px] uppercase tracking-widest flex items-center gap-2 shadow-sm border border-red-100"><LogOut size={16}/> Quitter</button>
+          
+          <button onClick={() => setShowCatList(!showCatList)} className="p-4 bg-white rounded-2xl shadow-sm border border-gray-200 text-[#0A1A3A] hover:bg-[#0A1A3A] hover:text-white transition-all"><Settings size={20}/></button>
+          
+          <button onClick={onBack} className="p-4 bg-gray-100 rounded-full text-gray-500 hover:bg-white hover:shadow-md transition-all"><X size={20}/></button>
         </div>
       </div>
 
+      {/* Gestion des Catégories */}
       {showCatList && (
-        <div className="bg-white rounded-3xl p-6 shadow-xl border mb-8 animate-fade-in grid grid-cols-2 md:grid-cols-4 gap-4">
-            {categories.map(c => (
-              <div key={c.id} className="flex justify-between items-center bg-gray-50 p-3 rounded-xl">
-                <span className="text-xs font-bold text-[#002D5A] truncate pr-2">{c.name}</span>
-                <button onClick={async () => { if(window.confirm("Supprimer la catégorie ?")) { await api.deleteCategory(c.id); onRefresh(); } }} className="text-red-400 hover:text-red-600 transition-colors"><Trash2 size={14}/></button>
-              </div>
-            ))}
+        <div className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-[#D4AF37]/20 mb-12 animate-fade-in">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-8 border-b pb-6">
+               <h3 className="font-black text-[#0A1A3A] uppercase tracking-widest text-sm flex items-center gap-2"><Settings size={18} className="text-[#D4AF37]"/> Liste des Catégories</h3>
+               <div className="flex items-center gap-2 bg-gray-50 p-2 rounded-2xl border border-gray-100 w-full md:w-auto shadow-inner">
+                  <input placeholder="Nom de la catégorie" className="bg-transparent border-none text-sm px-4 focus:ring-0 w-full md:w-64 font-bold" value={newCatName} onChange={e=>setNewCatName(e.target.value)} />
+                  <button onClick={async () => { if(newCatName) { await api.addCategory(newCatName); setNewCatName(''); onRefresh(); } }} className="bg-[#D4AF37] p-3 rounded-xl text-[#0A1A3A] shadow-lg active:scale-90 transition-all"><Plus size={20}/></button>
+               </div>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                {categories.map(c => (
+                  <div key={c.id} className="flex justify-between items-center bg-gray-50 p-4 rounded-2xl border border-gray-100 group hover:border-[#D4AF37] transition-all">
+                    <span className="text-xs font-black text-[#0A1A3A] truncate">{c.name}</span>
+                    <button onClick={async () => { if(window.confirm("Supprimer cette catégorie ?")) { await api.deleteCategory(c.id); onRefresh(); } }} className="text-red-400 opacity-0 group-hover:opacity-100 hover:text-red-600 transition-all"><Trash2 size={16}/></button>
+                  </div>
+                ))}
+            </div>
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <button onClick={() => setEditing({ nom: '', categorie: categories[0]?.name, type_dispo: 'STOCK', description: '', image_urls: ['', '', '', '', ''] })} className="bg-white border-4 border-dashed border-gray-200 rounded-[2.5rem] p-10 flex flex-col items-center justify-center hover:border-[#D0A050] transition-all group aspect-square">
-          <Plus size={40} className="text-gray-300 group-hover:text-[#D0A050] mb-2" />
-          <span className="font-black text-gray-400 text-xs uppercase tracking-widest text-center">Nouveau Produit</span>
+      {/* Grille des Produits */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+        {/* Bouton Ajouter */}
+        <button onClick={() => setEditing({ nom: '', categorie: categories[0]?.name, type_dispo: 'STOCK', description: '', image_urls: ['', '', '', '', ''] })} className="bg-white border-4 border-dashed border-gray-200 rounded-[3rem] p-10 flex flex-col items-center justify-center hover:border-[#D4AF37] hover:bg-orange-50 transition-all group aspect-square shadow-sm">
+          <div className="p-6 bg-gray-50 rounded-full group-hover:bg-[#D4AF37] transition-all mb-4">
+            <Plus size={48} className="text-gray-300 group-hover:text-white transition-all" />
+          </div>
+          <span className="font-black text-gray-400 group-hover:text-[#0A1A3A] text-xs uppercase tracking-[0.2em] text-center">Nouveau Produit</span>
         </button>
-        {products.map(p => (
-          <div key={p.id} className="bg-white p-5 rounded-[2.5rem] shadow-sm flex flex-col items-center group relative border border-white hover:border-gray-200 transition-all">
-            <button onClick={async () => { if(window.confirm("Supprimer l'article ?")) { await api.deleteProduct(p.id); onRefresh(); } }} className="absolute top-4 right-4 p-2 bg-red-50 rounded-full text-red-500 shadow-md opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500 hover:text-white"><Trash2 size={16}/></button>
-            <img src={p.image_urls?.[0]} className="w-full aspect-square rounded-3xl object-cover mb-4 bg-gray-50 shadow-inner" alt="" />
-            <p className="font-black text-[#002D5A] uppercase text-[10px] truncate w-full text-center px-2">{p.nom}</p>
-            <button onClick={() => setEditing({ ...p, image_urls: [...(p.image_urls || []), '', '', '', '', ''].slice(0, 5) })} className="mt-4 w-full py-2 bg-gray-50 rounded-xl text-[#D0A050] font-bold text-[10px] uppercase tracking-widest transition-all hover:bg-[#002D5A] hover:text-white">Modifier</button>
+
+        {/* Liste Filtrée */}
+        {filteredAdminProducts.map(p => (
+          <div key={p.id} className="bg-white p-6 rounded-[3rem] shadow-sm flex flex-col items-center group relative border border-transparent hover:border-[#D4AF37] hover:shadow-2xl transition-all duration-500 animate-fade-in">
+            <button onClick={async () => { if(window.confirm("Supprimer l'article définitivement ?")) { await api.deleteProduct(p.id); onRefresh(); } }} className="absolute top-4 right-4 p-3 bg-red-50 rounded-full text-red-500 shadow-md opacity-0 group-hover:opacity-100 transition-all hover:bg-red-600 hover:text-white z-10"><Trash2 size={18}/></button>
+            
+            <div className="w-full aspect-square rounded-[2rem] overflow-hidden mb-6 bg-gray-50 shadow-inner relative">
+              <img src={p.image_urls?.[0]} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="" />
+              <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-[8px] text-white font-black uppercase tracking-widest">{p.type_dispo}</div>
+            </div>
+
+            <div className="w-full text-center space-y-1">
+              <p className="text-[9px] font-black text-[#D4AF37] uppercase tracking-widest mb-1">{p.categorie}</p>
+              <p className="font-black text-[#0A1A3A] uppercase text-xs truncate w-full px-2">{p.nom}</p>
+              <p className="text-sm font-bold text-gray-400 mt-2">{Number(p.prix_standard || p.prix_avion)?.toLocaleString()} F</p>
+            </div>
+
+            <button onClick={() => setEditing({ ...p, image_urls: [...(p.image_urls || []), '', '', '', '', ''].slice(0, 5) })} className="mt-6 w-full py-4 bg-[#0A1A3A] rounded-2xl text-white font-black text-[10px] uppercase tracking-widest hover:bg-[#D4AF37] transition-all shadow-lg active:scale-95">Modifier l'offre</button>
           </div>
         ))}
       </div>
 
+      {/* Modal Edition */}
       {editing && (
-        <div className="fixed inset-0 z-[1000] bg-[#002D5A]/95 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-4xl rounded-[3.5rem] p-8 md:p-12 shadow-2xl max-h-[90vh] overflow-y-auto no-scrollbar animate-fade-in relative">
-            <button onClick={() => setEditing(null)} className="absolute top-8 right-8 p-3 bg-gray-100 rounded-full hover:bg-red-50 transition-all"><X size={20}/></button>
-            <h3 className="text-2xl font-black text-[#002D5A] mb-8 uppercase tracking-tighter">Édition Article</h3>
-            <form onSubmit={handleSave} className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-              <div className="space-y-6">
-                <input required className="w-full bg-gray-50 p-4 rounded-xl border-none" value={editing.nom} onChange={e=>setEditing({...editing, nom:e.target.value})} placeholder="Désignation" />
-                <select className="w-full bg-gray-50 p-4 rounded-xl font-bold border-none" value={editing.categorie} onChange={e=>setEditing({...editing, categorie:e.target.value})}>
-                  {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
-                </select>
-                <textarea className="w-full bg-gray-50 p-4 rounded-xl h-44 border-none font-sans" value={editing.description} onChange={e=>setEditing({...editing, description:e.target.value})} placeholder="Description détaillée..." />
-              </div>
-              <div className="space-y-6">
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Galerie Photos (Max 5)</p>
-                <div className="grid grid-cols-5 gap-2">
-                  {editing.image_urls.map((url, i) => (
-                    <button key={i} type="button" onClick={() => openCloudinary(i)} className={`aspect-square rounded-xl border-2 border-dashed flex flex-col items-center justify-center overflow-hidden transition-all ${i === 0 ? 'border-[#D0A050] bg-orange-50' : 'border-gray-200 bg-gray-50 hover:border-[#D0A050]'}`}>
-                      {url ? <img src={url} className="w-full h-full object-cover" alt="" /> : <ImageIcon size={18} className="text-gray-300"/>}
-                    </button>
-                  ))}
+        <div className="fixed inset-0 z-[1000] bg-[#0A1A3A]/90 backdrop-blur-lg flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-5xl rounded-[4rem] p-10 md:p-16 shadow-[0_0_100px_rgba(0,0,0,0.5)] max-h-[90vh] overflow-y-auto no-scrollbar animate-fade-in relative border-b-[12px] border-[#D4AF37]">
+            <button onClick={() => setEditing(null)} className="absolute top-10 right-10 p-4 bg-gray-100 rounded-full hover:bg-red-500 hover:text-white transition-all shadow-sm"><X size={24}/></button>
+            <div className="flex items-center gap-4 mb-12">
+               <div className="p-4 bg-[#D4AF37] rounded-3xl text-[#0A1A3A] shadow-xl"><Edit3 size={32}/></div>
+               <h3 className="text-4xl font-black text-[#0A1A3A] uppercase tracking-tighter roboto-font">Fiche Technique</h3>
+            </div>
+
+            <form onSubmit={handleSave} className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+              <div className="space-y-8">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Nom de l'article</label>
+                  <input required className="w-full bg-gray-50 p-6 rounded-[1.5rem] border border-gray-100 focus:border-[#D4AF37] outline-none font-bold shadow-inner" value={editing.nom} onChange={e=>setEditing({...editing, nom:e.target.value})} placeholder="Ex: iPhone 16 Pro Max..." />
                 </div>
-                <div className="grid grid-cols-2 gap-4 pt-4 border-t">
-                  <select className="w-full bg-gray-50 p-4 rounded-xl font-bold border-none" value={editing.type_dispo} onChange={e=>setEditing({...editing, type_dispo:e.target.value})}>
-                    <option value="STOCK">STOCK ABIDJAN</option>
-                    <option value="COMMANDE">IMPORT DIRECT USA</option>
+                
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Rayon / Catégorie</label>
+                  <select className="w-full bg-gray-50 p-6 rounded-[1.5rem] font-black border border-gray-100 outline-none shadow-inner cursor-pointer" value={editing.categorie} onChange={e=>setEditing({...editing, categorie:e.target.value})}>
+                    {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
                   </select>
-                  <input type="number" className="w-full bg-gray-50 p-4 rounded-xl font-black border-none text-[#002D5A]" value={editing.prix_standard || editing.prix_avion || ''} onChange={e=>setEditing({...editing, prix_standard:e.target.value})} placeholder="Prix de vente (F)" />
                 </div>
-                <button disabled={saving} type="submit" className="w-full bg-[#002D5A] text-white py-6 rounded-2xl font-black uppercase shadow-xl active:scale-95 transition-all">
-                  {saving ? <Loader2 className="animate-spin mx-auto"/> : "ENREGISTRER SUR LE CLOUD"}
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Description & Specs</label>
+                  <textarea className="w-full bg-gray-50 p-6 rounded-[1.5rem] h-56 border border-gray-100 focus:border-[#D4AF37] outline-none font-medium shadow-inner no-scrollbar" value={editing.description} onChange={e=>setEditing({...editing, description:e.target.value})} placeholder="Détails techniques, état, couleurs dispos..." />
+                </div>
+              </div>
+
+              <div className="space-y-8">
+                <div className="space-y-4">
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2 flex items-center gap-2"><ImageIcon size={14}/> Galerie Photos (Max 5)</p>
+                  <div className="grid grid-cols-5 gap-3">
+                    {editing.image_urls.map((url, i) => (
+                      <button key={i} type="button" onClick={() => openCloudinary(i)} className={`aspect-square rounded-2xl border-2 border-dashed flex flex-col items-center justify-center overflow-hidden transition-all ${i === 0 ? 'border-[#D4AF37] bg-orange-50' : 'border-gray-200 bg-gray-50 hover:border-[#D4AF37] shadow-sm'}`}>
+                        {url ? <img src={url} className="w-full h-full object-cover" alt="" /> : <Plus size={20} className="text-gray-300"/>}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-6 pt-6 border-t border-gray-100">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Disponibilité</label>
+                    <select className="w-full bg-gray-50 p-6 rounded-[1.5rem] font-black border border-gray-100 outline-none shadow-inner" value={editing.type_dispo} onChange={e=>setEditing({...editing, type_dispo:e.target.value})}>
+                      <option value="STOCK">STOCK ABIDJAN</option>
+                      <option value="COMMANDE">SUR COMMANDE USA</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Prix Public (F)</label>
+                    <input type="number" className="w-full bg-gray-100 p-6 rounded-[1.5rem] font-black border-none text-[#0A1A3A] text-2xl shadow-inner outline-none focus:ring-2 focus:ring-[#D4AF37]" value={editing.prix_standard || editing.prix_avion || ''} onChange={e=>setEditing({...editing, prix_standard:e.target.value})} placeholder="0" />
+                  </div>
+                </div>
+
+                <button disabled={saving} type="submit" className="w-full bg-[#0A1A3A] text-white py-8 rounded-[2rem] font-black uppercase shadow-2xl active:scale-95 transition-all text-xl tracking-widest mt-4 flex items-center justify-center gap-4 border-b-8 border-black/30">
+                  {saving ? <Loader2 className="animate-spin" /> : <><Save size={24}/> METTRE EN LIGNE</>}
                 </button>
               </div>
             </form>
@@ -582,6 +659,7 @@ const AdminDashboard = ({ products, categories, onRefresh, onBack, api, sb }) =>
     </div>
   );
 };
+
 // --- APP CONTENT ---
 function AppContent() {
   const [sb, setSb] = useState(null);

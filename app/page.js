@@ -784,6 +784,21 @@ function AppContent() {
     setIsCartOpen(true);
   };
 
+ const scrollToCategory = (catName) => {
+    setActiveCategory(catName);
+    setIsMenuOpen(false);
+    setTimeout(() => {
+      const id = catName === "Tout" ? 'header-categories' : `section-${catName.replace(/\s+/g, '-').toLowerCase()}`;
+      const element = document.getElementById(id);
+      if (catName === "Tout") window.scrollTo({ top: 0, behavior: 'smooth' });
+      else if (element) {
+        const offset = 160;
+        const pos = element.getBoundingClientRect().top + window.pageYOffset;
+        window.scrollTo({ top: pos - offset, behavior: 'smooth' });
+      }
+    }, 150);
+  };
+
   const updateCartQty = (cartId, delta) => {
     setCart(prev => prev.map(item => {
       if (item.cartId === cartId) {

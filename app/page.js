@@ -810,7 +810,7 @@ function AppContent() {
         .animate-fade-in { animation: fade-in 0.4s ease-out; }
       `}</style>
           {/* Header Public Premium avec Suggestions et Prix */}
-      <header className={`fixed top-0 left-0 right-0 z-[600] transition-all duration-500 ease-in-out transform ${showHeader ? 'translate-y-0' : '-translate-y-full'} ${isScrolled ? 'bg-white/90 backdrop-blur-xl shadow-lg border-b border-[#D4AF37]/30 py-3' : 'bg-transparent py-5'}`}>
+<header className={`fixed top-0 left-0 right-0 z-[600] transition-all duration-500 ease-in-out transform ${showHeader ? 'translate-y-0' : '-translate-y-full'} ${isScrolled ? 'bg-white/90 backdrop-blur-xl shadow-lg border-b border-[#D4AF37]/30 py-3' : 'bg-transparent py-5'}`}>
         <div className="max-w-7xl mx-auto px-4 md:px-12 flex flex-wrap items-center justify-between gap-y-3">
           <div className="flex items-center gap-1 md:gap-4 shrink-0">
             <button onClick={() => setIsMenuOpen(true)} className={`p-2 rounded-full transition-all active:scale-90 ${isScrolled ? 'text-[#0A1A3A] hover:bg-gray-100' : 'text-white hover:bg-white/10'}`}>
@@ -821,13 +821,13 @@ function AppContent() {
             </div>
           </div>
 
-          {/* GOOGLE-LIKE SEARCH BAR AVEC PRIX DANS LES SUGGESTIONS */}
+          {/* GOOGLE-LIKE SEARCH BAR AVEC BANDE HORIZONTALE DE SUGGESTIONS */}
           <div className="order-last w-full sm:order-none sm:w-auto sm:flex-1 sm:max-w-[600px] relative px-1 sm:px-0" ref={searchRef}>
             <div className={`flex items-center rounded-[2rem] px-5 py-3 gap-3 transition-all ${isScrolled ? 'bg-gray-100 border border-gray-200' : 'bg-white/10 backdrop-blur-md border border-white/20'}`}>
               <Search size={18} className={isScrolled ? 'text-gray-400' : 'text-white/60'} />
               <input 
                 type="text" 
-                placeholder="Trouver un iPhone, une montre, une pépite..." 
+                placeholder="Trouver une pépite, un article..." 
                 className={`bg-transparent border-none text-xs md:text-sm w-full focus:ring-0 focus:outline-none p-0 font-medium ${isScrolled ? 'text-[#0A1A3A]' : 'text-white placeholder-white/50'}`} 
                 value={search} 
                 onChange={e => {setSearch(e.target.value); setShowSuggestions(true);}} 
@@ -838,33 +838,38 @@ function AppContent() {
               )}
             </div>
 
-            {/* Suggestions Dropdown avec Prix (Google Style) */}
+            {/* Suggestions en BANDE HORIZONTALE (NOUVEAU) */}
             {showSuggestions && searchSuggestions.length > 0 && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-3xl shadow-[0_30px_60px_rgba(0,0,0,0.15)] border border-gray-100 overflow-hidden z-[800] animate-fade-in mx-1 sm:mx-0">
-                 <div className="px-5 py-3 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
-                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Suggestions directes</span>
-                    <span className="text-[10px] font-bold text-[#D4AF37]">{searchSuggestions.length} pépites</span>
+              <div className="absolute top-[110%] left-0 right-0 bg-white/95 backdrop-blur-xl rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-gray-100 overflow-hidden z-[800] animate-fade-in mx-1 sm:mx-0 p-4">
+                 <div className="flex items-center justify-between mb-4 px-2">
+                    <span className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.2em]">Pépites trouvées</span>
+                    <button onClick={() => setShowSuggestions(false)} className="text-[10px] font-bold text-gray-400 hover:text-red-500">FERMER</button>
                  </div>
-                 {searchSuggestions.map(p => (
-                   <div 
-                    key={p.id} 
-                    onClick={() => {setSelectedProduct(p); setView('detail'); setShowSuggestions(false); setSearch(''); window.scrollTo(0,0);}} 
-                    className="flex items-center gap-4 p-4 hover:bg-blue-50 cursor-pointer transition-all border-b border-gray-50 last:border-0 group"
-                   >
-                     <img src={p.image_urls?.[0]} className="w-14 h-14 rounded-xl object-cover bg-gray-50 border border-gray-200 shadow-sm" alt="" />
-                     <div className="flex-1 min-w-0">
-                        <p className="text-sm font-bold text-[#0A1A3A] truncate group-hover:text-blue-600 transition-colors uppercase designer-body leading-tight">{p.nom}</p>
-                        <div className="flex items-center gap-2 mt-1">
-                           <span className="text-[9px] text-[#D4AF37] font-black uppercase tracking-widest">{p.categorie}</span>
-                           <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
-                           <span className="text-[11px] text-[#0A1A3A] font-black">{(p.prix_standard || p.prix_avion)?.toLocaleString()} F</span>
-                        </div>
-                     </div>
-                     <ArrowRight size={16} className="text-gray-300 group-hover:text-blue-500 group-hover:translate-x-1 transition-all" />
-                   </div>
-                 ))}
-                 <div className="p-3 text-center bg-gray-50/50">
-                    <button onClick={() => setShowSuggestions(false)} className="text-[10px] font-black text-gray-400 hover:text-[#0A1A3A] uppercase transition-colors">Afficher tous les résultats</button>
+                 
+                 <div className="flex flex-row overflow-x-auto no-scrollbar gap-4 pb-2">
+                    {searchSuggestions.map(p => (
+                      <div 
+                        key={p.id} 
+                        onClick={() => {setSelectedProduct(p); setView('detail'); setShowSuggestions(false); setSearch(''); window.scrollTo(0,0);}} 
+                        className="flex-shrink-0 w-44 bg-gray-50/50 hover:bg-white border border-gray-100 hover:border-[#D4AF37]/40 rounded-[2rem] p-3 transition-all cursor-pointer group shadow-sm"
+                      >
+                         <div className="aspect-square w-full rounded-2xl overflow-hidden mb-3 bg-white">
+                            <img src={p.image_urls?.[0]} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="" />
+                         </div>
+                         <div className="px-1 min-w-0">
+                            <p className="text-[11px] font-bold text-[#0A1A3A] truncate uppercase leading-tight">{p.nom}</p>
+                            <div className="flex items-center justify-between mt-1">
+                               <span className="text-[8px] font-black text-[#D4AF37] uppercase truncate max-w-[60%]">{p.categorie}</span>
+                               <span className="text-[10px] font-black text-[#0A1A3A]">{(p.prix_standard || p.prix_avion)?.toLocaleString()}F</span>
+                            </div>
+                         </div>
+                      </div>
+                    ))}
+                    {/* Bouton "Tout voir" en fin de bande */}
+                    <div onClick={() => setShowSuggestions(false)} className="flex-shrink-0 w-24 flex flex-col items-center justify-center bg-gray-50 rounded-[2rem] border border-dashed border-gray-200 cursor-pointer hover:bg-gray-100 transition-colors">
+                       <ArrowRight className="text-[#D4AF37] mb-2" size={24} />
+                       <span className="text-[8px] font-black text-center uppercase tracking-tighter">Tout voir</span>
+                    </div>
                  </div>
               </div>
             )}
@@ -877,8 +882,8 @@ function AppContent() {
             </button>
           </div>
         </div>
-      </header>  {/* Padding pour compenser le header fixe */}
-      <div className="h-0"></div>
+      </header>
+
       <HeroSection/>
 
       {/* Barre de Catégories Responsive (Scroll horizontal) - Dynamique depuis Supabase */}

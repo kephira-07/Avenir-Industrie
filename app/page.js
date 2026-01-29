@@ -809,45 +809,79 @@ function AppContent() {
         @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
         .animate-fade-in { animation: fade-in 0.4s ease-out; }
       `}</style>
+       <header className="sticky top-0 z-[600] bg-white/95 backdrop-blur-xl border-b border-gray-100 px-3 md:px-12 py-3 md:py-4 flex flex-wrap items-center justify-between shadow-sm gap-y-3">
 
 
-      {/* Header Public Responsive avec Couleur Dorée Douce et Transparence au Scroll */}
-      <header className={`fixed top-0 left-0 right-0 z-[600] transition-all duration-500 ease-in-out transform ${showHeader ? 'translate-y-0' : '-translate-y-full'} ${isScrolled ? 'bg-white/80 backdrop-blur-xl shadow-lg border-b border-[#D4AF37]/30 py-3' : 'bg-blue-900 py-5'}`}>
+     {/* Header Public Premium avec Suggestions et Prix */}
+      <header className={`fixed top-0 left-0 right-0 z-[600] transition-all duration-500 ease-in-out transform ${showHeader ? 'translate-y-0' : '-translate-y-full'} ${isScrolled ? 'bg-white/90 backdrop-blur-xl shadow-lg border-b border-[#D4AF37]/30 py-3' : 'bg-transparent py-5'}`}>
         <div className="max-w-7xl mx-auto px-4 md:px-12 flex flex-wrap items-center justify-between gap-y-3">
           <div className="flex items-center gap-1 md:gap-4 shrink-0">
-            <button onClick={() => setIsMenuOpen(true)} className={`p-2 rounded-full transition-all active:scale-90 ${isScrolled ? 'text-[#002D5A] hover:bg-gray-100' : 'text-white hover:bg-white/10'}`}>
+            <button onClick={() => setIsMenuOpen(true)} className={`p-2 rounded-full transition-all active:scale-90 ${isScrolled ? 'text-[#0A1A3A] hover:bg-gray-100' : 'text-white hover:bg-white/10'}`}>
               <Menu size={24} strokeWidth={2.5}/>
             </button>
             <div className="flex items-center gap-2 cursor-pointer" onClick={() => scrollToCategory("Tout")}>
-              <img src="/logoah.jpeg" className="h-10 md:h-16 w-auto rounded-lg shadow-sm border border-[#D4AF37]/20" alt="Logo" />
+              <img src="/logoah.jpeg" className="h-10 md:h-16 w-auto rounded-lg shadow-md border border-[#D4AF37]/30" alt="Logo" />
             </div>
           </div>
 
-          <div className="order-last w-full sm:order-none sm:w-auto sm:flex-1 sm:max-w-[500px] relative px-1 sm:px-0" ref={searchRef}>
-            <div className={`flex items-center rounded-[2rem] px-4 md:px-6 py-2.5 gap-2 transition-all ${isScrolled ? 'bg-gray-50 border border-gray-100' : 'bg-white/10 backdrop-blur-md border border-white/20'}`}>
-              <Search size={16} className={isScrolled ? 'text-gray-400' : 'text-white/60'} />
+          {/* GOOGLE-LIKE SEARCH BAR AVEC PRIX DANS LES SUGGESTIONS */}
+          <div className="order-last w-full sm:order-none sm:w-auto sm:flex-1 sm:max-w-[600px] relative px-1 sm:px-0" ref={searchRef}>
+            <div className={`flex items-center rounded-[2rem] px-5 py-3 gap-3 transition-all ${isScrolled ? 'bg-gray-100 border border-gray-200' : 'bg-white/10 backdrop-blur-md border border-white/20'}`}>
+              <Search size={18} className={isScrolled ? 'text-gray-400' : 'text-white/60'} />
               <input 
                 type="text" 
-                placeholder="Rechercher une pépite..." 
-                className={`bg-transparent border-none text-xs md:text-sm w-full focus:ring-0 focus:outline-none p-0 font-medium ${isScrolled ? 'text-[#002D5A]' : 'text-white placeholder-white/40'}`} 
+                placeholder="Trouver un iPhone, une montre, une pépite..." 
+                className={`bg-transparent border-none text-xs md:text-sm w-full focus:ring-0 focus:outline-none p-0 font-medium ${isScrolled ? 'text-[#0A1A3A]' : 'text-white placeholder-white/50'}`} 
                 value={search} 
-                onChange={e => setSearch(e.target.value)} 
+                onChange={e => {setSearch(e.target.value); setShowSuggestions(true);}} 
+                onFocus={() => setShowSuggestions(true)}
               />
+              {search && (
+                <button onClick={() => {setSearch(''); setShowSuggestions(false);}} className={`p-1 rounded-full ${isScrolled ? 'bg-gray-200 text-gray-500' : 'bg-white/20 text-white'}`}><X size={12}/></button>
+              )}
             </div>
+
+            {/* Suggestions Dropdown avec Prix (Google Style) */}
+            {showSuggestions && searchSuggestions.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-3xl shadow-[0_30px_60px_rgba(0,0,0,0.15)] border border-gray-100 overflow-hidden z-[800] animate-fade-in mx-1 sm:mx-0">
+                 <div className="px-5 py-3 bg-gray-50 border-b border-gray-100 flex items-center justify-between">
+                    <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Suggestions directes</span>
+                    <span className="text-[10px] font-bold text-[#D4AF37]">{searchSuggestions.length} pépites</span>
+                 </div>
+                 {searchSuggestions.map(p => (
+                   <div 
+                    key={p.id} 
+                    onClick={() => {setSelectedProduct(p); setView('detail'); setShowSuggestions(false); setSearch(''); window.scrollTo(0,0);}} 
+                    className="flex items-center gap-4 p-4 hover:bg-blue-50 cursor-pointer transition-all border-b border-gray-50 last:border-0 group"
+                   >
+                     <img src={p.image_urls?.[0]} className="w-14 h-14 rounded-xl object-cover bg-gray-50 border border-gray-200 shadow-sm" alt="" />
+                     <div className="flex-1 min-w-0">
+                        <p className="text-sm font-bold text-[#0A1A3A] truncate group-hover:text-blue-600 transition-colors uppercase designer-body leading-tight">{p.nom}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                           <span className="text-[9px] text-[#D4AF37] font-black uppercase tracking-widest">{p.categorie}</span>
+                           <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
+                           <span className="text-[11px] text-[#0A1A3A] font-black">{(p.prix_standard || p.prix_avion)?.toLocaleString()} F</span>
+                        </div>
+                     </div>
+                     <ArrowRight size={16} className="text-gray-300 group-hover:text-blue-500 group-hover:translate-x-1 transition-all" />
+                   </div>
+                 ))}
+                 <div className="p-3 text-center bg-gray-50/50">
+                    <button onClick={() => setShowSuggestions(false)} className="text-[10px] font-black text-gray-400 hover:text-[#0A1A3A] uppercase transition-colors">Afficher tous les résultats</button>
+                 </div>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-1 md:gap-4 shrink-0">
-            <button onClick={() => {setView('about'); window.scrollTo(0,0);}} className={`flex items-center gap-1 text-[8px] md:text-[10px] font-black uppercase tracking-widest p-2 transition-all ${isScrolled ? 'text-gray-400 hover:text-[#002D5A]' : 'text-white/60 hover:text-white'}`}>
-              <Info size={18} className="md:hidden" />
-              <span className="hidden md:inline">À Propos</span>
-            </button>
-            <button onClick={() => setIsCartOpen(true)} className={`relative p-2.5 md:p-4 rounded-full shadow-2xl transition-all active:scale-90 ${isScrolled ? 'bg-[#002D5A] text-white border-4 border-[#D4AF37]/20' : 'bg-white/20 backdrop-blur-md text-white border-2 border-white/20'}`}>
+            <button onClick={() => setIsCartOpen(true)} className={`relative p-2.5 md:p-4 rounded-full shadow-2xl transition-all active:scale-90 ${isScrolled ? 'bg-[#0A1A3A] text-white border-4 border-[#D4AF37]/20' : 'bg-white/20 backdrop-blur-md text-white border-2 border-white/20'}`}>
               <ShoppingBag size={18} className="md:w-6 md:h-6" />
-              {cart.length > 0 && <span className="absolute -top-1 -right-1 bg-[#D0A050] text-[#002D5A] text-[9px] font-black w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center border-2 border-white shadow-lg">{cart.length}</span>}
+              {cart.length > 0 && <span className="absolute -top-1 -right-1 bg-[#D4AF37] text-[#0A1A3A] text-[9px] font-black w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center border-2 border-white shadow-lg animate-bounce">{cart.length}</span>}
             </button>
           </div>
         </div>
       </header>
+
 
       {/* Padding pour compenser le header fixe */}
       <div className="h-0"></div>

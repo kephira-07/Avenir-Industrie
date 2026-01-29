@@ -328,7 +328,7 @@ const ProductDetail = ({ product, onBack, onAddToCart }) => {
             </div>
             <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
               {product.image_urls?.map((url, i) => (
-                <button key={i} onClick={() => setActiveImg(url)} className={`w-16 h-16 md:w-20 md:h-20 rounded-2xl overflow-hidden border-4 shrink-0 transition-all ${activeImg === url ? 'border-[#D0A050] scale-105' : 'border-transparent opacity-60'}`}>
+                <button key={i} onClick={() => setActiveImg(url)} className={`w-16 h-16 md:w-25 md:h-25 rounded-1xl overflow-hidden border-4 shrink-0 transition-all ${activeImg === url ? 'border-[#D0A050] scale-105' : 'border-transparent opacity-60'}`}>
                   <img src={url} className="w-full h-full object-cover" alt="" />
                 </button>
               ))}
@@ -825,7 +825,7 @@ function AppContent() {
         .animate-fade-in { animation: fade-in 0.4s ease-out; }
       `}</style>
           {/* Header Public Premium avec Suggestions et Prix */}
-<header className={`fixed top-0 left-0 right-0 z-[600] transition-all duration-500 ease-in-out transform ${showHeader ? 'translate-y-0' : '-translate-y-full'} ${isScrolled ? 'bg-white/90 backdrop-blur-xl shadow-lg border-b border-[#D4AF37]/30 py-3' : 'bg-transparent py-5'}`}>
+<header className={`fixed top-0 left-0 right-0 z-[600] transition-all duration-500 ease-in-out transform ${showHeader ? 'translate-y-0' : '-translate-y-full'} ${isScrolled ? 'bg-white/90 backdrop-blur-xl shadow-lg border-b border-[#D4AF37]/30 py-3' : 'bg-blue-500 py-5'}`}>
         <div className="max-w-7xl mx-auto px-4 md:px-12 flex flex-wrap items-center justify-between gap-y-3">
           <div className="flex items-center gap-1 md:gap-4 shrink-0">
             <button onClick={() => setIsMenuOpen(true)} className={`p-2 rounded-full transition-all active:scale-90 ${isScrolled ? 'text-[#0A1A3A] hover:bg-gray-100' : 'text-white hover:bg-white/10'}`}>
@@ -938,7 +938,7 @@ function AppContent() {
       onClick={() => {setSelectedProduct(p); setView('detail'); window.scrollTo(0,0);}} 
       className="group bg-white rounded-[2rem] md:rounded-[2.5rem] overflow-hidden border shadow-sm hover:shadow-xl transition-all duration-700 cursor-pointer p-2 md:p-3" // MODIFIÉ : arrondis et padding réduits
     >
-      <div className="aspect-square bg-gray-50 overflow-hidden relative rounded-[1.5rem] mb-6 border shadow-inner"> {/* MODIFIÉ : marge basse réduite */}
+      <div className="aspect-square bg-gray-50 overflow-hidden relative rounded-[1rem] mb-6 border shadow-inner"> {/* MODIFIÉ : marge basse réduite */}
         <img 
           src={p.image_urls?.[0]} 
           alt={p.nom} 
@@ -1048,13 +1048,13 @@ function AppContent() {
       <Nudge api={apiInstance} />
 
       {/* Menu Mobile - Dynamique depuis Supabase */}
-     {isMenuOpen && (
+{isMenuOpen && (
         <div className="fixed inset-0 z-[1000] flex">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={() => setIsMenuOpen(false)}></div>
-          <div className="relative w-75 max-w-[85%] bg-[#0A1A3A] h-full shadow-2xl animate-slide-in p-10 flex flex-col no-scrollbar overflow-y-auto">
+          <div className="absolute inset-0 bg-blend-soft-light backdrop-blur-md" onClick={() => setIsMenuOpen(false)}></div>
+          <div className="relative w-75 max-w-[85%] bg-blue-950 h-full shadow-2xl animate-slide-in p-10 flex flex-col font-sans no-scrollbar overflow-y-auto">
              <div className="flex justify-between items-center mb-16">
                 <h2 className="text-3xl font-black text-white tracking-tighter leading-none roboto-font uppercase">Menu</h2>
-                <button onClick={() => setIsMenuOpen(false)} className="p-3 bg-white/10 lato-font rounded-full text-white"><X size={20}/></button>
+                <button onClick={() => setIsMenuOpen(false)} className="p-3 bg-grid-100 lato-font rounded-full text-white"><X size={20}/></button>
              </div>
              <nav className="flex flex-col gap-10">
                 <button 

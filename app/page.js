@@ -1033,20 +1033,35 @@ function AppContent() {
       <Nudge api={apiInstance} />
 
       {/* Menu Mobile - Dynamique depuis Supabase */}
-      {isMenuOpen && (
-        <div className="fixed inset-0 z-1000 flex">
-          <div className="absolute inset-0 bg-blend-soft-light backdrop-blur-md" onClick={() => setIsMenuOpen(false)}></div>
-          <div className="relative w-75 max-w-[85%] bg-blue-950 h-full shadow-2xl animate-slide-in p-10 flex flex-col font-sans no-scrollbar overflow-y-auto">
+     {isMenuOpen && (
+        <div className="fixed inset-0 z-[1000] flex">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={() => setIsMenuOpen(false)}></div>
+          <div className="relative w-75 max-w-[85%] bg-[#0A1A3A] h-full shadow-2xl animate-slide-in p-10 flex flex-col no-scrollbar overflow-y-auto">
              <div className="flex justify-between items-center mb-16">
-                <h2 className="text-3xl font-black  text-white tracking-tighter  leading-none roboto-font uppercase">Menu</h2>
-                <button onClick={() => setIsMenuOpen(false)} className="p-3 bg-grid-100 lato-font rounded-full text-white"><X size={20}/></button>
+                <h2 className="text-3xl font-black text-white tracking-tighter leading-none roboto-font uppercase">Menu</h2>
+                <button onClick={() => setIsMenuOpen(false)} className="p-3 bg-white/10 lato-font rounded-full text-white"><X size={20}/></button>
              </div>
              <nav className="flex flex-col gap-10">
-                <button onClick={()=>{setActiveCategory("Tout"); setIsMenuOpen(false); setView('home'); setSearch(''); window.scrollTo(850,850);}} className={`text-left font-medium karla-font text-xl ${activeCategory === "Tout" ? 'underline decoration-[#D4AF37] decoration-4 underline-offset-8 text-white'  : 'text-white'}`}>Toutes les Pépites</button>
+                <button 
+                  onClick={() => scrollToCategory("Tout")} 
+                  className={`text-left font-medium karla-font text-xl transition-all ${activeCategory === "Tout" ? 'underline decoration-[#D4AF37] decoration-4 underline-offset-8 text-white' : 'text-white'}`}
+                >
+                  Toutes les Pépites
+                </button>
+                
                 {categories.map(c => (
-              <button  key={c.id} onClick={() => { setActiveCategory(c.name); setIsMenuOpen(false); setView('home');   setSearch('');  window.scrollTo(0, 0);   }}   className={`text-left Bitter-font text-2xl transition-all text-white  ${activeCategory === c.name  ? 'underline decoration-[#D4AF37] decoration-4 underline-offset-8' : 'hover:underline hover:decoration-[#D4AF37]/50'   }`}
-              >    {c.name}  </button>))}
-                <div className="pt-10 border-t border-gray-100"><button onClick={()=>{setView('about'); setIsMenuOpen(false);}} className="text-left font-medium text-xl  text-white transition-colors ">Notre Processus</button></div>
+                  <button 
+                    key={c.id} 
+                    onClick={() => scrollToCategory(c.name)} 
+                    className={`text-left bitter-font text-2xl transition-all text-white ${activeCategory === c.name ? 'underline decoration-[#D4AF37] decoration-4 underline-offset-8' : 'hover:underline hover:decoration-[#D4AF37]/50'}`}
+                  >
+                    {c.name}
+                  </button>
+                ))}
+                
+                <div className="pt-10 border-t border-gray-100">
+                  <button onClick={() => {setView('about'); setIsMenuOpen(false);}} className="text-left font-medium text-xl text-white transition-colors">Notre Processus</button>
+                </div>
              </nav>
           </div>
         </div>

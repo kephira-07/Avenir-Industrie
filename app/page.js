@@ -809,10 +809,7 @@ function AppContent() {
         @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
         .animate-fade-in { animation: fade-in 0.4s ease-out; }
       `}</style>
-       <header className="sticky top-0 z-[600] bg-white/95 backdrop-blur-xl border-b border-gray-100 px-3 md:px-12 py-3 md:py-4 flex flex-wrap items-center justify-between shadow-sm gap-y-3">
-
-
-     {/* Header Public Premium avec Suggestions et Prix */}
+          {/* Header Public Premium avec Suggestions et Prix */}
       <header className={`fixed top-0 left-0 right-0 z-[600] transition-all duration-500 ease-in-out transform ${showHeader ? 'translate-y-0' : '-translate-y-full'} ${isScrolled ? 'bg-white/90 backdrop-blur-xl shadow-lg border-b border-[#D4AF37]/30 py-3' : 'bg-transparent py-5'}`}>
         <div className="max-w-7xl mx-auto px-4 md:px-12 flex flex-wrap items-center justify-between gap-y-3">
           <div className="flex items-center gap-1 md:gap-4 shrink-0">
@@ -880,10 +877,7 @@ function AppContent() {
             </button>
           </div>
         </div>
-      </header>
-
-
-      {/* Padding pour compenser le header fixe */}
+      </header>  {/* Padding pour compenser le header fixe */}
       <div className="h-0"></div>
       <HeroSection/>
 

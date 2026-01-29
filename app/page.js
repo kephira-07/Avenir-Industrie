@@ -6,7 +6,7 @@ import {
   Menu, Search, Facebook, Instagram, ArrowLeft, Truck, Send, 
   Loader2, Heart, Bell, Phone, MapPin, User, Mail, ShieldCheck, 
   History, FileText, ChevronDown, ListChecks, Globe, ChevronRight,
-  Settings, Plus, Minus, Edit3, Image as ImageIcon, Save, Lock, Trash2, Info, LogOut,Sparkles,Zap,CircleQuestionMark
+  Settings, Plus, Minus, Edit3, Image as ImageIcon, Save, Lock, Trash2, Info, LogOut,Sparkles,Zap,CircleQuestionMark,BookOpen, Laptop
 } from 'lucide-react';
 
 
@@ -111,85 +111,115 @@ const Nudge = ({ api }) => {
     </div>
   );
 };
+// --- COMPOSANT HERO DÉSIGNER AVEC IMAGES ANIMÉES ---
+const HeroSection = ({ onScrollToCategories }) => {
+  // Images représentatives pour les colonnes
+  const col1Images = [
+    "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=800&auto=format&fit=crop", // Tech
+    "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=800&auto=format&fit=crop", // Gadget
+    "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=800&auto=format&fit=crop", // Audio
+    "https://images.unsplash.com/photo-1526170315870-efffd09636f7?q=80&w=800&auto=format&fit=crop"  // Caméra
+  ];
 
-const HeroSection = () => {
+  const col2Images = [
+    "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800&auto=format&fit=crop", // Shoes
+    "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?q=80&w=800&auto=format&fit=crop", // Watch
+    "https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=800&auto=format&fit=crop", // Bag
+    "https://images.unsplash.com/photo-1491553895911-0055eca6402d?q=80&w=800&auto=format&fit=crop"  // Fashion
+  ];
+
   return (
-    <div className="relative bg-[#2269af] overflow-hidden py-20 md:py-10 px-6">
-      {/* Image de fond avec animation Ken Burns */}
-      <div className="absolute inset-0 z-0">
-        <img 
-          src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&q=80&w=2000" 
-          alt="Import Logistique" 
-          className="w-full h-full object-cover opacity-30 scale-110 animate-ken-burns"
-        />
-        {/* Overlay Dégradé pour la lisibilité */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#002D5A] via-[#002D5A]/80 to-transparent"></div>
-      </div>
+    <>
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes scrollUp { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
+        @keyframes scrollDown { 0% { transform: translateY(-50%); } 100% { transform: translateY(0); } }
+        .animate-vertical-up { animation: scrollUp 30s linear infinite; }
+        .animate-vertical-down { animation: scrollDown 30s linear infinite; }
+        .designer-title { font-family: 'Syne', sans-serif; letter-spacing: -0.04em; }
+        .designer-body { font-family: 'Inter', sans-serif; }
+      `}} />
 
-      <div className="max-w-7xl mx-auto relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        <div className="space-y-8 animate-fade-in-up">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20">
+      <section className="relative overflow-hidden bg-blue-100 py-16 lg:py-20 min-h-[85vh] flex items-center">
+        {/* IMAGE DE FOND DU HERO */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=2000&auto=format&fit=crop" 
+            className="w-full h-full object-cover opacity-20"
+            alt="Background Logistics"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#07101ac4] via-[#0F172A]/60 to-transparent"></div>
+        </div>
+
+        <div className="max-w-10xl mx-auto p-5 px-10 relative z-10 w-full">
+          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
             
-            <span className="text-[10px] md:text-xs font-black text-white uppercase tracking-widest">Importation Directe USA & Chine</span>
-          </div>
-          
-          <h1 className="text-3xl md:text-7xl font-medium text-white leading-[1.1] tracking-tighter Savate-font">
-          <span className="text-[#D0A050]">Commandez vos produits  </span>  de qualite chez nous  
-          </h1>
-          
-          <p className="text-gray-200 text-lg md:text-xl max-w-xl leading-relaxed font-thin Karla-font">
-            Ici a l'Industie de l'Avenir vous pouvez commander des produit depuis la Chine et quantite que vous Voulez,et il y aussi des produits diponible en boutique pour vous.
-          </p>
-          <div className="flex flex-wrap gap-4 pt-4">
-             <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm p-4 rounded-3xl border border-white/10 shadow-xl">
-                <div className="p-3 bg-[#D0A050] text-[#002D5A] rounded-2xl shadow-lg"><Zap size={20}/></div>
-                <div><p className="text-white font-black text-sm uppercase">Livraison</p><p className="text-xs text-gray-300">10-12j (Avion)</p></div>
-             </div>
-             <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm p-4 rounded-3xl border border-white/10 shadow-xl">
-                <div className="p-3 bg-[#D0A050] text-[#002D5A] rounded-2xl shadow-lg"><ShieldCheck size={20}/></div>
-                <div><p className="text-white font-black text-sm uppercase">diponible</p><p className="text-xs text-gray-300">SAV local certifié</p></div>
-             </div>
-          </div>
-        </div>
-
-        <div className="hidden lg:flex justify-center relative animate-float">
-           <div className="relative z-10 bg-gradient-to-tr from-[#D0A050] to-amber-200 aspect-square w-[450px] rounded-[4rem] shadow-2xl flex items-center justify-center p-1.5 overflow-hidden">
-              <div className="bg-[#002D5A] w-full h-full rounded-[3.8rem] flex flex-col items-center justify-center p-12 text-center space-y-6">
-                 <Globe size={130} className="text-[#D0A050] animate-spin-slow" />
-                 <h2 className="text-2xl font-black text-white uppercase tracking-widest leading-tight">Commander <br/>Sans Limites</h2>
-                 <p className="text-sm text-gray-400">Électronique, Automobile, Industriel. Nous trouvons, nous livrons.</p>
+            {/* TEXTE & CTA */}
+            <div className="w-full lg:w-1/2 space-y-10  animate-fade-in-up">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-bold uppercase tracking-widest designer-body">
+                <Globe size={14} />
+                <span>Import direct &middot; Produit diponible en boutique</span>
               </div>
-           </div>
-           {/* Éléments décoratifs flottants */}
-           <div className="absolute top-0 right-10 w-20 h-20 bg-[#D0A050]/20 rounded-full blur-2xl animate-pulse"></div>
-           <div className="absolute bottom-10 left-10 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl animate-pulse"></div>
-        </div>
-      </div>
+              
+              <h1 className="text-3xl md:text-6xl font-Karla text-white leading-[1.1] uppercase m-0">
+              Commandez vos produits <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">Chez nous.</span>
+              </h1>
+              
+              <p className="text-sm md:text-base text-white max-w-lg leading-relaxed designer-body font-light">
+                La plateforme qui vous permet de commander des produits locaux et internationaux, avec une livraison fiable partout en Afrique.
+                Accédez à des articles sélectionnés, provenant de fournisseurs locaux et de l’étranger, en toute simplicité.
+              </p>
 
-      <style>{`
-        @keyframes ken-burns {
-          0% { transform: scale(1); }
-          50% { transform: scale(1.1); }
-          100% { transform: scale(1); }
-        }
-        @keyframes fade-in-up {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes float {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-20px); }
-        }
-        .animate-ken-burns { animation: ken-burns 20s ease-in-out infinite; }
-        .animate-fade-in-up { animation: fade-in-up 0.8s ease-out forwards; }
-        .animate-float { animation: float 6s ease-in-out infinite; }
-        .animate-spin-slow { animation: spin-slow 30s linear infinite; }
-        @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-      `}</style>
-    </div>
+
+              {/* Badges de confiance */}
+              <div className="flex flex-wrap items-center gap-6 pt-6 border-t border-slate-800">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="text-blue-500" size={18} />
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter designer-body">Paiement Sécurisé</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Truck className="text-blue-500" size={18} />
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter designer-body">Suivi Temps Réel</span>
+                </div>
+              </div>
+            </div>
+
+            {/* VISUEL DYNAMIQUE (BOX AVEC IMAGES) */}
+            <div className="w-full lg:w-1/2 h-[500px] relative">
+              <div className="grid grid-cols-2 gap-3 h-full overflow-hidden rounded-[2.5rem] border-8 border-slate-800/50 shadow-2xl bg-slate-900">
+                
+                {/* Colonne 1 : Monte */}
+                <div className="space-y-3 animate-vertical-up">
+                  {[...col1Images, ...col1Images].map((img, i) => (
+                    <div key={i} className="h-56 w-full relative overflow-hidden rounded-2xl group">
+                      <img src={img} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Product" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Colonne 2 : Descend */}
+                <div className="space-y-3 animate-vertical-down pt-10">
+                  {[...col2Images, ...col2Images].map((img, i) => (
+                    <div key={i} className="h-56 w-full relative overflow-hidden rounded-2xl group">
+                      <img src={img} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Product" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Filtre de fondu pour le haut et le bas */}
+                <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-[#0F172A] via-transparent to-[#0F172A] opacity-80"></div>
+              </div>
+
+             </div>
+
+          </div>
+        </div>
+      </section>
+    </>
   );
 };
-
 
 const AboutPage = ({ onBack, sectionId }) => {
   useEffect(() => {
@@ -674,8 +704,31 @@ function AppContent() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cart, setCart] = useState([]);
+   const [showHeader, setShowHeader] = useState(true);
+   const [lastScrollY, setLastScrollY] = useState(0);
+  const [isScrolled, setIsScrolled] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const searchRef = useRef(null);
+
+   useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      // Fond du header
+      setIsScrolled(currentScrollY > 50);
+      
+      // Show/Hide
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setShowHeader(false); // Scroll down
+      } else {
+        setShowHeader(true); // Scroll up
+      }
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
 
   useEffect(() => {
     const script = document.createElement('script');
@@ -757,59 +810,51 @@ function AppContent() {
         .animate-fade-in { animation: fade-in 0.4s ease-out; }
       `}</style>
 
-      {/* Header Premium Responsive avec Retour à la ligne pour la barre de recherche sur mobile */}
-      <header className="sticky top-0 z-[600] bg-white/95 backdrop-blur-xl border-b border-gray-100 px-3 md:px-12 py-3 md:py-4 flex flex-wrap items-center justify-between shadow-sm gap-y-3">
-        <div className="flex items-center gap-1 md:gap-4 shrink-0">
-          <button onClick={() => setIsMenuOpen(true)} className="p-2 text-[#002D5A] hover:bg-gray-100 rounded-full transition-all active:scale-90">
-            <Menu size={24} strokeWidth={2.5}/>
-          </button>
-          <div className="flex flex-col cursor-pointer shrink-0" onClick={() => {setView('home'); setActiveCategory('Tout'); setSearch(''); window.scrollTo(0,0);}}>
-             <div className="flex flex-col cursor-pointer" onClick={() => {setView('home'); setActiveCategory('Tout'); setSearch(''); window.scrollTo(0,0);}}>
-             <div className="flex items-center gap-2">
-             
-              <img src="/logoah.jpeg" className="h-13 md:h-19 w-auto" alt="Logoah" />
-              </div>
-            </div>
-             </div>
-        </div>
 
-        {/* Barre de Recherche (order-last sur mobile) */}
-        <div className="order-last w-full sm:order-none sm:w-auto sm:flex-1 sm:max-w-[500px] relative px-1 sm:px-0" ref={searchRef}>
-          <div className="flex items-center bg-gray-50 border border-gray-100 rounded-[2rem] px-4 md:px-6 py-2.5 gap-2 focus-within:bg-white focus-within:border-[#D0A050]/50 transition-all shadow-sm">
-            <Search size={16} className="text-gray-400 shrink-0" />
-            <input type="text" placeholder="Rechercher une pépite..." className="bg-transparent border-none text-xs md:text-sm w-full focus:ring-0 p-0 font-medium" value={search} onChange={e => {setSearch(e.target.value); setShowSuggestions(true);}} onFocus={() => setShowSuggestions(true)} />
+      {/* Header Public Responsive avec Couleur Dorée Douce et Transparence au Scroll */}
+      <header className={`fixed top-0 left-0 right-0 z-[600] transition-all duration-500 ease-in-out transform ${showHeader ? 'translate-y-0' : '-translate-y-full'} ${isScrolled ? 'bg-white/80 backdrop-blur-xl shadow-lg border-b border-[#D4AF37]/30 py-3' : 'bg-blue-900 py-5'}`}>
+        <div className="max-w-7xl mx-auto px-4 md:px-12 flex flex-wrap items-center justify-between gap-y-3">
+          <div className="flex items-center gap-1 md:gap-4 shrink-0">
+            <button onClick={() => setIsMenuOpen(true)} className={`p-2 rounded-full transition-all active:scale-90 ${isScrolled ? 'text-[#002D5A] hover:bg-gray-100' : 'text-white hover:bg-white/10'}`}>
+              <Menu size={24} strokeWidth={2.5}/>
+            </button>
+            <div className="flex items-center gap-2 cursor-pointer" onClick={() => scrollToCategory("Tout")}>
+              <img src="/logoah.jpeg" className="h-10 md:h-16 w-auto rounded-lg shadow-sm border border-[#D4AF37]/20" alt="Logo" />
+            </div>
           </div>
-          {showSuggestions && searchSuggestions.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-3xl shadow-2xl border border-gray-50 overflow-hidden z-[800] animate-fade-in mx-1 sm:mx-0">
-              {searchSuggestions.map(p => (
-                <div key={p.id} onClick={() => {setSelectedProduct(p); setView('detail'); setShowSuggestions(false); setSearch(''); window.scrollTo(0,0);}} className="flex items-center gap-4 p-4 hover:bg-gray-50 cursor-pointer border-b last:border-0 transition-all">
-                  <img src={p.image_urls?.[0]} className="w-12 h-12 rounded-xl object-cover bg-gray-50 border shadow-sm" alt="" />
-                  <div>
-                    <p className="text-xs font-black text-[#002D5A] uppercase leading-tight">{p.nom}</p>
-                    <p className="text-[9px] text-[#D0A050] font-black uppercase tracking-widest">{p.categorie}</p>
-                  </div>
-                  <ArrowRight size={14} className="ml-auto text-gray-300" />
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
 
-        <div className="flex items-center gap-1 md:gap-4 shrink-0">
-          <button onClick={() => {setView('about'); window.scrollTo(0,0);}} className="flex items-center gap-1 text-[8px] md:text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-[#002D5A] p-2 transition-all">
-            <Info size={18} className="md:hidden" />
-            <span className="hidden md:inline">À Propos</span>
-          </button>
-          <button onClick={() => setIsCartOpen(true)} className="relative p-2.5 md:p-4 bg-[#002D5A] text-white rounded-full shadow-2xl border-4 border-[#D0A050]/10 active:scale-90 transition-all">
-            <ShoppingBag size={18} className="md:w-6 md:h-6" />
-            {cart.length > 0 && <span className="absolute -top-1 -right-1 bg-[#D0A050] text-[#002D5A] text-[9px] font-black w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center border-2 border-white shadow-lg">{cart.length}</span>}
-          </button>
+          <div className="order-last w-full sm:order-none sm:w-auto sm:flex-1 sm:max-w-[500px] relative px-1 sm:px-0" ref={searchRef}>
+            <div className={`flex items-center rounded-[2rem] px-4 md:px-6 py-2.5 gap-2 transition-all ${isScrolled ? 'bg-gray-50 border border-gray-100' : 'bg-white/10 backdrop-blur-md border border-white/20'}`}>
+              <Search size={16} className={isScrolled ? 'text-gray-400' : 'text-white/60'} />
+              <input 
+                type="text" 
+                placeholder="Rechercher une pépite..." 
+                className={`bg-transparent border-none text-xs md:text-sm w-full focus:ring-0 focus:outline-none p-0 font-medium ${isScrolled ? 'text-[#002D5A]' : 'text-white placeholder-white/40'}`} 
+                value={search} 
+                onChange={e => setSearch(e.target.value)} 
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1 md:gap-4 shrink-0">
+            <button onClick={() => {setView('about'); window.scrollTo(0,0);}} className={`flex items-center gap-1 text-[8px] md:text-[10px] font-black uppercase tracking-widest p-2 transition-all ${isScrolled ? 'text-gray-400 hover:text-[#002D5A]' : 'text-white/60 hover:text-white'}`}>
+              <Info size={18} className="md:hidden" />
+              <span className="hidden md:inline">À Propos</span>
+            </button>
+            <button onClick={() => setIsCartOpen(true)} className={`relative p-2.5 md:p-4 rounded-full shadow-2xl transition-all active:scale-90 ${isScrolled ? 'bg-[#002D5A] text-white border-4 border-[#D4AF37]/20' : 'bg-white/20 backdrop-blur-md text-white border-2 border-white/20'}`}>
+              <ShoppingBag size={18} className="md:w-6 md:h-6" />
+              {cart.length > 0 && <span className="absolute -top-1 -right-1 bg-[#D0A050] text-[#002D5A] text-[9px] font-black w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center border-2 border-white shadow-lg">{cart.length}</span>}
+            </button>
+          </div>
         </div>
       </header>
+
+      {/* Padding pour compenser le header fixe */}
+      <div className="h-0"></div>
       <HeroSection/>
 
       {/* Barre de Catégories Responsive (Scroll horizontal) - Dynamique depuis Supabase */}
-      <div className="border-b bg-white sticky top-[120px] sm:top-[81px] z-40 overflow-x-auto no-scrollbar transition-all">
+      <div   className="border-b bg-white sticky top-[120px] sm:top-[81px] z-40 overflow-x-auto no-scrollbar transition-all">
         <div className="max-w-7xl mx-auto flex gap-6 md:gap-10 px-6 md:px-12 py-4 md:py-6 whitespace-nowrap">
           <button onClick={() => setActiveCategory("Tout")} className={`text-[10px] md:text-xs font-black uppercase tracking-widest relative pb-1 transition-all ${activeCategory === "Tout" ? 'text-[#002D5A]' : 'text-blue-500'}`}>Tout</button>
           {categories.map(c => (

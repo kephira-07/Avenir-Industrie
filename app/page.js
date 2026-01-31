@@ -302,77 +302,130 @@ const AboutPage = ({ onBack, sectionId }) => {
     </div>
   );
 };
-const ProductDetail = ({ product, onBack, onAddToCart }) => {
-  const [activeImg, setActiveImg] = useState(product.image_urls?.[0] || '');
-  const [mode, setMode] = useState('AVION');
-  const [qty, setQty] = useState(1);
-  const isOrder = product.type_dispo === 'COMMANDE';
-  const price = isOrder ? (mode === 'AVION' ? product.prix_avion : product.prix_bateau) : product.prix_standard;
 
-  useEffect(() => {
-    if (product.image_urls?.length > 0) setActiveImg(product.image_urls[0]);
-  }, [product]);
+
+
+const ProductDetail = ({ selectedProduct }) => {
+  // État pour le mode de transport sélectionné
+  const [transport, setTransport] = useState('avion');
+
+  // Tarifs fixes
+  const prixUnitaireAvion = 4000;
+  const prixUnitaireBateau = 2000;
+
+  // Calcul du prix total (Prix produit + Prix transport)
+  const prixProduit = Number(selectedProduct?.prix_standard || 0);
+  const fraisTransport = transport === 'avion' ? prixUnitaireAvion : prixUnitaireBateau;
+  const prixTotal = prixProduit + fraisTransport;
 
   return (
-    <div className="min-h-screen bg-white animate-fade-in pb-20 font-sans overflow-x-hidden">
-      <div className="sticky top-0 bg-white/95 backdrop-blur-md z-[700] px-4 md:px-6 py-4 border-b flex items-center justify-between">
-        <button onClick={onBack} className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"><ArrowLeft size={20}/></button>
-        <span className="text-[10px] font-black uppercase text-[#D0A050]">Vitrine </span>
-        <div className="w-10" />
-      </div>
-      <div className="max-w-6xl mx-auto px-4 md:px-6 mt-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
-          <div className="space-y-6">
-            <div className="aspect-square rounded-[3.5rem] overflow-hidden bg-gray-50 border shadow-xl">
-              <img src={activeImg} alt={product.nom} className="w-full h-full object-cover transition-all duration-500" />
-            </div>
-            <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
-              {product.image_urls?.map((url, i) => (
-                <button key={i} onClick={() => setActiveImg(url)} className={`w-16 h-16 md:w-25 md:h-25 rounded-1xl overflow-hidden border-4 shrink-0 transition-all ${activeImg === url ? 'border-[#D0A050] scale-105' : 'border-transparent opacity-60'}`}>
-                  <img src={url} className="w-full h-full object-cover" alt="" />
-                </button>
-              ))}
+    <div className="max-w-7xl mx-auto px-4 md:px-12 py-10 animate-fade-in">
+      <div className="flex flex-col lg:flex-row gap-12">
+        
+        {/* SECTION IMAGE - Format Rectangle Gallerie */}
+        <div className="flex-1 space-y-4">
+          <div className="aspect-[16/10] bg-gray-100 overflow-hidden border border-gray-200">
+            <img 
+              src={selectedProduct?.image_urls?.[0]} 
+              className="w-full h-full object-cover" 
+              alt={selectedProduct?.nom} 
+            />
+          </div>
+        </div>
+
+        {/* SECTION INFOS & PRIX */}
+        <div className="flex-1 space-y-8">
+          <div>
+            <p className="text-[#D0A050] font-black tracking-[0.3em] text-xs uppercase mb-2">
+              {selectedProduct?.categorie}
+            </p>
+            <h1 className="text-4xl md:text-5xl font-black text-[#002D5A] uppercase tracking-tighter leading-tight">
+              {selectedProduct?.nom}
+            </h1>
+          </div>
+
+          {/* SÉLECTEUR DE TRANSPORT CLICABLE */}
+          <div className="space-y-4">
+            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Options d'expédition :</p>
+            <div className="grid grid-cols-2 gap-4">
+              
+              {/* Option Avion */}
+              <div 
+                onClick={() => setTransport('avion')}
+                className={`cursor-pointer p-4 border-2 transition-all duration-300 relative ${
+                  transport === 'avion' 
+                  ? 'border-[#002D5A] bg-[#002D5A]/5 shadow-lg' 
+                  : 'border-gray-100 bg-white opacity-60'
+                }`}
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <Plane size={24} className={transport === 'avion' ? 'text-[#002D5A]' : 'text-gray-400'} />
+                  {transport === 'avion' && <CheckCircle2 size={16} className="text-[#002D5A]" />}
+                </div>
+                <p className={`text-[10px] font-black uppercase tracking-widest ${transport === 'avion' ? 'text-[#002D5A]' : 'text-gray-400'}`}>Fret Aérien</p>
+                <p className="text-xl font-black text-[#002D5A]">{prixUnitaireAvion.toLocaleString()} F</p>
+              </div>
+
+              {/* Option Bateau */}
+              <div 
+                onClick={() => setTransport('bateau')}
+                className={`cursor-pointer p-4 border-2 transition-all duration-300 relative ${
+                  transport === 'bateau' 
+                  ? 'border-[#D0A050] bg-[#D0A050]/5 shadow-lg' 
+                  : 'border-gray-100 bg-white opacity-60'
+                }`}
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <Ship size={24} className={transport === 'bateau' ? 'text-[#D0A050]' : 'text-gray-400'} />
+                  {transport === 'bateau' && <CheckCircle2 size={16} className="text-[#D0A050]" />}
+                </div>
+                <p className={`text-[10px] font-black uppercase tracking-widest ${transport === 'bateau' ? 'text-[#D0A050]' : 'text-gray-400'}`}>Fret Maritime</p>
+                <p className="text-xl font-black text-[#002D5A]">{prixUnitaireBateau.toLocaleString()} F</p>
+              </div>
+
             </div>
           </div>
-          <div className="space-y-8">
+
+          {/* AFFICHAGE DU PRIX FINAL */}
+          <div className="bg-[#002D5A] p-6 text-white border-l-8 border-[#D0A050]">
+            <div className="flex justify-between items-end">
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-70">Total à payer</p>
+                <p className="text-4xl md:text-5xl font-black tracking-tighter">
+                  {prixTotal.toLocaleString()} <span className="text-lg">F CFA</span>
+                </p>
+              </div>
+              <div className="text-right text-[10px] font-bold opacity-70">
+                <p>Produit: {prixProduit.toLocaleString()} F</p>
+                <p>Livraison: {fraisTransport.toLocaleString()} F</p>
+              </div>
+            </div>
+          </div>
+
+          {/* BOUTON D'ACTION (ROUGE) */}
+          <button className="w-full bg-[#E63946] hover:bg-red-700 text-white py-5 px-8 font-black uppercase tracking-[0.3em] flex items-center justify-center gap-4 transition-all active:scale-[0.98] shadow-xl">
+            Commander maintenant <ArrowRight size={20} />
+          </button>
+
+          {/* DÉTAILS SUPPLÉMENTAIRES */}
+          <div className="grid grid-cols-2 gap-8 pt-6 border-t border-gray-100">
             <div>
-              <span className="text-[#D0A050] font-black uppercase text-xs tracking-[0.4em] mb-2 block">{product.categorie}</span>
-              <h1 className="text-3xl md:text-5xl font-black text-[#002D5A] leading-tight uppercase tracking-tighter">{product.nom}</h1>
-              <p className="text-gray-500 mt-8 leading-relaxed text-lg whitespace-pre-line border-l-4 border-gray-100 pl-6">{product.description}</p>
+              <p className="text-[10px] font-black text-gray-400 uppercase mb-1">Disponibilité</p>
+              <p className="font-bold text-[#002D5A]">{selectedProduct?.type_dispo}</p>
             </div>
-            <div className="p-8 bg-gray-100 rounded-[3rem] space-y-8">
-              <div className="flex justify-between items-center">
-                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Choisir Quantité</p>
-                 <div className="flex items-center gap-6 bg-white px-6 py-3 rounded-2xl shadow-sm border border-gray-200">
-                    <button onClick={() => setQty(Math.max(1, qty - 1))} className="text-[#002D5A] active:scale-90 transition-all"><Minus size={18}/></button>
-                    <span className="font-black text-xl w-6 text-center">{qty}</span>
-                    <button onClick={() => setQty(qty + 1)} className="text-[#002D5A] active:scale-90 transition-all"><Plus size={18}/></button>
-                 </div>
-              </div>
-              {isOrder && (
-                <div className="grid grid-cols-2 gap-4">
-                  <button onClick={() => setMode('AVION')} className={`p-5 rounded-[2rem] border-2 transition-all flex flex-col items-center gap-2 ${mode === 'AVION' ? 'border-[#D0A050] bg-white shadow-lg' : 'border-transparent opacity-40'}`}>
-                    <Plane size={24} className="text-[#D0A050]"/><span className="text-[10px] font-black uppercase">Avion</span>
-                  </button>
-                  <button onClick={() => setMode('BATEAU')} className={`p-5 rounded-[2rem] border-2 transition-all flex flex-col items-center gap-2 ${mode === 'BATEAU' ? 'border-[#D0A050] bg-white shadow-lg' : 'border-transparent opacity-40'}`}>
-                    <Ship size={24} className="text-[#D0A050]"/><span className="text-[10px] font-black uppercase">Bateau</span>
-                  </button>
-                </div>
-              )}
-              <div className="flex justify-between items-end border-t border-gray-200 pt-6">
-                <div><p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Prix Unitaire</p><p className="text-3xl md:text-4xl font-black text-[#002D5A]">{Number(price)?.toLocaleString()} F</p></div>
-                <div className="text-right"><p className="text-[10px] font-black text-[#D0A050] uppercase mb-1">Sous-total</p><p className="text-xl font-black">{(Number(price) * qty).toLocaleString()} F</p></div>
-              </div>
+            <div>
+              <p className="text-[10px] font-black text-gray-400 uppercase mb-1">Délai Estimé</p>
+              <p className="font-bold text-[#002D5A]">
+                {transport === 'avion' ? '5 - 10 Jours' : '30 - 45 Jours'}
+              </p>
             </div>
-            <button onClick={() => onAddToCart(product, isOrder ? mode : 'STOCK', price, qty)} className="w-full bg-[#002D5A] text-white py-6 rounded-[2.5rem] font-black flex items-center justify-center gap-4 shadow-2xl active:scale-95 transition-all text-xl uppercase tracking-tighter border-b-8 border-black/20">
-              <ShoppingBag size={24} /> Ajouter {qty} au Panier
-            </button>
           </div>
         </div>
       </div>
     </div>
   );
 };
+
 
 const CheckoutPage = ({ cart, total, onBack, api }) => {
   const [form, setForm] = useState({ nom: '', tel: '', adresse: '' });
@@ -952,14 +1005,14 @@ function AppContent() {
           className="group bg-white overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-500 cursor-pointer"
         >
           {/* IMAGE : Format Rectangle Horizontal (Aspect Video 16/9) */}
-          <div className="aspect-video bg-gray-50 overflow-hidden relative rounded-2xl ">
+          <div className="aspect-video bg-gray-50 overflow-hidden relative rounded-3xl ">
             <img 
               src={p.image_urls?.[0]} 
               alt={p.nom} 
               className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
             />
             {/* Badge Rectangulaire sans arrondis */}
-            <div className={`absolute top-0 left-0 px-4 py-1.5 text-[8px] rounded-1xl font-black text-white uppercase tracking-widest ${p.type_dispo === 'STOCK' ? 'bg-[#2843ca]' : 'bg-rose-600'}`}>
+            <div className={`absolute top-0 left-0 px-4 py-1.5 text-[8px] rounded-2xl font-black text-white uppercase tracking-widest ${p.type_dispo === 'STOCK' ? 'bg-[#2843ca]' : 'bg-rose-600'}`}>
               {p.type_dispo === 'STOCK' ? 'En Stock' : 'Sur Commande'}
             </div>
           </div>
@@ -967,7 +1020,7 @@ function AppContent() {
           {/* Contenu Texte ajusté */}
           <div className="p-5 space-y-4">
             <div className="space-y-1">
-              <p className="text-[#D0A050] text-[9px] font-black uppercase tracking-[0.3em]">{p.categorie}</p>
+              <p className="text-[#D0A050] text-[8px] font-black uppercase tracking-[0.3em]">{p.categorie}</p>
               <h3 className="text-base md:text-xl font-black text-[#002D5A] truncate uppercase tracking-tighter">
                 {p.nom}
               </h3>

@@ -941,7 +941,7 @@ function AppContent() {
   {loading ? (
     <div className="flex flex-col items-center justify-center py-40 opacity-20">
       <Loader2 size={60} className="animate-spin mb-4 text-[#002D5A]"/>
-      <p className="font-black uppercase text-xs tracking-widest text-center">Accès Cloud...</p>
+      <p className="font-black uppercase text-xs tracking-widest text-center">Chargement...</p>
     </div>
   ) : (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10 pb-32">
@@ -952,14 +952,14 @@ function AppContent() {
           className="group bg-white overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-500 cursor-pointer"
         >
           {/* IMAGE : Format Rectangle Horizontal (Aspect Video 16/9) */}
-          <div className="aspect-video bg-gray-50 overflow-hidden relative">
+          <div className="aspect-video bg-gray-50 overflow-hidden relative rounded-2xl ">
             <img 
               src={p.image_urls?.[0]} 
               alt={p.nom} 
               className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
             />
             {/* Badge Rectangulaire sans arrondis */}
-            <div className={`absolute top-0 left-0 px-4 py-1.5 text-[8px] font-black text-white uppercase tracking-widest ${p.type_dispo === 'STOCK' ? 'bg-[#002D5A]' : 'bg-rose-600'}`}>
+            <div className={`absolute top-0 left-0 px-4 py-1.5 text-[8px] rounded-1xl font-black text-white uppercase tracking-widest ${p.type_dispo === 'STOCK' ? 'bg-[#2843ca]' : 'bg-rose-600'}`}>
               {p.type_dispo === 'STOCK' ? 'En Stock' : 'Sur Commande'}
             </div>
           </div>

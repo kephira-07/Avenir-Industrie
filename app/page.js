@@ -914,59 +914,80 @@ function AppContent() {
         </div>
       </div>
      
-      <main className="max-w-7xl mx-auto px-4 md:px-12 py-10 min-h-screen animate-fade-in">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-16">
-          <div className="space-y-2">
-            <p className="text-[9px] font-black uppercase text-[#D0A050] tracking-[0.5em] flex items-center gap-4 animate-fade-in"><span className="h-px w-10 bg-[#D0A050]"></span> Boutique Exclusive</p>
-            <h2 className="text-3xl md:text-6xl font-black text-[#002D5A] tracking-tighter uppercase leading-tight animate-fade-in">{activeCategory}</h2>
-          </div>
-          <div className="flex items-center gap-4 py-3 px-6 bg-gray-50 rounded-2xl border shadow-sm self-start animate-fade-in">
-            <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Tri par Prix :</span>
-            <button onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')} className="text-[10px] font-black text-[#002D5A] flex items-center gap-2 uppercase tracking-widest active:scale-95 transition-all">
-              {sortOrder === 'asc' ? 'Croissant' : 'Décroissant'} <ChevronDown size={14} className={`transition-all ${sortOrder === 'desc' ? 'rotate-180' : ''}`}/>
-            </button>
-          </div>
-        </div>
-
-        {loading ? (
-          <div className="flex flex-col items-center justify-center py-40 opacity-20"><Loader2 size={60} className="animate-spin mb-4 text-[#002D5A]"/><p className="font-black uppercase text-xs tracking-widest text-center">Accès Cloud...</p></div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 pb-32"> {/* MODIFIÉ : + de colonnes, gap réduit */}
-  {filtered.map(p => (
-    <div 
-      key={p.id} 
-      onClick={() => {setSelectedProduct(p); setView('detail'); window.scrollTo(0,0);}} 
-      className="group bg-white rounded-[2rem] md:rounded-[2.5rem] overflow-hidden border shadow-sm hover:shadow-xl transition-all duration-700 cursor-pointer p-2 md:p-3" // MODIFIÉ : arrondis et padding réduits
-    >
-      <div className="aspect-square bg-gray-50 overflow-hidden relative rounded-[1rem] mb-6 border shadow-inner"> {/* MODIFIÉ : marge basse réduite */}
-        <img 
-          src={p.image_urls?.[0]} 
-          alt={p.nom} 
-          className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
-        />
-        <div className={`absolute top-3 left-3 px-3 py-1 rounded-lg text-[7px] font-black text-white shadow-lg ${p.type_dispo === 'STOCK' ? 'bg-green-500' : 'bg-rose-600'}`}>
-          {p.type_dispo === 'STOCK' ? 'EN STOCK' : 'SUR COMMANDE'}
-        </div>
-      </div>
-
-      <div className="space-y-2"> {/* MODIFIÉ : espace entre les textes réduit */}
-        <p className="text-[#D0A050] text-[7px] font-black uppercase tracking-[0.3em]">{p.categorie}</p>
-        <h3 className="text-sm md:text-lg font-black text-[#002D5A] truncate uppercase tracking-tight">{p.nom}</h3>
-        
-        <div className="flex justify-between items-center pt-4 border-t border-gray-100"> {/* MODIFIÉ : padding-top réduit */}
-          <p className="text-lg md:text-xl font-black text-[#002D5A] tracking-tighter">
-            {(Number(p.prix_standard || p.prix_avion))?.toLocaleString()} F
-          </p>
-          <div className="p-3 bg-gray-50 rounded-2xl group-hover:bg-[#D0A050] group-hover:text-white transition-all shadow-inner"> {/* MODIFIÉ : bouton plus petit */}
-            <ArrowRight size={18}/>
-          </div>
-        </div>
-      </div>
+     <main className="max-w-7xl mx-auto px-4 md:px-12 py-10 min-h-screen animate-fade-in">
+  {/* Header Section */}
+  <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-16">
+    <div className="space-y-2">
+      <p className="text-[9px] font-black uppercase text-[#D0A050] tracking-[0.5em] flex items-center gap-4 animate-fade-in">
+        <span className="h-px w-10 bg-[#D0A050]"></span> Boutique Exclusive
+      </p>
+      <h2 className="text-3xl md:text-6xl font-black text-[#002D5A] tracking-tighter uppercase leading-tight animate-fade-in">
+        {activeCategory}
+      </h2>
     </div>
-  ))}
-</div>
-        )}
-      </main>
+    
+    <div className="flex items-center gap-4 py-3 px-6 bg-white rounded-md border shadow-sm self-start animate-fade-in">
+      <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Tri par Prix :</span>
+      <button 
+        onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')} 
+        className="text-[10px] font-black text-[#002D5A] flex items-center gap-2 uppercase tracking-widest active:scale-95 transition-all"
+      >
+        {sortOrder === 'asc' ? 'Croissant' : 'Décroissant'} 
+        <ChevronDown size={14} className={`transition-all ${sortOrder === 'desc' ? 'rotate-180' : ''}`}/>
+      </button>
+    </div>
+  </div>
+
+  {loading ? (
+    <div className="flex flex-col items-center justify-center py-40 opacity-20">
+      <Loader2 size={60} className="animate-spin mb-4 text-[#002D5A]"/>
+      <p className="font-black uppercase text-xs tracking-widest text-center">Accès Cloud...</p>
+    </div>
+  ) : (
+    <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8 pb-32">
+      {filtered.map(p => (
+        <div 
+          key={p.id} 
+          onClick={() => {setSelectedProduct(p); setView('detail'); window.scrollTo(0,0);}} 
+          className="group bg-white rounded-sm overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-500 cursor-pointer"
+        >
+          {/* Conteneur Image Rectangulaire (ratio 4/5 pour un look plus mode/boutique) */}
+          <div className="aspect-[4/5] bg-gray-50 overflow-hidden relative">
+            <img 
+              src={p.image_urls?.[0]} 
+              alt={p.nom} 
+              className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" 
+            />
+            {/* Badge Carré */}
+            <div className={`absolute top-0 left-0 px-3 py-1 text-[8px] font-black text-white uppercase tracking-tighter ${p.type_dispo === 'STOCK' ? 'bg-green-600' : 'bg-rose-600'}`}>
+              {p.type_dispo === 'STOCK' ? 'Disponible' : 'Sur Commande'}
+            </div>
+          </div>
+
+          {/* Contenu Texte avec moins de padding arrondi */}
+          <div className="p-4 space-y-3">
+            <div>
+              <p className="text-[#D0A050] text-[8px] font-black uppercase tracking-[0.2em] mb-1">{p.categorie}</p>
+              <h3 className="text-sm md:text-base font-bold text-[#002D5A] truncate uppercase tracking-tight leading-tight">
+                {p.nom}
+              </h3>
+            </div>
+            
+            <div className="flex justify-between items-center pt-3 border-t border-gray-50">
+              <p className="text-lg font-black text-[#002D5A] tracking-tighter">
+                {(Number(p.prix_standard || p.prix_avion))?.toLocaleString()} F
+              </p>
+              {/* Bouton rectangulaire minimaliste */}
+              <div className="w-8 h-8 flex items-center justify-center border border-gray-200 rounded-sm group-hover:bg-[#002D5A] group-hover:text-white transition-colors">
+                <ArrowRight size={16}/>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+</main>
 
       <footer className="bg-[#002D5A] text-white pt-24 pb-12 px-8 rounded-t-[4rem] md:rounded-t-[6rem] font-sans mt-20">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-16 mb-20 text-center md:text-left">
@@ -993,7 +1014,7 @@ function AppContent() {
           </div>
           <div className="space-y-8 md:col-span-1">
             <h4 className="text-[#D0A050] font-black uppercase text-[10px] tracking-[0.4em]">Contact</h4>
-            <p className="text-xl font-black">{WHATSAPP_NUMBER.replace('225', '+225 ')}</p>
+            <p className="text-xl font-black">{WHATSAPP_NUMBER.replace('228', '+228 ')}</p>
             <p className="text-gray-400 text-sm font-medium leading-relaxed">lome TOGO.</p>
           </div>
         </div>

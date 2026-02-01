@@ -957,7 +957,7 @@ function AppContent() {
             <button onClick={() => setIsMenuOpen(true)} className={`p-2 rounded-full transition-all active:scale-90 ${isScrolled ? 'text-[#0A1A3A] hover:bg-gray-100' : 'text-white hover:bg-white/10'}`}>
               <Menu size={24} strokeWidth={2.5}/>
             </button>
-            <div className="flex items-center gap-2 cursor-pointer" onClick={() => scrollToCategory("Tout")}>
+            <div className="flex items-center gap-2 cursor-pointer" onClick={() => (scrollToCategory("Tout"), setActiveCategory("Tout"))}>
               <img src="/logoah.jpeg" className="h-10 md:h-16 w-auto rounded-lg shadow-md border border-[#D4AF37]/30" alt="Logo" />
             </div>
           </div>
@@ -991,7 +991,7 @@ function AppContent() {
         </div>
       </header>
 
-      <div className="h-20" />
+      <div className="h-5" />
       <HeroSection onScrollToCategories={() => scrollToCategory("Tout")} />
 
       <div id="header-categories" className="border-b bg-white sticky top-0 z-40 overflow-x-auto no-scrollbar pt-[130px] sm:pt-[85px]">

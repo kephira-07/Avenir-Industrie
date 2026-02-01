@@ -917,84 +917,60 @@ function AppContent() {
         </div>
       </div>
      
-<main className="max-w-7xl mx-auto px-4 md:px-12 py-10 min-h-screen animate-fade-in">
-  {/* Header Section */}
-  <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-16">
-    <div className="space-y-2">
-      <p className="text-[9px] font-black uppercase text-[#D0A050] tracking-[0.5em] flex items-center gap-4 animate-fade-in">
-        <span className="h-px w-10 bg-[#D0A050]"></span> Boutique Exclusive
-      </p>
-      <h2 className="text-3xl md:text-6xl font-black text-[#002D5A] tracking-tighter uppercase leading-tight animate-fade-in">
-        {activeCategory}
-      </h2>
-    </div>
-    
-    <div className="flex items-center gap-4 py-3 px-6 bg-white border border-gray-200 shadow-sm self-start animate-fade-in">
-      <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Tri par Prix :</span>
-      <button 
-        onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')} 
-        className="text-[10px] font-black text-[#002D5A] flex items-center gap-2 uppercase tracking-widest active:scale-95 transition-all"
-      >
-        {sortOrder === 'asc' ? 'Croissant' : 'Décroissant'} 
-        <ChevronDown size={14} className={`transition-all ${sortOrder === 'desc' ? 'rotate-180' : ''}`}/>
-      </button>
-    </div>
-  </div>
-
-  {loading ? (
-    <div className="flex flex-col items-center justify-center py-40 opacity-20">
-      <Loader2 size={60} className="animate-spin mb-4 text-[#002D5A]"/>
-      <p className="font-black uppercase text-xs tracking-widest text-center">Chargement...</p>
-    </div>
-  ) : (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-10 pb-32">
-      {filtered.map(p => (
-        <div 
-          key={p.id} 
-          onClick={() => {setSelectedProduct(p); setView('detail'); window.scrollTo(0,0);}} 
-          className="group bg-white overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-500 cursor-pointer"
-        >
-          {/* IMAGE : Format Rectangle Horizontal (Aspect Video 16/9) */}
-          <div className="aspect-video bg-gray-50 overflow-hidden relative rounded-3xl ">
-            <img 
-              src={p.image_urls?.[0]} 
-              alt={p.nom} 
-              className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
-            />
-            {/* Badge Rectangulaire sans arrondis */}
-            <div className={`absolute top-0 left-0 px-4 py-1.5 text-[8px] rounded-2xl font-black text-white uppercase tracking-widest ${p.type_dispo === 'STOCK' ? 'bg-[#2843ca]' : 'bg-rose-600'}`}>
-              {p.type_dispo === 'STOCK' ? 'En Stock' : 'Sur Commande'}
-            </div>
+ <main className="max-w-7xl mx-auto px-4 md:px-12 py-10 min-h-screen animate-fade-in">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-16">
+          <div className="space-y-2">
+            <p className="text-[9px] font-black uppercase text-[#D0A050] tracking-[0.5em] flex items-center gap-4 animate-fade-in"><span className="h-px w-10 bg-[#D0A050]"></span> Boutique Exclusive</p>
+            <h2 className="text-3xl md:text-6xl font-black text-[#002D5A] tracking-tighter uppercase leading-tight animate-fade-in">{activeCategory}</h2>
           </div>
-
-          {/* Contenu Texte ajusté */}
-          <div className="p-5 space-y-4">
-            <div className="space-y-1">
-              <p className="text-[#D0A050] text-[8px] font-black uppercase tracking-[0.3em]">{p.categorie}</p>
-              <h3 className="text-base md:text-xl font-black text-[#002D5A] truncate uppercase tracking-tighter">
-                {p.nom}
-              </h3>
-            </div>
-            
-            <div className="flex justify-between items-center pt-4 border-t border-gray-100">
-              <div className="flex flex-col">
-                <span className="text-[8px] text-gray-400 font-bold uppercase">Prix Exclusif</span>
-                <p className="text-xl font-black text-[#002D5A] tracking-tighter">
-                  {(Number(p.prix_standard || p.prix_avion))?.toLocaleString()} F
-                </p>
-              </div>
-              
-              {/* Bouton flèche rectangulaire */}
-              <div className="w-10 h-10 flex items-center justify-center border border-[#002D5A] group-hover:bg-[#002D5A] group-hover:text-white transition-all duration-300">
-                <ArrowRight size={20}/>
-              </div>
-            </div>
+          <div className="flex items-center gap-4 py-3 px-6 bg-gray-50 rounded-2xl border shadow-sm self-start animate-fade-in">
+            <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Tri par Prix :</span>
+            <button onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')} className="text-[10px] font-black text-[#002D5A] flex items-center gap-2 uppercase tracking-widest active:scale-95 transition-all">
+              {sortOrder === 'asc' ? 'Croissant' : 'Décroissant'} <ChevronDown size={14} className={`transition-all ${sortOrder === 'desc' ? 'rotate-180' : ''}`}/>
+            </button>
           </div>
         </div>
-      ))}
+
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-40 opacity-20"><Loader2 size={60} className="animate-spin mb-4 text-[#002D5A]"/><p className="font-black uppercase text-xs tracking-widest text-center">Accès Cloud...</p></div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 pb-32"> {/* MODIFIÉ : + de colonnes, gap réduit */}
+  {filtered.map(p => (
+    <div 
+      key={p.id} 
+      onClick={() => {setSelectedProduct(p); setView('detail'); window.scrollTo(0,0);}} 
+      className="group bg-white rounded-[2rem] md:rounded-[2.5rem] overflow-hidden border shadow-sm hover:shadow-xl transition-all duration-700 cursor-pointer p-2 md:p-3" // MODIFIÉ : arrondis et padding réduits
+    >
+      <div className="aspect-square bg-gray-50 overflow-hidden relative rounded-[1rem] mb-6 border shadow-inner"> {/* MODIFIÉ : marge basse réduite */}
+        <img 
+          src={p.image_urls?.[0]} 
+          alt={p.nom} 
+          className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
+        />
+        <div className={`absolute top-3 left-3 px-3 py-1 rounded-lg text-[7px] font-black text-white shadow-lg ${p.type_dispo === 'STOCK' ? 'bg-green-500' : 'bg-rose-600'}`}>
+          {p.type_dispo === 'STOCK' ? 'EN STOCK' : 'SUR COMMANDE'}
+        </div>
+      </div>
+
+      <div className="space-y-2"> {/* MODIFIÉ : espace entre les textes réduit */}
+        <p className="text-[#D0A050] text-[7px] font-black uppercase tracking-[0.3em]">{p.categorie}</p>
+        <h3 className="text-sm md:text-lg font-black text-[#002D5A] truncate uppercase tracking-tight">{p.nom}</h3>
+        
+        <div className="flex justify-between items-center pt-4 border-t border-gray-100"> {/* MODIFIÉ : padding-top réduit */}
+          <p className="text-lg md:text-xl font-black text-[#002D5A] tracking-tighter">
+            {(Number(p.prix_standard || p.prix_avion))?.toLocaleString()} F
+          </p>
+          <div className="p-3 bg-gray-50 rounded-2xl group-hover:bg-[#D0A050] group-hover:text-white transition-all shadow-inner"> {/* MODIFIÉ : bouton plus petit */}
+            <ArrowRight size={18}/>
+          </div>
+        </div>
+      </div>
     </div>
-  )}
-</main>
+  ))}
+</div>
+        )}
+      </main>
+
 
 
       <footer className="bg-[#002D5A] text-white pt-24 pb-12 px-8 rounded-t-[4rem] md:rounded-t-[6rem] font-sans mt-20">

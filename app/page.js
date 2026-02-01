@@ -951,7 +951,7 @@ function AppContent() {
       `}</style>
 
       {/* Header Premium */}
-      <header className={`fixed top-0 left-0 right-0 z-[600] transition-all duration-500 transform ${showHeader ? 'translate-y-0' : '-translate-y-full'} ${isScrolled ? 'bg-white/90 backdrop-blur-xl shadow-lg border-b border-[#D4AF37]/30 py-3' : 'bg-blue-900 py-5'}`}>
+      <header className={`fixed top-0 left-0 right-0 z-[600] transition-all duration-500 ${isScrolled ? 'bg-white/90 backdrop-blur-xl shadow-lg border-b border-[#D4AF37]/30 py-3' : 'bg-blue-900 py-5'}`}>
         <div className="max-w-7xl mx-auto px-4 md:px-12 flex flex-wrap items-center justify-between gap-y-3">
           <div className="flex items-center gap-1 md:gap-4 shrink-0">
             <button onClick={() => setIsMenuOpen(true)} className={`p-2 rounded-full transition-all active:scale-90 ${isScrolled ? 'text-[#0A1A3A] hover:bg-gray-100' : 'text-white hover:bg-white/10'}`}>
@@ -962,7 +962,7 @@ function AppContent() {
             </div>
           </div>
 
-          <div className="order-last w-full sm:order-none sm:w-auto sm:flex-1 sm:max-w-[500px] relative px-1 sm:px-0" ref={searchRef}>
+          <div className=" order-last w-full sm:order-none sm:w-auto sm:flex-1 sm:max-w-[500px] relative px-1 sm:px-0" ref={searchRef} onClick={() => scrollToCategory("Tout")}>
             <div className={`flex items-center rounded-[2rem] px-5 py-3 gap-3 transition-all ${isScrolled ? 'bg-gray-100 border border-gray-100' : 'bg-white/10 backdrop-blur-md border border-white/20'}`}>
               <Search size={18} className={isScrolled ? 'text-gray-400' : 'text-white/60'} />
               <input type="text" placeholder="Rechercher une pépite..." className={`bg-transparent border-none text-xs md:text-sm w-full focus:ring-0 focus:outline-none p-0 font-medium ${isScrolled ? 'text-[#0A1A3A]' : 'text-white placeholder-white/50'}`} value={search} onChange={e => {setSearch(e.target.value); setShowSuggestions(true);}} onFocus={() => setShowSuggestions(true)} />

@@ -1010,7 +1010,7 @@ function AppContent() {
             return catProds.length > 0 && (
               <section key={cat.id} id={`section-${cat.name.replace(/\s+/g, '-').toLowerCase()}`} className="animate-fade-in-up scroll-mt-24">
                 <div className="flex items-center gap-6 mb-10">
-                  <h2 className="text-3xl md:text-5xl font-black text-[#0A1A3A] designer-title uppercase tracking-tighter">{cat.name}</h2>
+                  <h2 className="text-3xl md:text-5xl font-black text-[#0A1A3A] designer-title uppercase ">{cat.name}</h2>
                   <div className="h-px flex-1 bg-gradient-to-r from-[#D4AF37]/40 to-transparent"></div>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
@@ -1021,7 +1021,7 @@ function AppContent() {
                         <div className={`absolute top-4 left-4 px-4 py-1.5 rounded-xl text-[8px] font-Karla text-white shadow-xl ${p.type_dispo === 'STOCK' ? 'bg-blue-600' : 'bg-red-600'}`}>{p.type_dispo}</div>
                       </div>
                       <div className="space-y-2 p-3">
-                        <p className="text-[#D4AF37] text-[8px] font-black uppercase tracking-[0.3em]">{p.categorie}</p>
+                        <p className="text-[#D4AF37] text-[8px] font-black uppercase ">{p.categorie}</p>
                         <h3 className="text-lg font-karla text-[#0A1A3A] designer-title uppercase truncate">{p.nom}</h3>
                         <div className="flex justify-between items-center pt-5 border-t border-gray-100">
                           <p className="text-xl font-Karla text-[#0A1A3A]">{p.prix_standard?.toLocaleString()} F</p>

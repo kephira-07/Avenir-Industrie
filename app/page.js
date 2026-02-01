@@ -19,7 +19,7 @@ const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || ""; 
 const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || ""; 
 const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "";
-const Num="22891253109"; // Remplacez par votre numéro WhatsApp complet avec indicatif pays
+ // Remplacez par votre numéro WhatsApp complet avec indicatif pays
 
 
 // --- LOGIQUE API SUPABASE ---
@@ -542,6 +542,28 @@ const AdminDashboard = ({ products, categories, onRefresh, onBack, api, sb }) =>
   const [newCatName, setNewCatName] = useState('');
   const [showCatList, setShowCatList] = useState(false);
 
+
+  const navigateTo = (newView, data = null) => {
+    window.history.pushState({ view: newView, data: data }, '', '');
+    setView(newView);
+    if (data) setSelectedProduct(data);
+    window.scrollTo(0, 0);
+  };
+
+  useEffect(() => {
+    const handlePopState = (event) => {
+      if (event.state && event.state.view) {
+        setView(event.state.view);
+        if (event.state.data) setSelectedProduct(event.state.data);
+      } else {
+        setView('home');
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    window.history.replaceState({ view: 'home' }, '', '');
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
   // Vérification sécurisée de sb.auth
   useEffect(() => {
     if (!sb || !sb.auth) return;
@@ -805,36 +827,40 @@ function AppContent() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [activeCategory, setActiveCategory] = useState("Tout");
   const [search, setSearch] = useState('');
-  const [sortOrder, setSortOrder] = useState('asc');
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cart, setCart] = useState([]);
-   const [showHeader, setShowHeader] = useState(true);
-   const [lastScrollY, setLastScrollY] = useState(0);
+  
+  // Header Animation States
+  const [showHeader, setShowHeader] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [showSuggestions, setShowSuggestions] = useState(false);
   const searchRef = useRef(null);
 
-   useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      
-      // Fond du header
-      setIsScrolled(currentScrollY > 50);
-      
-      // Show/Hide
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        setShowHeader(false); // Scroll down
+  // LOGIQUE DE NAVIGATION HISTORIQUE
+  const navigateTo = (newView, data = null) => {
+    window.history.pushState({ view: newView, data: data }, '', '');
+    setView(newView);
+    if (data) setSelectedProduct(data);
+    window.scrollTo(0, 0);
+  };
+
+  useEffect(() => {
+    const handlePopState = (event) => {
+      if (event.state && event.state.view) {
+        setView(event.state.view);
+        if (event.state.data) setSelectedProduct(event.state.data);
       } else {
-        setShowHeader(true); // Scroll up
+        setView('home');
       }
-      setLastScrollY(currentScrollY);
     };
+    window.addEventListener('popstate', handlePopState);
+    window.history.replaceState({ view: 'home' }, '', '');
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
-
+  // INITIALISATION SUPABASE
   useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7/dist/umd/supabase.js';
@@ -845,7 +871,7 @@ function AppContent() {
       }
     };
     document.head.appendChild(script);
-    
+
     const clickOutside = (e) => { if (searchRef.current && !searchRef.current.contains(e.target)) setShowSuggestions(false); };
     document.addEventListener('mousedown', clickOutside);
     return () => document.removeEventListener('mousedown', clickOutside);
@@ -853,95 +879,79 @@ function AppContent() {
 
   const apiInstance = useMemo(() => sb ? createApi(sb) : null, [sb]);
 
-  const loadData = async () => {
+  useEffect(() => {
     if (!apiInstance) return;
-    setLoading(true);
-    const [cats, prods] = await Promise.all([apiInstance.getCategories(), apiInstance.getProducts()]);
-    setCategories(cats);
-    setProducts(prods);
-    setLoading(false);
-  };
-
-  useEffect(() => { if (apiInstance) loadData(); }, [apiInstance]);
+    const load = async () => {
+      setLoading(true);
+      const [cats, prods] = await Promise.all([apiInstance.getCategories(), apiInstance.getProducts()]);
+      setCategories(cats);
+      setProducts(prods);
+      setLoading(false);
+    };
+    load();
+  }, [apiInstance]);
 
   const searchSuggestions = useMemo(() => {
     if (search.length < 2) return [];
-    return products.filter(p => p.nom.toLowerCase().includes(search.toLowerCase())).slice(0, 6);
+    return products.filter(p => p.nom.toLowerCase().includes(search.toLowerCase())).slice(0, 10); 
   }, [search, products]);
 
-  const filtered = useMemo(() => {
-    let res = products.filter(p => (activeCategory === "Tout" || p.categorie === activeCategory) && p.nom.toLowerCase().includes(search.toLowerCase()));
-  
-    return res.sort((a, b) => {
-      const pa = Number(a.prix_standard || a.prix_avion || a.prix_bateau || 0);
-      const pb = Number(b.prix_standard || b.prix_avion || b.prix_bateau || 0);
-      return sortOrder === 'asc' ? pa - pb : pb - pa;
-    });
-  }, [products, activeCategory, search, sortOrder]);
-
-  const addToCart = (product, mode, price, quantity = 1) => {
-    const existing = cart.find(i => i.id === product.id && i.mode === mode);
-    if (existing) {
-      setCart(cart.map(i => (i.id === product.id && i.mode === mode) ? { ...i, quantity: i.quantity + quantity } : i));
-    } else {
-      setCart([...cart, { ...product, mode, finalPrice: price, quantity: quantity, cartId: Date.now() }]);
-    }
-    setIsCartOpen(true);
-  };
-
-    const groupedProducts = useMemo(() => {
-    const groups = {};
-    const filtered = products.filter(p => p.nom.toLowerCase().includes(search.toLowerCase()));
-    categories.forEach(cat => { groups[cat.name] = filtered.filter(p => p.categorie === cat.name); });
-    return groups;
-  }, [products, categories, search]);
-
-    const filteredProducts = useMemo(() => {
-    return products.filter(p => p.categorie === activeCategory && p.nom.toLowerCase().includes(search.toLowerCase()));
-  }, [products, activeCategory, search]);
-
- const scrollToCategory = (catName) => {
+  const scrollToCategory = (catName) => {
     setActiveCategory(catName);
     setIsMenuOpen(false);
     setTimeout(() => {
       const id = catName === "Tout" ? 'header-categories' : `section-${catName.replace(/\s+/g, '-').toLowerCase()}`;
       const element = document.getElementById(id);
-      if (catName === "Tout") window.scrollTo({ top: 0, behavior: 'smooth' });
-      else if (element) {
+      if (element) {
         const offset = 160;
-        const pos = element.getBoundingClientRect().top + window.pageYOffset;
-        window.scrollTo({ top: pos - offset, behavior: 'smooth' });
+        window.scrollTo({ top: element.getBoundingClientRect().top + window.pageYOffset - offset, behavior: 'smooth' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }, 150);
   };
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      setIsScrolled(currentScrollY > 50);
+      if (currentScrollY > lastScrollY && currentScrollY > 100) setShowHeader(false);
+      else setShowHeader(true);
+      setLastScrollY(currentScrollY);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
+
   const updateCartQty = (cartId, delta) => {
-    setCart(prev => prev.map(item => {
-      if (item.cartId === cartId) {
-        return { ...item, quantity: Math.max(1, item.quantity + delta) };
-      }
-      return item;
-    }));
+    setCart(prev => prev.map(item => item.cartId === cartId ? { ...item, quantity: Math.max(1, item.quantity + delta) } : item));
   };
 
-  if (view === 'admin') return <AdminDashboard products={products} categories={categories} api={apiInstance} sb={sb} onRefresh={loadData} onBack={() => setView('home')} />;
-  if (view === 'about') return <AboutPage onBack={() => setView('home')} />;
-  if (view === 'detail' && selectedProduct) return <ProductDetail product={selectedProduct} onBack={() => setView('home')} onAddToCart={addToCart} />;
-  if (view === 'checkout') return <CheckoutPage cart={cart} total={cart.reduce((s, i) => s + (i.finalPrice * i.quantity), 0)} api={apiInstance} onBack={() => setView('home')} />;
+  if (view === 'detail' && selectedProduct) return <ProductDetail product={selectedProduct} onBack={() => window.history.back()} onAddToCart={(p, mode, price, qty) => {setCart([...cart, {...p, mode, finalPrice: price, quantity: qty, cartId: Date.now()}]); setIsCartOpen(true);}} />;
+  if (view === 'admin') return <AdminDashboard products={products} categories={categories} api={apiInstance} sb={sb} onRefresh={loadData} onBack={() => window.history.back()} />;
+  if (view === 'about') return <AboutPage onBack={() => window.history.back()} />;
+  if (view === 'checkout') return <CheckoutPage cart={cart} total={cart.reduce((s, i) => s + (i.finalPrice * i.quantity), 0)} api={apiInstance} onBack={() => window.history.back()} />;
 
   return (
-    <div className="min-h-screen bg-white font-sans text-gray-900 selection:bg-[#D0A050]/20 overflow-x-hidden">
-      <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
+    <div className="min-h-screen bg-[#FDFDFD] font-sans text-[#0A1A3A] overflow-x-hidden">
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .google-sans-header { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; letter-spacing: -0.04em; }
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@300;400;500;600;700&family=Bitter:wght@700&family=Karla:wght@500&display=swap');
+        .designer-title { font-family: 'Syne', sans-serif; }
+        .designer-body { font-family: 'Inter', sans-serif; }
+        .bitter-font { font-family: 'Bitter', serif; }
+        .karla-font { font-family: 'Karla', sans-serif; }
+        .roboto-font { font-family: 'Syne', sans-serif; }
+        @keyframes scrollUp { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
+        @keyframes scrollDown { 0% { transform: translateY(-50%); } 100% { transform: translateY(0); } }
+        .animate-vertical-up { animation: scrollUp 40s linear infinite; }
+        .animate-vertical-down { animation: scrollDown 40s linear infinite; }
+        .animate-fade-in-up { animation: fade-in-up 0.8s ease-out forwards; }
+        @keyframes fade-in-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-        .animate-fade-in { animation: fade-in 0.4s ease-out; }
       `}</style>
-          {/* Header Public Premium avec Suggestions et Prix */}
-<header className={`fixed top-0 left-0 right-0 z-[600] transition-all duration-500 ease-in-out transform ${showHeader ? 'translate-y-0' : '-translate-y-full'} ${isScrolled ? 'bg-white/90 backdrop-blur-xl shadow-lg border-b border-[#D4AF37]/30 py-3' : 'bg-blue-800 py-5'}`}>
+
+      {/* Header Premium */}
+      <header className={`fixed top-0 left-0 right-0 z-[600] transition-all duration-500 transform ${showHeader ? 'translate-y-0' : '-translate-y-full'} ${isScrolled ? 'bg-white/90 backdrop-blur-xl shadow-lg border-b border-[#D4AF37]/30 py-3' : 'bg-blue-900 py-5'}`}>
         <div className="max-w-7xl mx-auto px-4 md:px-12 flex flex-wrap items-center justify-between gap-y-3">
           <div className="flex items-center gap-1 md:gap-4 shrink-0">
             <button onClick={() => setIsMenuOpen(true)} className={`p-2 rounded-full transition-all active:scale-90 ${isScrolled ? 'text-[#0A1A3A] hover:bg-gray-100' : 'text-white hover:bg-white/10'}`}>
@@ -952,55 +962,21 @@ function AppContent() {
             </div>
           </div>
 
-          {/* GOOGLE-LIKE SEARCH BAR AVEC BANDE HORIZONTALE DE SUGGESTIONS */}
-          <div className="order-last w-full sm:order-none sm:w-auto sm:flex-1 sm:max-w-[600px] relative px-1 sm:px-0" ref={searchRef}>
-            <div className={`flex items-center rounded-[2rem] px-5 py-3 gap-3 transition-all ${isScrolled ? 'bg-gray-100 border border-gray-200' : 'bg-white/10 backdrop-blur-md border border-white/20'}`}>
+          <div className="order-last w-full sm:order-none sm:w-auto sm:flex-1 sm:max-w-[500px] relative px-1 sm:px-0" ref={searchRef}>
+            <div className={`flex items-center rounded-[2rem] px-5 py-3 gap-3 transition-all ${isScrolled ? 'bg-gray-100 border border-gray-100' : 'bg-white/10 backdrop-blur-md border border-white/20'}`}>
               <Search size={18} className={isScrolled ? 'text-gray-400' : 'text-white/60'} />
-              <input 
-                type="text" 
-                placeholder="Trouver une pépite, un article..." 
-                className={`bg-transparent border-none text-xs md:text-sm w-full focus:ring-0 focus:outline-none p-0 font-medium ${isScrolled ? 'text-[#0A1A3A]' : 'text-white placeholder-white/50'}`} 
-                value={search} 
-                onChange={e => {setSearch(e.target.value); setShowSuggestions(true);}} 
-                onFocus={() => setShowSuggestions(true)}
-              />
-              {search && (
-                <button onClick={() => {setSearch(''); setShowSuggestions(false);}} className={`p-1 rounded-full ${isScrolled ? 'bg-gray-200 text-gray-500' : 'bg-white/20 text-white'}`}><X size={12}/></button>
-              )}
+              <input type="text" placeholder="Rechercher une pépite..." className={`bg-transparent border-none text-xs md:text-sm w-full focus:ring-0 focus:outline-none p-0 font-medium ${isScrolled ? 'text-[#0A1A3A]' : 'text-white placeholder-white/50'}`} value={search} onChange={e => {setSearch(e.target.value); setShowSuggestions(true);}} onFocus={() => setShowSuggestions(true)} />
             </div>
-
-            {/* Suggestions en BANDE HORIZONTALE (NOUVEAU) */}
             {showSuggestions && searchSuggestions.length > 0 && (
-              <div className="absolute top-[110%] left-0 right-0 bg-white/95 backdrop-blur-xl rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-gray-100 overflow-hidden z-[800] animate-fade-in mx-1 sm:mx-0 p-4">
-                 <div className="flex items-center justify-between mb-4 px-2">
-                    <span className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.2em]">Pépites trouvées</span>
-                    <button onClick={() => setShowSuggestions(false)} className="text-[10px] font-bold text-gray-400 hover:text-red-500">FERMER</button>
-                 </div>
-                 
+              <div className="absolute top-[110%] left-0 right-0 bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-100 z-[800] animate-fade-in p-4">
                  <div className="flex flex-row overflow-x-auto no-scrollbar gap-4 pb-2">
                     {searchSuggestions.map(p => (
-                      <div 
-                        key={p.id} 
-                        onClick={() => {setSelectedProduct(p); setView('detail'); setShowSuggestions(false); setSearch(''); window.scrollTo(0,0);}} 
-                        className="flex-shrink-0 w-44 bg-gray-50/50 hover:bg-white border border-gray-100 hover:border-[#D4AF37]/40 rounded-[2rem] p-3 transition-all cursor-pointer group shadow-sm"
-                      >
-                         <div className="aspect-square w-full rounded-2xl overflow-hidden mb-3 bg-white">
-                            <img src={p.image_urls?.[0]} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="" />
-                         </div>
-                         <div className="px-1 min-w-0">
-                            <p className="text-[11px] font-bold text-[#0A1A3A] truncate uppercase leading-tight">{p.nom}</p>
-                            <div className="flex items-center justify-between mt-1">
-                               <span className="text-[8px] font-black text-[#D4AF37] uppercase truncate max-w-[60%]">{p.categorie}</span>
-                               <span className="text-[10px] font-black text-[#0A1A3A]">{(p.prix_standard || p.prix_avion)?.toLocaleString()}F</span>
-                            </div>
-                         </div>
+                      <div key={p.id} onClick={() => {navigateTo('detail', p); setShowSuggestions(false); setSearch('');}} className="flex-shrink-0 w-44 bg-gray-50 hover:bg-white border border-gray-100 rounded-[2rem] p-3 transition-all cursor-pointer">
+                         <div className="aspect-square w-full rounded-2xl overflow-hidden mb-3"><img src={p.image_urls?.[0]} className="w-full h-full object-cover" alt="" /></div>
+                         <p className="text-[11px] font-bold text-[#0A1A3A] truncate uppercase">{p.nom}</p>
+                         <p className="text-[10px] font-black text-[#D4AF37] mt-1">{p.prix_standard?.toLocaleString()}F</p>
                       </div>
                     ))}
-                    {/* Bouton "Tout voir" en fin de bande */}
-                    <div onClick={() => setShowSuggestions(false)} className="flex-shrink-0 w-24 flex flex-col items-center justify-center bg-gray-50 rounded-[2rem] border border-dashed border-gray-200 cursor-pointer hover:bg-gray-100 transition-colors">
-                       <ArrowRight className="text-[#D4AF37] mb-2" size={24} />
-                       <span className="text-[8px] font-black text-center uppercase tracking-tighter">Tout voir</span>
-                    </div>
                  </div>
               </div>
             )}
@@ -1015,40 +991,61 @@ function AppContent() {
         </div>
       </header>
 
-      <HeroSection/>
+      <div className="h-20" />
+      <HeroSection onScrollToCategories={() => scrollToCategory("Tout")} />
 
-      {/* Barre de Catégories Responsive (Scroll horizontal) - Dynamique depuis Supabase */}
-      <div   className="border-b bg-white sticky top-[120px] sm:top-[81px] z-40 overflow-x-auto no-scrollbar transition-all">
-        <div className="max-w-7xl mx-auto flex gap-6 md:gap-10 px-6 md:px-12 py-4 md:py-6 whitespace-nowrap">
-          <button onClick={() => setActiveCategory("Tout")} className={`text-[10px] md:text-xs font-black uppercase tracking-widest relative pb-1 transition-all ${activeCategory === "Tout" ? 'text-[#002D5A]' : 'text-blue-500'}`}>Tout</button>
+      <div id="header-categories" className="border-b bg-white sticky top-0 z-40 overflow-x-auto no-scrollbar pt-[130px] sm:pt-[85px]">
+        <div className="max-w-7xl mx-auto flex gap-10 px-8 py-5 whitespace-nowrap items-center border-t border-gray-100">
+          <button onClick={() => scrollToCategory("Tout")} className={`text-[11px] font-bold uppercase tracking-widest relative pb-2 transition-all ${activeCategory === "Tout" ? 'text-[#0A1A3A]' : 'text-gray-400 hover:text-gray-600'}`}>Tout{activeCategory === "Tout" && <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#D4AF37] rounded-full"></div>}</button>
           {categories.map(c => (
-            <button key={c.id} onClick={() => setActiveCategory(c.name)} className={`text-[10px] md:text-xs  Alegreya-font uppercase tracking-widest relative pb-1 transition-all ${activeCategory === c.name ? 'text-[#002D5A]' : 'text-gray-500 hover:text-blue-700'}`}>
-              {c.name}
-              {activeCategory === c.name && <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#D0A050] rounded-full"></div>}
-            </button>
+            <button key={c.id} onClick={() => scrollToCategory(c.name)} className={`text-[11px] font-bold uppercase tracking-widest relative pb-2 transition-all ${activeCategory === c.name ? 'text-[#0A1A3A]' : 'text-gray-400 hover:text-gray-600'}`}>{c.name}{activeCategory === c.name && <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#D4AF37] rounded-full"></div>}</button>
           ))}
         </div>
       </div>
-     
+
       <main className="max-w-7xl mx-auto px-6 py-16 min-h-screen">
-        <div className="space-y-24">
-          {activeCategory === "Tout" ? (
-            categories.map(cat => groupedProducts[cat.name]?.length > 0 && (
+        <div className="space-y-32">
+          {activeCategory === "Tout" ? categories.map(cat => {
+            const catProds = products.filter(p => p.categorie === cat.name && p.nom.toLowerCase().includes(search.toLowerCase()));
+            return catProds.length > 0 && (
               <section key={cat.id} id={`section-${cat.name.replace(/\s+/g, '-').toLowerCase()}`} className="animate-fade-in-up scroll-mt-24">
                 <div className="flex items-center gap-6 mb-10">
                   <h2 className="text-3xl md:text-5xl font-black text-[#0A1A3A] designer-title uppercase tracking-tighter">{cat.name}</h2>
                   <div className="h-px flex-1 bg-gradient-to-r from-[#D4AF37]/40 to-transparent"></div>
-                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.4em]">{groupedProducts[cat.name].length} Produits</span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-                  {groupedProducts[cat.name].map(p => ( <ProductCard key={p.id} product={p} onClick={() => {setSelectedProduct(p); setView('detail');}} /> ))}
+                  {catProds.map(p => (
+                    <div key={p.id} onClick={() => navigateTo('detail', p)} className="group bg-white rounded-[3rem] overflow-hidden border border-gray-100 hover:border-[#D4AF37]/40 shadow-sm hover:shadow-2xl transition-all duration-700 cursor-pointer p-6">
+                      <div className="aspect-square bg-gray-50 overflow-hidden relative rounded-[2rem] mb-6 shadow-inner">
+                        <img src={p.image_urls?.[0]} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" alt="" />
+                        <div className={`absolute top-4 left-4 px-4 py-1.5 rounded-xl text-[8px] font-black text-white shadow-xl ${p.type_dispo === 'STOCK' ? 'bg-blue-600' : 'bg-red-600'}`}>{p.type_dispo}</div>
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-[#D4AF37] text-[8px] font-black uppercase tracking-[0.3em]">{p.categorie}</p>
+                        <h3 className="text-lg font-bold text-[#0A1A3A] designer-title uppercase truncate">{p.nom}</h3>
+                        <div className="flex justify-between items-center pt-5 border-t border-gray-100">
+                          <p className="text-xl font-black text-[#0A1A3A] tracking-tighter">{p.prix_standard?.toLocaleString()} F</p>
+                          <div className="p-3 bg-gray-50 group-hover:bg-[#0A1A3A] group-hover:text-white transition-all rounded-xl"><ArrowRight size={18}/></div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </section>
-            ))
-          ) : (
-            <section id={`section-${activeCategory.replace(/\s+/g, '-').toLowerCase()}`} className="animate-fade-in-up scroll-mt-24">
+            );
+          }) : (
+            <section className="animate-fade-in-up scroll-mt-24">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-                {filteredProducts.map(p => ( <ProductCard key={p.id} product={p} onClick={() => {setSelectedProduct(p); setView('detail');}} /> ))}
+                {products.filter(p => p.categorie === activeCategory && p.nom.toLowerCase().includes(search.toLowerCase())).map(p => (
+                  <div key={p.id} onClick={() => navigateTo('detail', p)} className="group bg-white rounded-[3rem] overflow-hidden border border-gray-100 hover:border-[#D4AF37]/40 shadow-sm hover:shadow-2xl transition-all duration-700 cursor-pointer p-6">
+                    <div className="aspect-square bg-gray-50 overflow-hidden relative rounded-[2rem] mb-6 shadow-inner"><img src={p.image_urls?.[0]} className="w-full h-full object-cover" alt="" /></div>
+                    <div className="space-y-2">
+                      <p className="text-[#D4AF37] text-[8px] font-black uppercase tracking-[0.3em]">{p.categorie}</p>
+                      <h3 className="text-lg font-bold text-[#0A1A3A] designer-title uppercase truncate">{p.nom}</h3>
+                      <p className="text-xl font-black text-[#0A1A3A] mt-4">{p.prix_standard?.toLocaleString()} F</p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </section>
           )}
@@ -1056,8 +1053,7 @@ function AppContent() {
       </main>
 
 
-
-      <footer className="bg-[#002D5A] text-white pt-24 pb-12 px-8 rounded-t-[4rem] md:rounded-t-[6rem] font-sans mt-20">
+       <footer className="bg-[#002D5A] text-white pt-24 pb-12 px-8 rounded-t-[4rem] md:rounded-t-[6rem] font-sans mt-20">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-16 mb-20 text-center md:text-left">
           <div className="space-y-8">
             <h2 className="text-3xl font-black tracking-tighter uppercase google-sans-header">Industrie de l'avenir</h2>
@@ -1089,55 +1085,7 @@ function AppContent() {
         <p className="text-[9px] text-gray-600 uppercase text-center border-t border-white/5 pt-10 font-black tracking-[0.5em] tracking-widest">© 2024 l'industie de l'avenir . L'EXCELLENCE SANS FRONTIÈRES</p>
       </footer>
 
-      {/* Drawer Panier avec +/- Quantité */}
-      {isCartOpen && (
-        <div className="fixed inset-0 z-[1000] flex justify-end">
-          <div className="absolute inset-0 bg-[#002D5A]/85 backdrop-blur-md" onClick={() => setIsCartOpen(false)}></div>
-          <div className="relative w-full sm:max-w-md bg-white h-full shadow-2xl flex flex-col p-8 md:p-12 animate-slide-in-right overflow-y-auto no-scrollbar font-sans">
-             <div className="flex justify-between items-center mb-10 md:mb-16">
-               <h2 className="text-3xl md:text-4xl font-black text-[#002D5A] tracking-tighter uppercase leading-none">Votre Panier</h2>
-               <button onClick={() => setIsCartOpen(false)} className="p-4 bg-gray-100 rounded-full active:scale-90 hover:bg-red-50 hover:text-red-500 transition-all"><X size={20}/></button>
-             </div>
-             <div className="flex-1 space-y-6">
-                {cart.length === 0 ? (
-                  <div className="text-center py-40 opacity-10 flex flex-col items-center">
-                    <ShoppingCart size={120} strokeWidth={0.5}/><p className="mt-8 font-black uppercase text-sm tracking-[0.3em] font-sans">Votre panier est vide</p>
-                  </div>
-                ) : cart.map((item) => (
-                  <div key={item.cartId} className="flex gap-4 md:gap-6 items-center bg-gray-50 p-6 rounded-[2.5rem] border shadow-sm relative animate-fade-in">
-                    <img src={item.image_urls?.[0]} className="w-20 h-20 rounded-[1.5rem] object-cover shadow-lg border" alt="" />
-                    <div className="flex-1 min-w-0">
-                      <p className="font-black text-[#002D5A] truncate uppercase text-[10px] leading-tight mb-2 pr-4">{item.nom}</p>
-                      <div className="flex items-center gap-4 flex-wrap">
-                         <div className="flex items-center gap-3 bg-white px-3 py-1.5 rounded-xl border shadow-sm">
-                            <button onClick={() => updateCartQty(item.cartId, -1)} className="text-gray-400 active:scale-110"><Minus size={12}/></button>
-                            <span className="font-black text-xs min-w-[12px] text-center">{item.quantity}</span>
-                            <button onClick={() => updateCartQty(item.cartId, 1)} className="text-gray-400 active:scale-110"><Plus size={12}/></button>
-                         </div>
-                         <p className="font-black text-[#002D5A] text-xs">{(item.finalPrice * item.quantity).toLocaleString()} F</p>
-                      </div>
-                    </div>
-                    <button onClick={() => setCart(cart.filter(i=>i.cartId!==item.cartId))} className="absolute -top-2 -right-2 bg-white text-red-500 p-2 rounded-full shadow-md border active:scale-90 transition-all"><X size={14}/></button>
-                  </div>
-                ))}
-             </div>
-             {cart.length > 0 && (
-               <div className="pt-8 border-t border-gray-100 space-y-8">
-                  <div className="flex justify-between items-end">
-                    <span className="text-gray-400 font-black uppercase text-[10px] tracking-[0.5em]">Total Commande</span>
-                    <span className="text-3xl font-black text-[#002D5A] tracking-tighter">{(cart.reduce((s, i) => s + (i.finalPrice * i.quantity), 0)).toLocaleString()} F</span>
-                  </div>
-                  <button onClick={() => {setIsCartOpen(false); setView('checkout'); window.scrollTo(0,0);}} className="w-full bg-[#002D5A] text-white py-6 rounded-[2rem] font-black text-xl border-b-8 border-black/20 active:scale-95 transition-all uppercase tracking-widest">Valider la Commande</button>
-               </div>
-             )}
-          </div>
-        </div>
-      )}
-
-      <Nudge api={apiInstance} />
-
-      {/* Menu Mobile - Dynamique depuis Supabase */}
-{isMenuOpen && (
+      {isMenuOpen && (
         <div className="fixed inset-0 z-[1000] flex">
           <div className="absolute inset-0 bg-blend-soft-light backdrop-blur-md" onClick={() => setIsMenuOpen(false)}></div>
           <div className="relative w-75 max-w-[85%] bg-blue-950 h-full shadow-2xl animate-slide-in p-10 flex flex-col font-sans no-scrollbar overflow-y-auto">
@@ -1152,7 +1100,6 @@ function AppContent() {
                 >
                   Toutes les Pépites
                 </button>
-                
                 {categories.map(c => (
                   <button 
                     key={c.id} 
@@ -1162,11 +1109,49 @@ function AppContent() {
                     {c.name}
                   </button>
                 ))}
-                
                 <div className="pt-10 border-t border-gray-100">
                   <button onClick={() => {setView('about'); setIsMenuOpen(false);}} className="text-left font-medium text-xl text-white transition-colors">Notre Processus</button>
                 </div>
              </nav>
+          </div>
+        </div>
+      )}
+
+      {isCartOpen && (
+        <div className="fixed inset-0 z-[1000] flex justify-end">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={() => setIsCartOpen(false)}></div>
+          <div className="relative w-full max-w-md bg-white h-full shadow-2xl flex flex-col p-8 animate-slide-in-right overflow-y-auto no-scrollbar font-sans">
+             <div className="flex justify-between items-center mb-10">
+               <h2 className="text-3xl font-black text-[#0A1A3A] tracking-tighter uppercase">Votre Panier</h2>
+               <button onClick={() => setIsCartOpen(false)} className="p-4 bg-gray-100 rounded-full"><X size={20}/></button>
+             </div>
+             <div className="flex-1 space-y-6">
+                {cart.length === 0 ? <p className="text-center py-20 font-bold opacity-30">Panier vide</p> : cart.map((item) => (
+                  <div key={item.cartId} className="flex gap-4 items-center bg-gray-50 p-4 rounded-3xl border border-gray-100">
+                    <img src={item.image_urls?.[0]} className="w-16 h-16 rounded-xl object-cover" alt="" />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-[#0A1A3A] truncate text-xs uppercase">{item.nom}</p>
+                      <div className="flex items-center gap-4 mt-1">
+                        <div className="flex items-center gap-2 bg-white px-2 py-1 rounded-lg border">
+                          <button onClick={() => updateCartQty(item.cartId, -1)}><Minus size={12}/></button>
+                          <span className="text-xs font-black">{item.quantity}</span>
+                          <button onClick={() => updateCartQty(item.cartId, 1)}><Plus size={12}/></button>
+                        </div>
+                        <p className="font-black text-[#0A1A3A] text-xs">{(item.finalPrice * item.quantity).toLocaleString()} F</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+             </div>
+             {cart.length > 0 && (
+               <div className="pt-8 border-t border-gray-100">
+                  <div className="flex justify-between mb-6">
+                    <span className="font-bold text-gray-400">TOTAL</span>
+                    <span className="text-2xl font-black text-[#0A1A3A]">{(cart.reduce((s, i) => s + (i.finalPrice * i.quantity), 0)).toLocaleString()} F</span>
+                  </div>
+                  <button onClick={() => navigateTo('checkout')} className="w-full bg-[#0A1A3A] text-white py-5 rounded-2xl font-black uppercase shadow-xl tracking-widest active:scale-95 transition-all">Valider la Commande</button>
+               </div>
+             )}
           </div>
         </div>
       )}

@@ -991,10 +991,10 @@ function AppContent() {
         </div>
       </header>
 
-      <div className="h-5" />
+      <div className="h-20" />
       <HeroSection onScrollToCategories={() => scrollToCategory("Tout")} />
 
-      <div id="header-categories" className="border-b bg-white sticky top-0 z-40 overflow-x-auto no-scrollbar pt-[130px] sm:pt-[85px]">
+      <div id="header-categories" className="border-b bg-white sticky top-0 z-40 overflow-x-auto no-scrollbar pt-[10px] sm:pt-[5px]">
         <div className="max-w-7xl mx-auto flex gap-10 px-8 py-5 whitespace-nowrap items-center border-t border-gray-100">
           <button onClick={() => scrollToCategory("Tout")} className={`text-[11px] font-bold uppercase tracking-widest relative pb-2 transition-all ${activeCategory === "Tout" ? 'text-[#0A1A3A]' : 'text-gray-400 hover:text-gray-600'}`}>Tout{activeCategory === "Tout" && <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#D4AF37] rounded-full"></div>}</button>
           {categories.map(c => (

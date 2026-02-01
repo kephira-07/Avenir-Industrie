@@ -896,6 +896,10 @@ function AppContent() {
     return groups;
   }, [products, categories, search]);
 
+    const filteredProducts = useMemo(() => {
+    return products.filter(p => p.categorie === activeCategory && p.nom.toLowerCase().includes(search.toLowerCase()));
+  }, [products, activeCategory, search]);
+
  const scrollToCategory = (catName) => {
     setActiveCategory(catName);
     setIsMenuOpen(false);

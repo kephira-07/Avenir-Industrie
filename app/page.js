@@ -1013,10 +1013,10 @@ function AppContent() {
                   <h2 className="text-3xl md:text-5xl font-black text-[#0A1A3A] designer-title uppercase tracking-tighter">{cat.name}</h2>
                   <div className="h-px flex-1 bg-gradient-to-r from-[#D4AF37]/40 to-transparent"></div>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
                   {catProds.map(p => (
-                    <div key={p.id} onClick={() => navigateTo('detail', p)} className="group bg-white rounded-[3rem] overflow-hidden border border-gray-100 hover:border-[#D4AF37]/40 shadow-sm hover:shadow-2xl transition-all duration-700 cursor-pointer p-6">
-                      <div className="aspect-square bg-gray-50 overflow-hidden relative rounded-[2rem] mb-6 shadow-inner">
+                    <div key={p.id} onClick={() => navigateTo('detail', p)} className="group bg-white rounded-[1rem] overflow-hidden border border-gray-100 hover:border-[#D4AF37]/40 shadow-sm hover:shadow-2xl transition-all duration-700 cursor-pointer ">
+                      <div className="aspect-square bg-gray-50 overflow-hidden relative rounded-[1rem] mb-6 shadow-inner">
                         <img src={p.image_urls?.[0]} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" alt="" />
                         <div className={`absolute top-4 left-4 px-4 py-1.5 rounded-xl text-[8px] font-black text-white shadow-xl ${p.type_dispo === 'STOCK' ? 'bg-blue-600' : 'bg-red-600'}`}>{p.type_dispo}</div>
                       </div>

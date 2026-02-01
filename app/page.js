@@ -889,6 +889,13 @@ function AppContent() {
     setIsCartOpen(true);
   };
 
+    const groupedProducts = useMemo(() => {
+    const groups = {};
+    const filtered = products.filter(p => p.nom.toLowerCase().includes(search.toLowerCase()));
+    categories.forEach(cat => { groups[cat.name] = filtered.filter(p => p.categorie === cat.name); });
+    return groups;
+  }, [products, categories, search]);
+
  const scrollToCategory = (catName) => {
     setActiveCategory(catName);
     setIsMenuOpen(false);

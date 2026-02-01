@@ -304,72 +304,155 @@ const AboutPage = ({ onBack, sectionId }) => {
 };
 
 
-
 const ProductDetail = ({ product, onBack, onAddToCart }) => {
-  const [activeImg, setActiveImg] = useState(product.image_urls?.[0] || '');
-  const [mode, setMode] = useState('AVION');
+  const [activeImgIndex, setActiveImgIndex] = useState(0);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [qty, setQty] = useState(1);
+  const [showToast, setShowToast] = useState(false);
+  
   const isOrder = product.type_dispo === 'COMMANDE';
-  const price = isOrder ? (mode === 'AVION' ? product.prix_avion : product.prix_bateau) : product.prix_standard;
+  // Si c'est sur commande, on affiche le prix de base (souvent le prix avion ou min)
+  const price = isOrder ? product.prix_avion : product.prix_standard;
 
-  useEffect(() => {
-    if (product.image_urls?.length > 0) setActiveImg(product.image_urls[0]);
-  }, [product]);
+  const nextImg = () => setActiveImgIndex((prev) => (prev + 1) % product.image_urls.length);
+  const prevImg = () => setActiveImgIndex((prev) => (prev - 1 + product.image_urls.length) % product.image_urls.length);
+
+  const handleAddToCart = () => {
+    onAddToCart(product, isOrder ? 'WHATSAPP' : 'STOCK', price, qty);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+  };
 
   return (
     <div className="min-h-screen bg-white animate-fade-in pb-20 font-sans overflow-x-hidden">
+      {/* Toast Notification */}
+      {showToast && (
+        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[1000] bg-[#0A1A3A] text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 border border-[#D4AF37] animate-fade-in-up">
+          <div className="bg-[#D4AF37] p-1 rounded-full text-[#0A1A3A]"><CheckCircle size={16}/></div>
+          <p className="font-bold text-sm uppercase tracking-widest">Produit ajouté au panier !</p>
+        </div>
+      )}
+
+      {/* Galerie Plein Écran */}
+      {isFullscreen && (
+        <div className="fixed inset-0 z-[1000] bg-black flex flex-col items-center justify-center p-4">
+          <button onClick={() => setIsFullscreen(false)} className="absolute top-6 right-6 text-white bg-white/10 p-3 rounded-full hover:bg-white/20 transition-all">
+            <X size={32} />
+          </button>
+          
+          <div className="relative w-full max-w-4xl aspect-square md:aspect-auto md:h-[80vh] flex items-center justify-center">
+            <img 
+              src={product.image_urls[activeImgIndex]} 
+              className="max-w-full max-h-full object-contain animate-fade-in" 
+              alt="Fullscreen view" 
+            />
+            
+            <button onClick={(e) => { e.stopPropagation(); prevImg(); }} className="absolute left-0 p-4 text-white hover:scale-110 transition-transform">
+              <ChevronLeft size={48} />
+            </button>
+            <button onClick={(e) => { e.stopPropagation(); nextImg(); }} className="absolute right-0 p-4 text-white hover:scale-110 transition-transform">
+              <ChevronRight size={48} />
+            </button>
+          </div>
+
+          <div className="absolute bottom-10 text-white font-black uppercase tracking-[0.4em] text-xs">
+            {activeImgIndex + 1} / {product.image_urls.length}
+          </div>
+        </div>
+      )}
+
+      {/* Header Interne */}
       <div className="sticky top-0 bg-white/95 backdrop-blur-md z-[700] px-4 md:px-6 py-4 border-b flex items-center justify-between">
-        <button onClick={onBack} className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"><ArrowLeft size={20}/></button>
-        <span className="text-[10px] font-black uppercase text-[#D0A050]">Vitrine </span>
+        <button onClick={onBack} className="p-2 bg-gray-100 rounded-full hover:bg-[#0A1A3A] hover:text-white transition-all active:scale-90">
+          <ArrowLeft size={20}/>
+        </button>
+        <span className="text-[10px] font-black uppercase text-[#D4AF37] tracking-[0.3em]">Afri-Tech Luxury Store</span>
         <div className="w-10" />
       </div>
-      <div className="max-w-5xl mx-auto px-4 md:px-6 mt-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
+
+      <div className="max-w-7xl mx-auto px-4 md:px-12 mt-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24">
+          
+          {/* ZONE IMAGES */}
           <div className="space-y-6">
-            <div className="aspect-auto rounded-[1rem] overflow-hidden bg-gray-50 border shadow-xl">
-              <img src={activeImg} alt={product.nom} className="w-full h-full object-cover transition-all duration-500" />
+            <div 
+              onClick={() => setIsFullscreen(true)}
+              className="relative aspect-square rounded-[2rem] overflow-hidden bg-gray-50 border shadow-2xl cursor-zoom-in group"
+            >
+              <img src={product.image_urls[activeImgIndex]} alt={product.nom} className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105" />
+              <div className="absolute bottom-6 right-6 p-4 bg-white/20 backdrop-blur-md rounded-2xl text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                <Maximize2 size={24} />
+              </div>
             </div>
-            <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
+            
+            <div className="flex gap-4 overflow-x-auto no-scrollbar pb-4 px-2">
               {product.image_urls?.map((url, i) => (
-                <button key={i} onClick={() => setActiveImg(url)} className={`w-16 h-16 md:w-25 md:h-25 rounded-2xl overflow-hidden border-4 shrink-0 transition-all ${activeImg === url ? 'border-[#f9fbf89d] scale-105' : 'border-transparent opacity-60'}`}>
+                <button 
+                  key={i} 
+                  onClick={() => setActiveImgIndex(i)} 
+                  className={`w-20 h-20 md:w-28 md:h-28 rounded-2xl overflow-hidden border-4 shrink-0 transition-all ${activeImgIndex === i ? 'border-[#D4AF37] scale-110 shadow-xl' : 'border-transparent opacity-40 hover:opacity-80'}`}
+                >
                   <img src={url} className="w-full h-full object-cover" alt="" />
                 </button>
               ))}
             </div>
           </div>
-          <div className="space-y-8">
-            <div>
-              <span className="text-[#D0A050] font-black uppercase text-xs tracking-[0.4em] mb-2 block">{product.categorie}</span>
-              <h1 className="text-3xl md:text-5xl font-black text-[#002D5A] leading-tight uppercase tracking-tighter">{product.nom}</h1>
-              <p className="text-gray-500 mt-8 leading-relaxed text-lg whitespace-pre-line border-l-4 border-gray-100 pl-6">{product.description}</p>
+
+          {/* ZONE TEXTE */}
+          <div className="space-y-10 flex flex-col justify-center">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <span className="h-px w-8 bg-[#D4AF37]"></span>
+                <span className="text-[#D4AF37] font-black uppercase text-xs tracking-[0.4em]">{product.categorie}</span>
+              </div>
+              <h1 className="text-4xl md:text-6xl font-black text-[#0A1A3A] designer-title leading-tight uppercase tracking-tighter">
+                {product.nom}
+              </h1>
+              {/* Changement couleur : Noir profond pour la lisibilité */}
+              <p className="text-[#0A1A3A] font-medium leading-relaxed text-lg md:text-xl designer-body border-l-4 border-[#D4AF37] pl-8 py-2">
+                {product.description}
+              </p>
             </div>
-            <div className="p-8 bg-gray-100 rounded-[3rem] space-y-8">
+
+            <div className="p-8 md:p-12 bg-gray-50 rounded-[3.5rem] space-y-10 shadow-inner">
               <div className="flex justify-between items-center">
-                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Choisir Quantité</p>
-                 <div className="flex items-center gap-6 bg-white px-6 py-3 rounded-2xl shadow-sm border border-gray-200">
-                    <button onClick={() => setQty(Math.max(1, qty - 1))} className="text-[#002D5A] active:scale-90 transition-all"><Minus size={18}/></button>
-                    <span className="font-black text-xl w-6 text-center">{qty}</span>
-                    <button onClick={() => setQty(qty + 1)} className="text-[#002D5A] active:scale-90 transition-all"><Plus size={18}/></button>
+                 <p className="text-[10px] font-black text-[#0A1A3A] uppercase tracking-[0.2em]">SÉLECTION QUANTITÉ</p>
+                 <div className="flex items-center gap-8 bg-white px-8 py-4 rounded-[1.5rem] shadow-sm border border-gray-100">
+                    <button onClick={() => setQty(Math.max(1, qty - 1))} className="text-[#0A1A3A] hover:text-red-500 transition-colors active:scale-125"><Minus size={20}/></button>
+                    <span className="font-black text-2xl w-8 text-center text-[#0A1A3A]">{qty}</span>
+                    <button onClick={() => setQty(qty + 1)} className="text-[#0A1A3A] hover:text-green-500 transition-colors active:scale-125"><Plus size={20}/></button>
                  </div>
               </div>
-              {isOrder && (
-                <div className="grid grid-cols-2 gap-4">
-                  <button onClick={() => setMode('AVION')} className={`p-5 rounded-[2rem] border-2 transition-all flex flex-col items-center gap-2 ${mode === 'AVION' ? 'border-[#D0A050] bg-white shadow-lg' : 'border-transparent opacity-40'}`}>
-                    <Plane size={24} className="text-[#D0A050]"/><span className="text-[10px] font-black uppercase">Avion</span>
-                  </button>
-                  <button onClick={() => setMode('BATEAU')} className={`p-5 rounded-[2rem] border-2 transition-all flex flex-col items-center gap-2 ${mode === 'BATEAU' ? 'border-[#D0A050] bg-white shadow-lg' : 'border-transparent opacity-40'}`}>
-                    <Ship size={24} className="text-[#D0A050]"/><span className="text-[10px] font-black uppercase">Bateau</span>
-                  </button>
+
+              {/* Box Avion/Bateau enlevée pour "COMMANDE" */}
+              
+              <div className="flex justify-between items-end border-t border-gray-200 pt-8">
+                <div>
+                  <p className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.3em] mb-2">PRIX UNITAIRE</p>
+                  <p className="text-4xl md:text-5xl font-black text-[#0A1A3A] tracking-tighter">
+                    {Number(price)?.toLocaleString()} <span className="text-xl">FCFA</span>
+                  </p>
                 </div>
-              )}
-              <div className="flex justify-between items-end border-t border-gray-200 pt-6">
-                <div><p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Prix Unitaire</p><p className="text-3xl md:text-4xl font-black text-[#002D5A]">{Number(price)?.toLocaleString()} F</p></div>
-                <div className="text-right"><p className="text-[10px] font-black text-[#D0A050] uppercase mb-1">Sous-total</p><p className="text-xl font-black">{(Number(price) * qty).toLocaleString()} F</p></div>
+                <div className="text-right">
+                  <p className="text-[10px] font-black text-gray-400 uppercase mb-2">SOUS-TOTAL</p>
+                  <p className="text-2xl font-bold text-[#D4AF37]">{(Number(price) * qty).toLocaleString()} F</p>
+                </div>
               </div>
             </div>
-            <button onClick={() => onAddToCart(product, isOrder ? mode : 'STOCK', price, qty)} className="w-full bg-[#002D5A] text-white py-6 rounded-[2.5rem] font-black flex items-center justify-center gap-4 shadow-2xl active:scale-95 transition-all text-xl uppercase tracking-tighter border-b-8 border-black/20">
-              <ShoppingBag size={24} /> Ajouter {qty} au Panier
+
+            <button 
+              onClick={handleAddToCart}
+              className={`w-full py-7 rounded-[2.5rem] font-black flex items-center justify-center gap-4 shadow-2xl active:scale-95 transition-all text-xl uppercase tracking-widest border-b-[10px] border-black/20 ${isOrder ? 'bg-[#25D366] text-white' : 'bg-[#0A1A3A] text-white'}`}
+            >
+              {isOrder ? <Phone size={24} /> : <ShoppingBag size={24} />}
+              {isOrder ? `Commander via WhatsApp (${qty})` : `Ajouter au Panier`}
             </button>
+            
+            {isOrder && (
+              <p className="text-center text-[10px] font-bold text-[#25D366] uppercase tracking-widest animate-pulse">
+                * Les produits sur commande sont finalisés directement avec nos experts
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -693,6 +776,25 @@ const AdminDashboard = ({ products, categories, onRefresh, onBack, api, sb }) =>
   );
 };
 
+const ProductCard = ({ product, onClick }) => (
+  <div onClick={onClick} className="group bg-white rounded-[3rem] overflow-hidden border border-gray-100 hover:border-[#D4AF37]/40 shadow-sm hover:shadow-[0_40px_80px_rgba(0,0,0,0.08)] transition-all duration-700 cursor-pointer p-6 animate-fade-in">
+    <div className="aspect-square bg-gray-50 overflow-hidden relative rounded-[2rem] mb-6 shadow-inner">
+      <img src={product.image_urls?.[0]} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" alt={product.nom} />
+      <div className={`absolute top-4 left-4 px-4 py-1.5 rounded-xl text-[8px] font-black text-white shadow-xl ${product.type_dispo === 'STOCK' ? 'bg-blue-600' : 'bg-red-600'}`}>
+        {product.type_dispo}
+      </div>
+    </div>
+    <div className="space-y-2">
+      <p className="text-[#D4AF37] text-[8px] font-black uppercase tracking-[0.3em]">{product.categorie}</p>
+      <h3 className="text-lg font-bold text-[#0A1A3A] designer-title uppercase leading-tight truncate">{product.nom}</h3>
+      <div className="flex justify-between items-center pt-5 border-t border-gray-100">
+        <p className="text-xl font-black text-[#0A1A3A] tracking-tighter">{(product.prix_standard || product.prix_avion)?.toLocaleString()} F</p>
+        <div className="p-3 bg-gray-50 group-hover:bg-[#0A1A3A] group-hover:text-white transition-all rounded-xl shadow-inner"><ArrowRight size={18}/></div>
+      </div>
+    </div>
+  </div>
+);
+
 // --- APP CONTENT ---
 function AppContent() {
   const [sb, setSb] = useState(null);
@@ -917,58 +1019,29 @@ function AppContent() {
         </div>
       </div>
      
- <main className="max-w-7xl mx-auto px-4 md:px-12 py-10 min-h-screen animate-fade-in">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-16">
-          <div className="space-y-2">
-            <p className="text-[9px] font-black uppercase text-[#D0A050] tracking-[0.5em] flex items-center gap-4 animate-fade-in"><span className="h-px w-10 bg-[#D0A050]"></span> Boutique Exclusive</p>
-            <h2 className="text-3xl md:text-6xl font-black text-[#002D5A] tracking-tighter uppercase leading-tight animate-fade-in">{activeCategory}</h2>
-          </div>
-          <div className="flex items-center gap-4 py-3 px-6 bg-gray-50 rounded-2xl border shadow-sm self-start animate-fade-in">
-            <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Tri par Prix :</span>
-            <button onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')} className="text-[10px] font-black text-[#002D5A] flex items-center gap-2 uppercase tracking-widest active:scale-95 transition-all">
-              {sortOrder === 'asc' ? 'Croissant' : 'Décroissant'} <ChevronDown size={14} className={`transition-all ${sortOrder === 'desc' ? 'rotate-180' : ''}`}/>
-            </button>
-          </div>
+      <main className="max-w-7xl mx-auto px-6 py-16 min-h-screen">
+        <div className="space-y-24">
+          {activeCategory === "Tout" ? (
+            categories.map(cat => groupedProducts[cat.name]?.length > 0 && (
+              <section key={cat.id} id={`section-${cat.name.replace(/\s+/g, '-').toLowerCase()}`} className="animate-fade-in-up scroll-mt-24">
+                <div className="flex items-center gap-6 mb-10">
+                  <h2 className="text-3xl md:text-5xl font-black text-[#0A1A3A] designer-title uppercase tracking-tighter">{cat.name}</h2>
+                  <div className="h-px flex-1 bg-gradient-to-r from-[#D4AF37]/40 to-transparent"></div>
+                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.4em]">{groupedProducts[cat.name].length} Produits</span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+                  {groupedProducts[cat.name].map(p => ( <ProductCard key={p.id} product={p} onClick={() => {setSelectedProduct(p); setView('detail');}} /> ))}
+                </div>
+              </section>
+            ))
+          ) : (
+            <section id={`section-${activeCategory.replace(/\s+/g, '-').toLowerCase()}`} className="animate-fade-in-up scroll-mt-24">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+                {filteredProducts.map(p => ( <ProductCard key={p.id} product={p} onClick={() => {setSelectedProduct(p); setView('detail');}} /> ))}
+              </div>
+            </section>
+          )}
         </div>
-
-        {loading ? (
-          <div className="flex flex-col items-center justify-center py-40 opacity-20"><Loader2 size={60} className="animate-spin mb-4 text-[#002D5A]"/><p className="font-black uppercase text-xs tracking-widest text-center">Accès Cloud...</p></div>
-        ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 pb-32"> {/* MODIFIÉ : + de colonnes, gap réduit */}
-  {filtered.map(p => (
-    <div 
-      key={p.id} 
-      onClick={() => {setSelectedProduct(p); setView('detail'); window.scrollTo(0,0);}} 
-      className="group bg-white rounded-[2rem] md:rounded-[2.5rem] overflow-hidden border shadow-sm hover:shadow-xl transition-all duration-700 cursor-pointer p-2 md:p-3" // MODIFIÉ : arrondis et padding réduits
-    >
-      <div className="aspect-square bg-gray-50 overflow-hidden relative rounded-[1rem] mb-6 border shadow-inner"> {/* MODIFIÉ : marge basse réduite */}
-        <img 
-          src={p.image_urls?.[0]} 
-          alt={p.nom} 
-          className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
-        />
-        <div className={`absolute top-3 left-3 px-3 py-1 rounded-lg text-[7px] font-black text-white shadow-lg ${p.type_dispo === 'STOCK' ? 'bg-green-500' : 'bg-rose-600'}`}>
-          {p.type_dispo === 'STOCK' ? 'EN STOCK' : 'SUR COMMANDE'}
-        </div>
-      </div>
-
-      <div className="space-y-2"> {/* MODIFIÉ : espace entre les textes réduit */}
-        <p className="text-[#D0A050] text-[7px] font-black uppercase tracking-[0.3em]">{p.categorie}</p>
-        <h3 className="text-sm md:text-lg font-black text-[#002D5A] truncate uppercase tracking-tight">{p.nom}</h3>
-        
-        <div className="flex justify-between items-center pt-4 border-t border-gray-100"> {/* MODIFIÉ : padding-top réduit */}
-          <p className="text-lg md:text-xl font-black text-[#002D5A] tracking-tighter">
-            {(Number(p.prix_standard || p.prix_avion))?.toLocaleString()} F
-          </p>
-          <div className="p-3 bg-gray-50 rounded-2xl group-hover:bg-[#D0A050] group-hover:text-white transition-all shadow-inner"> {/* MODIFIÉ : bouton plus petit */}
-            <ArrowRight size={18}/>
-          </div>
-        </div>
-      </div>
-    </div>
-  ))}
-</div>
-        )}
       </main>
 
 

@@ -1018,14 +1018,14 @@ function AppContent() {
                     <div key={p.id} onClick={() => navigateTo('detail', p)} className="group bg-white rounded-[1rem] overflow-hidden border border-gray-100 hover:border-[#D4AF37]/40 shadow-sm hover:shadow-2xl transition-all duration-700 cursor-pointer ">
                       <div className="aspect-square bg-gray-50 overflow-hidden relative rounded-[1rem] mb-6 shadow-inner">
                         <img src={p.image_urls?.[0]} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" alt="" />
-                        <div className={`absolute top-4 left-4 px-4 py-1.5 rounded-xl text-[8px] font-black text-white shadow-xl ${p.type_dispo === 'STOCK' ? 'bg-blue-600' : 'bg-red-600'}`}>{p.type_dispo}</div>
+                        <div className={`absolute top-4 left-4 px-4 py-1.5 rounded-xl text-[8px] font-Karla text-white shadow-xl ${p.type_dispo === 'STOCK' ? 'bg-blue-600' : 'bg-red-600'}`}>{p.type_dispo}</div>
                       </div>
-                      <div className="space-y-2">
+                      <div className="space-y-2 p-3">
                         <p className="text-[#D4AF37] text-[8px] font-black uppercase tracking-[0.3em]">{p.categorie}</p>
-                        <h3 className="text-lg font-bold text-[#0A1A3A] designer-title uppercase truncate">{p.nom}</h3>
+                        <h3 className="text-lg font-karla text-[#0A1A3A] designer-title uppercase truncate">{p.nom}</h3>
                         <div className="flex justify-between items-center pt-5 border-t border-gray-100">
-                          <p className="text-xl font-black text-[#0A1A3A] tracking-tighter">{p.prix_standard?.toLocaleString()} F</p>
-                          <div className="p-3 bg-gray-50 group-hover:bg-[#0A1A3A] group-hover:text-white transition-all rounded-xl"><ArrowRight size={18}/></div>
+                          <p className="text-xl font-Karla text-[#0A1A3A]">{p.prix_standard?.toLocaleString()} F</p>
+                          <div className="p-3 bg-gray-50 group-hover:bg-[#0A1A3A] group-hover:text-white transition-all rounded-xl"><ArrowRight size={14}/></div>
                         </div>
                       </div>
                     </div>

@@ -323,10 +323,10 @@ const ProductDetail = ({ product, onBack, onAddToCart }) => {
         <span className="text-[10px] font-black uppercase text-[#D0A050]">Vitrine </span>
         <div className="w-10" />
       </div>
-      <div className="max-w-6xl mx-auto px-4 md:px-6 mt-8">
+      <div className="max-w-8xl mx-auto px-4 md:px-6 mt-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
-          <div className="space-y-1">
-            <div className="aspect-square rounded-[1.5rem] overflow-hidden bg-gray-50 border shadow-xl">
+          <div className="space-y-6">
+            <div className="aspect-auto rounded-[1rem] overflow-hidden bg-gray-50 border shadow-xl">
               <img src={activeImg} alt={product.nom} className="w-full h-full object-cover transition-all duration-500" />
             </div>
             <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">

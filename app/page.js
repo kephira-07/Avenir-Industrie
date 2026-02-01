@@ -325,13 +325,13 @@ const ProductDetail = ({ product, onBack, onAddToCart }) => {
       </div>
       <div className="max-w-6xl mx-auto px-4 md:px-6 mt-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
-          <div className="space-y-6">
-            <div className="aspect-square rounded-[3.5rem] overflow-hidden bg-gray-50 border shadow-xl">
+          <div className="space-y-1">
+            <div className="aspect-square rounded-[1.5rem] overflow-hidden bg-gray-50 border shadow-xl">
               <img src={activeImg} alt={product.nom} className="w-full h-full object-cover transition-all duration-500" />
             </div>
             <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
               {product.image_urls?.map((url, i) => (
-                <button key={i} onClick={() => setActiveImg(url)} className={`w-16 h-16 md:w-25 md:h-25 rounded-1xl overflow-hidden border-4 shrink-0 transition-all ${activeImg === url ? 'border-[#D0A050] scale-105' : 'border-transparent opacity-60'}`}>
+                <button key={i} onClick={() => setActiveImg(url)} className={`w-16 h-16 md:w-25 md:h-25 rounded-2xl overflow-hidden border-4 shrink-0 transition-all ${activeImg === url ? 'border-[#f9fbf89d] scale-105' : 'border-transparent opacity-60'}`}>
                   <img src={url} className="w-full h-full object-cover" alt="" />
                 </button>
               ))}

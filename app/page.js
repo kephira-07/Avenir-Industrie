@@ -1035,14 +1035,14 @@ function AppContent() {
             );
           }) : (
             <section className="animate-fade-in-up scroll-mt-24">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
                 {products.filter(p => p.categorie === activeCategory && p.nom.toLowerCase().includes(search.toLowerCase())).map(p => (
-                  <div key={p.id} onClick={() => navigateTo('detail', p)} className="group bg-white rounded-[3rem] overflow-hidden border border-gray-100 hover:border-[#D4AF37]/40 shadow-sm hover:shadow-2xl transition-all duration-700 cursor-pointer p-6">
-                    <div className="aspect-square bg-gray-50 overflow-hidden relative rounded-[2rem] mb-6 shadow-inner"><img src={p.image_urls?.[0]} className="w-full h-full object-cover" alt="" /></div>
-                    <div className="space-y-2">
-                      <p className="text-[#D4AF37] text-[8px] font-black uppercase tracking-[0.3em]">{p.categorie}</p>
-                      <h3 className="text-lg font-bold text-[#0A1A3A] designer-title uppercase truncate">{p.nom}</h3>
-                      <p className="text-xl font-black text-[#0A1A3A] mt-4">{p.prix_standard?.toLocaleString()} F</p>
+                  <div key={p.id} onClick={() => navigateTo('detail', p)} className="group bg-white rounded-[3rem] overflow-hidden border border-gray-100 hover:border-[#D4AF37]/40 shadow-sm hover:shadow-2xl transition-all duration-700 cursor-pointer ">
+                    <div className="aspect-square bg-gray-50 overflow-hidden relative rounded-[1rem] mb-6 shadow-inner"><img src={p.image_urls?.[0]} className="w-full h-full object-cover" alt="" /></div>
+                    <div className="space-y-2 p-3">
+                      <p className="text-[#D4AF37] text-[8px] font-black uppercase ">{p.categorie}</p>
+                      <h3 className="text-lg font-Karla text-[#0A1A3A] designer-title uppercase truncate">{p.nom}</h3>
+                      <p className="text-xl font-Karla text-[#0A1A3A] mt-4">{p.prix_standard?.toLocaleString()} F</p>
                     </div>
                   </div>
                 ))}

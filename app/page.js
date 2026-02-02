@@ -816,12 +816,7 @@ function AppContent() {
   const searchRef = useRef(null);
 
   // LOGIQUE DE NAVIGATION HISTORIQUE
-  const navigateTo = (newView, data = null) => {
-    window.history.pushState({ view: newView, data: data }, '', '');
-    setView(newView);
-    if (data) setSelectedProduct(data);
-    window.scrollTo(0, 0);
-  };
+
 
     const loadData = async () => {
     if (!apiInstance) return;
@@ -957,7 +952,7 @@ function AppContent() {
               <div className="absolute top-[110%] left-0 right-0 bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-100 z-[800] animate-fade-in p-4">
                  <div className="flex flex-row overflow-x-auto no-scrollbar gap-4 pb-2">
                     {searchSuggestions.map(p => (
-                      <div key={p.id} onClick={() => {navigateTo('detail', p); setShowSuggestions(false); setSearch('');}} className="flex-shrink-0 w-44 bg-gray-50 hover:bg-white border border-gray-100 rounded-[2rem] p-3 transition-all cursor-pointer">
+                      <div key={p.id} onClick={() => { setShowSuggestions(false); setSearch('')}} className="flex-shrink-0 w-44 bg-gray-50 hover:bg-white border border-gray-100 rounded-[2rem] p-3 transition-all cursor-pointer">
                          <div className="aspect-square w-full rounded-2xl overflow-hidden mb-3"><img src={p.image_urls?.[0]} className="w-full h-full object-cover" alt="" /></div>
                          <p className="text-[11px] font-bold text-[#0A1A3A] truncate uppercase">{p.nom}</p>
                          <p className="text-[10px] font-black text-[#D4AF37] mt-1">{p.prix_standard?.toLocaleString()}F</p>
@@ -1001,7 +996,7 @@ function AppContent() {
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
                   {catProds.map(p => (
-                    <div key={p.id} onClick={() => navigateTo('detail', p)} className="group bg-white rounded-[1rem] overflow-hidden border border-gray-100 hover:border-[#D4AF37]/40 shadow-sm hover:shadow-2xl transition-all duration-700 cursor-pointer ">
+                    <div key={p.id} className="group bg-white rounded-[1rem] overflow-hidden border border-gray-100 hover:border-[#D4AF37]/40 shadow-sm hover:shadow-2xl transition-all duration-700 cursor-pointer ">
                       <div className="aspect-square bg-gray-50 overflow-hidden relative rounded-[1rem] mb-6 shadow-inner">
                         <img src={p.image_urls?.[0]} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" alt="" />
                         <div className={`absolute top-4 left-4 px-4 py-1.5 rounded-xl text-[8px] font-Karla text-white shadow-xl ${p.type_dispo === 'STOCK' ? 'bg-blue-600' : 'bg-red-600'}`}>{p.type_dispo}</div>
@@ -1023,7 +1018,7 @@ function AppContent() {
             <section className="animate-fade-in-up scroll-mt-24">
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
                 {products.filter(p => p.categorie === activeCategory && p.nom.toLowerCase().includes(search.toLowerCase())).map(p => (
-                  <div key={p.id} onClick={() => navigateTo('detail', p)} className="group bg-white rounded-[3rem] overflow-hidden border border-gray-100 hover:border-[#D4AF37]/40 shadow-sm hover:shadow-2xl transition-all duration-700 cursor-pointer ">
+                  <div key={p.id}  className="group bg-white rounded-[3rem] overflow-hidden border border-gray-100 hover:border-[#D4AF37]/40 shadow-sm hover:shadow-2xl transition-all duration-700 cursor-pointer ">
                     <div className="aspect-square bg-gray-50 overflow-hidden relative rounded-[1rem] mb-6 shadow-inner"><img src={p.image_urls?.[0]} className="w-full h-full object-cover" alt="" /></div>
                     <div className="space-y-2 p-3">
                       <p className="text-[#D4AF37] text-[8px] font-black uppercase ">{p.categorie}</p>
@@ -1135,7 +1130,7 @@ function AppContent() {
                     <span className="font-bold text-gray-400">TOTAL</span>
                     <span className="text-2xl font-black text-[#0A1A3A]">{(cart.reduce((s, i) => s + (i.finalPrice * i.quantity), 0)).toLocaleString()} F</span>
                   </div>
-                  <button onClick={() => navigateTo('checkout')} className="w-full bg-[#0A1A3A] text-white py-5 rounded-2xl font-black uppercase shadow-xl tracking-widest active:scale-95 transition-all">Valider la Commande</button>
+                  <button  className="w-full bg-[#0A1A3A] text-white py-5 rounded-2xl font-black uppercase shadow-xl tracking-widest active:scale-95 transition-all">Valider la Commande</button>
                </div>
              )}
           </div>

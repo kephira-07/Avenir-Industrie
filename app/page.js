@@ -1851,18 +1851,18 @@ function AppContent() {
             categories.map(cat => groupedProducts[cat.name]?.length > 0 && (
               <section key={cat.id} id={`section-${cat.name.replace(/\s+/g, '-').toLowerCase()}`} className="animate-fade-in-up scroll-mt-24">
                 <div className="flex items-center gap-6 mb-10">
-                  <h2 className="text-3xl md:text-5xl font-black text-[#0A1A3A] designer-title uppercase tracking-tighter">{cat.name}</h2>
+                  <h2 className="text-3xl md:text-5xl font-black text-[#0A1A3A] designer-title uppercase ">{cat.name}</h2>
                   <div className="h-px flex-1 bg-gradient-to-r from-[#D4AF37]/40 to-transparent"></div>
-                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.4em]">{groupedProducts[cat.name].length} Produits</span>
+                  <span className="text-[10px] font-black text-gray-400 uppercase ">{groupedProducts[cat.name].length} Produits</span>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
                   {groupedProducts[cat.name].map(p => ( <ProductCard key={p.id} product={p} onClick={() => {setSelectedProduct(p); setView('detail');}} /> ))}
                 </div>
               </section>
             ))
           ) : (
             <section id={`section-${activeCategory.replace(/\s+/g, '-').toLowerCase()}`} className="animate-fade-in-up scroll-mt-24">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
                 {filteredProducts.map(p => ( <ProductCard key={p.id} product={p} onClick={() => {setSelectedProduct(p); setView('detail');}} /> ))}
               </div>
             </section>

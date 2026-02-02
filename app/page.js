@@ -759,9 +759,9 @@ const AdminDashboard = ({ products, categories, onRefresh, onBack, api, sb }) =>
                   <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2 flex items-center gap-2"><ImageIcon size={14}/> Galerie Photos (Max 5)</p>
                   <div className="grid grid-cols-5 gap-3">
                     {editing.image_urls.map((url, i) => (
-                      <button key={i} type="button" onClick={() => openCloudinary(i)} className={`aspect-square rounded-2xl border-2 border-dashed flex flex-col items-center justify-center overflow-hidden transition-all ${i === 0 ? 'border-[#D4AF37] bg-orange-50' : 'border-gray-200 bg-gray-50 hover:border-[#D4AF37] shadow-sm'}`}>
-                        {url ? <img src={url} className="w-full h-full object-cover" alt="" /> : <Plus size={20} className="text-gray-300"/>}
-                      </button>
+<button key={i} type="button" onClick={() => openCloudinary(i)} className={`aspect-square rounded-xl border-2 border-dashed flex flex-col items-center justify-center overflow-hidden transition-all ${i === 0 ? 'border-[#D0A050] bg-orange-50' : 'border-gray-200 bg-gray-50 hover:border-[#D0A050]'}`}>
+                      {url ? <img src={url} className="w-full h-full object-cover" alt="" /> : <ImageIcon size={18} className="text-gray-300"/>}
+                    </button>
                     ))}
                   </div>
                 </div>

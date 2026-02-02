@@ -543,12 +543,6 @@ const AdminDashboard = ({ products, categories, onRefresh, onBack, api, sb }) =>
   const [showCatList, setShowCatList] = useState(false);
 
 
-  const navigateTo = (newView, data = null) => {
-    window.history.pushState({ view: newView, data: data }, '', '');
-    setView(newView);
-    if (data) setSelectedProduct(data);
-    window.scrollTo(0, 0);
-  };
 
   useEffect(() => {
     const handlePopState = (event) => {
@@ -602,7 +596,7 @@ const AdminDashboard = ({ products, categories, onRefresh, onBack, api, sb }) =>
     setUser(null);
   };
 
-  const openCloudinary = (index) => {
+   const openCloudinary = (index) => {
     if (!window.cloudinary) return alert("Module d'image indisponible.");
     window.cloudinary.openUploadWidget({
       cloudName: CLOUDINARY_CLOUD_NAME, uploadPreset: CLOUDINARY_UPLOAD_PRESET,

@@ -798,24 +798,7 @@ const AdminDashboard = ({ products, categories, onRefresh, onBack, api, sb }) =>
   );
 };
 
-const ProductCard = ({ product, onClick }) => (
-  <div onClick={onClick} className="group bg-white rounded-[3rem] overflow-hidden border border-gray-100 hover:border-[#D4AF37]/40 shadow-sm hover:shadow-[0_40px_80px_rgba(0,0,0,0.08)] transition-all duration-700 cursor-pointer p-6 animate-fade-in">
-    <div className="aspect-square bg-gray-50 overflow-hidden relative rounded-[2rem] mb-6 shadow-inner">
-      <img src={product.image_urls?.[0]} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" alt={product.nom} />
-      <div className={`absolute top-4 left-4 px-4 py-1.5 rounded-xl text-[8px] font-black text-white shadow-xl ${product.type_dispo === 'STOCK' ? 'bg-blue-600' : 'bg-red-600'}`}>
-        {product.type_dispo}
-      </div>
-    </div>
-    <div className="space-y-2">
-      <p className="text-[#D4AF37] text-[8px] font-black uppercase tracking-[0.3em]">{product.categorie}</p>
-      <h3 className="text-lg font-bold text-[#0A1A3A] designer-title uppercase leading-tight truncate">{product.nom}</h3>
-      <div className="flex justify-between items-center pt-5 border-t border-gray-100">
-        <p className="text-xl font-black text-[#0A1A3A] tracking-tighter">{(product.prix_standard || product.prix_avion)?.toLocaleString()} F</p>
-        <div className="p-3 bg-gray-50 group-hover:bg-[#0A1A3A] group-hover:text-white transition-all rounded-xl shadow-inner"><ArrowRight size={18}/></div>
-      </div>
-    </div>
-  </div>
-);
+
 
 // --- APP CONTENT ---
 function AppContent() {

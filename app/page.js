@@ -559,16 +559,20 @@ const AdminDashboard = ({ products, categories, onRefresh, onBack, api, sb }) =>
   }, []);
 
   // Vérification sécurisée de sb.auth
-  useEffect(() => {
-    if (!sb || !sb.auth) return;
-    const checkUser = async () => {
-      try {
-        const { data: { user } } = await sb.auth.getUser();
-        setUser(user);
-      } catch (e) { console.error("Auth error", e); }
-    };
-    checkUser();
-  }, [sb]);
+useEffect(() => {
+  if (!sb || !sb.auth) return;
+  
+  const checkUser = async () => {
+    const { data, error } = await sb.auth.getUser();
+    if (error) {
+      console.error("Erreur de session Supabase:", error.message);
+      setUser(null); // Force le retour à l'écran de login si le token est mort
+    } else {
+      setUser(data.user);
+    }
+  };
+  checkUser();
+}, [sb]);
 
   // Filtrage des produits pour la recherche admin
   const filteredAdminProducts = useMemo(() => {

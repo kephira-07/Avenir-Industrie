@@ -1585,8 +1585,8 @@ const AdminDashboard = ({ products, categories, onRefresh, onBack, api, sb }) =>
 };
 
 const ProductCard = ({ product, onClick }) => (
-  <div onClick={onClick} className="group bg-white rounded-[3rem] overflow-hidden border border-gray-100 hover:border-[#D4AF37]/40 shadow-sm hover:shadow-[0_40px_80px_rgba(0,0,0,0.08)] transition-all duration-700 cursor-pointer  animate-fade-in">
-    <div className="aspect-square bg-gray-50 overflow-hidden relative rounded-[1rem] mb-3 shadow-inner">
+  <div onClick={onClick} className="group bg-white rounded-[1rem] overflow-hidden border border-gray-100 hover:border-[#D4AF37]/40 shadow-sm hover:shadow-[0_40px_80px_rgba(0,0,0,0.08)] transition-all duration-700 cursor-pointer  animate-fade-in gap-2">
+    <div className="aspect-square bg-gray-50 overflow-hidden relative rounded-[1rem] mb-1 shadow-inner">
       <img src={product.image_urls?.[0]} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" alt={product.nom} />
       <div className={`absolute top-4 left-4 px-4 py-1.5 rounded-xl text-[8px] font-Roboto text-white shadow-xl ${product.type_dispo === 'STOCK' ? 'bg-blue-600' : 'bg-red-600'}`}>
         {product.type_dispo}

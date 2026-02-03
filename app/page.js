@@ -280,7 +280,7 @@ const HeroSection = ({ onScrollToCategories }) => {
 
 
 
-      <section className="relative overflow-hidden bg-blue-100 py-16 lg:py-20 min-h-[85vh] flex items-center">
+      <section className="relative overflow-hidden bg-blue-100 py-5 lg:py-10 min-h-[85vh] flex items-center">
 
         {/* IMAGE DE FOND DU HERO */}
 
@@ -352,7 +352,7 @@ const HeroSection = ({ onScrollToCategories }) => {
 
                   <ShieldCheck className="text-blue-500" size={18} />
 
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter designer-body">Paiement Sécurisé</span>
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter designer-body">Commandez en toute confiance </span>
 
                 </div>
 
@@ -360,7 +360,7 @@ const HeroSection = ({ onScrollToCategories }) => {
 
                   <Truck className="text-blue-500" size={18} />
 
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter designer-body">Suivi Temps Réel</span>
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter designer-body">Livraison partout</span>
 
                 </div>
 
@@ -1756,7 +1756,7 @@ function AppContent() {
         .animate-fade-in { animation: fade-in 0.4s ease-out; }
       `}</style>
           {/* Header Public Premium avec Suggestions et Prix */}
-<header className={`fixed top-0 left-0 right-0 z-[600] transition-all duration-500 ease-in-out transform ${showHeader ? 'translate-y-0' : '-translate-y-full'} ${isScrolled ? 'bg-white/90 backdrop-blur-xl shadow-lg border-b border-[#D4AF37]/30 py-3' : 'bg-blue-800 py-5'}`}>
+<header className={`fixed top-0 left-0 right-0 z-[600] transition-all duration-500 ease-in-out transform  ${isScrolled ? 'bg-white/90 backdrop-blur-xl shadow-lg border-b border-[#D4AF37]/30 py-3' : 'bg-blue-800 py-5'}`}>
         <div className="max-w-7xl mx-auto px-4 md:px-12 flex flex-wrap items-center justify-between gap-y-3">
           <div className="flex items-center gap-1 md:gap-4 shrink-0">
             <button onClick={() => setIsMenuOpen(true)} className={`p-2 rounded-full transition-all active:scale-90 ${isScrolled ? 'text-[#0A1A3A] hover:bg-gray-100' : 'text-white hover:bg-white/10'}`}>
@@ -1813,9 +1813,7 @@ function AppContent() {
                     ))}
                     {/* Bouton "Tout voir" en fin de bande */}
                     <div onClick={() => setShowSuggestions(false)} className="flex-shrink-0 w-24 flex flex-col items-center justify-center bg-gray-50 rounded-[2rem] border border-dashed border-gray-200 cursor-pointer hover:bg-gray-100 transition-colors">
-                       <ArrowRight className="text-[#D4AF37] mb-2" size={24} />
-                       <span className="text-[8px] font-black text-center uppercase tracking-tighter">Tout voir</span>
-                    </div>
+                       </div>
                  </div>
               </div>
             )}

@@ -14,7 +14,7 @@ import {
 
   History, FileText, ChevronDown, ListChecks, Globe, ChevronRight,
 
-  Settings, Plus, Minus, Edit3, Image as ImageIcon, Save, Lock, Trash2, Info, LogOut,Sparkles,Zap,CircleQuestionMark,BookOpen, Laptop,Maximize2,ChevronLeft,
+  Settings, Plus, Minus, Edit3, Image as ImageIcon, Save, Lock, Trash2, Info, LogOut,Sparkles,Zap,CircleQuestionMark,BookOpen, Laptop,Maximize2,ChevronLeft,Play
 
 } from 'lucide-react';
 
@@ -239,7 +239,7 @@ const Nudge = ({ api }) => {
 
 // --- COMPOSANT HERO DÉSIGNER AVEC IMAGES ANIMÉES ---
 
-const HeroSection = ({ onScrollToCategories }) => {
+const HeroSection = () => {
 
   // Images représentatives pour les colonnes
 

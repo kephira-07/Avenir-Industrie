@@ -43,7 +43,10 @@ const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "";
  // Remplacez par votre numéro WhatsApp complet avec indicatif pays
 
 
-
+const isVideo = (url) => {
+  if (!url) return false;
+  return url.includes('/video/upload/') || url.match(/\.(mp4|webm|ogg|mov)$/i);
+};
 
 
 // --- LOGIQUE API SUPABASE ---

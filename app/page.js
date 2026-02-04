@@ -609,317 +609,275 @@ const AboutPage = ({ onBack, sectionId }) => {
 
 
 
-
+// --- COMPOSANT DÉTAIL PRODUIT ---
 const ProductDetail = ({ product, onBack, onAddToCart }) => {
-
   const [activeImgIndex, setActiveImgIndex] = useState(0);
-
   const [isFullscreen, setIsFullscreen] = useState(false);
-
   const [qty, setQty] = useState(1);
-
   const [showToast, setShowToast] = useState(false);
-
   
-
   const isOrder = product.type_dispo === 'COMMANDE';
-
-  // Si c'est sur commande, on affiche le prix de base (souvent le prix avion ou min)
-
   const price = isOrder ? product.prix_avion : product.prix_standard;
 
-
-
-  const nextImg = () => setActiveImgIndex((prev) => (prev + 1) % product.image_urls.length);
-
-  const prevImg = () => setActiveImgIndex((prev) => (prev - 1 + product.image_urls.length) % product.image_urls.length);
-
-
-
-  const handleAddToCart = () => {
-
-    onAddToCart(product, isOrder ? 'WHATSAPP' : 'STOCK', price, qty);
-
-    setShowToast(true);
-
-    setTimeout(() => setShowToast(false), 3000);
-
-  };
-
-
-
   return (
-
     <div className="min-h-screen bg-white animate-fade-in pb-20 font-sans overflow-x-hidden">
-
-      {/* Toast Notification */}
-
       {showToast && (
-
         <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[1000] bg-[#0A1A3A] text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 border border-[#D4AF37] animate-fade-in-up">
-
           <div className="bg-[#D4AF37] p-1 rounded-full text-[#0A1A3A]"><CheckCircle size={16}/></div>
-
           <p className="font-bold text-sm uppercase tracking-widest">Produit ajouté au panier !</p>
-
         </div>
-
       )}
-
-
-
-      {/* Galerie Plein Écran */}
 
       {isFullscreen && (
-
         <div className="fixed inset-0 z-[1000] bg-black flex flex-col items-center justify-center p-4">
-
-          <button onClick={() => setIsFullscreen(false)} className="absolute top-6 right-6 text-white bg-white/10 p-3 rounded-full hover:bg-white/20 transition-all">
-
-            <X size={32} />
-
-          </button>
-
-          
-
-          <div className="relative w-full max-w-4xl aspect-square md:aspect-auto md:h-[80vh] flex items-center justify-center">
-
-            <img 
-
-              src={product.image_urls[activeImgIndex]} 
-
-              className="max-w-full max-h-full object-contain animate-fade-in" 
-
-              alt="Fullscreen view" 
-
-            />
-
-            
-
-            <button onClick={(e) => { e.stopPropagation(); prevImg(); }} className="absolute left-0 p-4 text-white hover:scale-110 transition-transform">
-
-              <ChevronLeft size={48} />
-
-            </button>
-
-            <button onClick={(e) => { e.stopPropagation(); nextImg(); }} className="absolute right-0 p-4 text-white hover:scale-110 transition-transform">
-
-              <ChevronRight size={48} />
-
-            </button>
-
+          <button onClick={() => setIsFullscreen(false)} className="absolute top-6 right-6 text-white bg-white/10 p-3 rounded-full hover:bg-white/20 transition-all"><X size={32} /></button>
+          <div className="relative w-full max-w-4xl flex items-center justify-center">
+            {isVideo(product.image_urls[activeImgIndex]) ? (
+              <video src={product.image_urls[activeImgIndex]} className="max-w-full max-h-full" controls autoPlay />
+            ) : (
+              <img src={product.image_urls[activeImgIndex]} className="max-w-full max-h-full object-contain" alt="" />
+            )}
+            <button onClick={() => setActiveImgIndex((prev) => (prev - 1 + product.image_urls.length) % product.image_urls.length)} className="absolute left-0 p-4 text-white"><ChevronLeft size={48} /></button>
+            <button onClick={() => setActiveImgIndex((prev) => (prev + 1) % product.image_urls.length)} className="absolute right-0 p-4 text-white"><ChevronRight size={48} /></button>
           </div>
-
-
-
-          <div className="absolute bottom-10 text-white font-black uppercase tracking-[0.4em] text-xs">
-
-            {activeImgIndex + 1} / {product.image_urls.length}
-
-          </div>
-
         </div>
-
       )}
 
-
-
-      {/* Header Interne */}
-
-      <div className="sticky top-0 bg-white/95 backdrop-blur-md z-[700] px-4 md:px-6 py-4 border-b flex items-center justify-between">
-
-        <button onClick={onBack} className="p-2 bg-gray-100 rounded-full hover:bg-[#0A1A3A] hover:text-white transition-all active:scale-90">
-
-          <ArrowLeft size={20}/>
-
-        </button>
-
-        <span className="text-[10px] font-black uppercase text-[#D4AF37] tracking-[0.3em]">Afri-Tech Luxury Store</span>
-
+      <div className="sticky top-0 bg-white/95 backdrop-blur-md z-[700] px-4 md:px-6 py-4 border-b flex items-center justify-between shadow-sm">
+        <button onClick={onBack} className="p-2 bg-gray-100 rounded-full hover:bg-[#0A1A3A] hover:text-white transition-all active:scale-90"><ArrowLeft size={20}/></button>
+        <span className="text-[10px] font-black uppercase text-[#D4AF37] tracking-[0.3em]">Vitrine Afri-Tech</span>
         <div className="w-10" />
-
       </div>
-
-
 
       <div className="max-w-7xl mx-auto px-4 md:px-12 mt-10">
-
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24">
-
-          
-
-          {/* ZONE IMAGES */}
-
           <div className="space-y-6">
-
-            <div 
-
-              onClick={() => setIsFullscreen(true)}
-
-              className="relative aspect-square rounded-[2rem] overflow-hidden bg-gray-50 border shadow-2xl cursor-zoom-in group"
-
-            >
-
-              <img src={product.image_urls[activeImgIndex]} alt={product.nom} className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105" />
-
+            <div onClick={() => setIsFullscreen(true)} className="relative aspect-square rounded-[2rem] overflow-hidden bg-gray-50 border shadow-2xl cursor-zoom-in group">
+              <MediaRenderer url={product.image_urls[activeImgIndex]} className="w-full h-full object-cover transition-all" autoPlay={true} />
               <div className="absolute bottom-6 right-6 p-4 bg-white/20 backdrop-blur-md rounded-2xl text-white opacity-0 group-hover:opacity-100 transition-opacity">
-
-                <Maximize2 size={24} />
-
+                {isVideo(product.image_urls[activeImgIndex]) ? <Play size={24} /> : <Maximize2 size={24} />}
               </div>
-
             </div>
-
-            
-
             <div className="flex gap-4 overflow-x-auto no-scrollbar pb-4 px-2">
-
               {product.image_urls?.map((url, i) => (
-
-                <button 
-
-                  key={i} 
-
-                  onClick={() => setActiveImgIndex(i)} 
-
-                  className={`w-20 h-20 md:w-28 md:h-28 rounded-2xl overflow-hidden border-4 shrink-0 transition-all ${activeImgIndex === i ? 'border-[#D4AF37] scale-110 shadow-xl' : 'border-transparent opacity-40 hover:opacity-80'}`}
-
-                >
-
-                  <img src={url} className="w-full h-full object-cover" alt="" />
-
+                <button key={i} onClick={() => setActiveImgIndex(i)} className={`w-20 h-20 md:w-28 md:h-28 rounded-2xl overflow-hidden border-4 shrink-0 transition-all ${activeImgIndex === i ? 'border-[#D4AF37] scale-110 shadow-xl' : 'border-transparent opacity-40 hover:opacity-80'}`}>
+                  {isVideo(url) ? <div className="w-full h-full bg-slate-900 flex items-center justify-center text-white"><Play size={24}/></div> : <img src={url} className="w-full h-full object-cover" alt="" />}
                 </button>
-
               ))}
-
             </div>
-
           </div>
-
-
-
-          {/* ZONE TEXTE */}
 
           <div className="space-y-10 flex flex-col justify-center">
-
             <div className="space-y-4">
-
-              <div className="flex items-center gap-3">
-
-                <span className="h-px w-8 bg-[#D4AF37]"></span>
-
-                <span className="text-[#D4AF37] font-black uppercase text-xs tracking-[0.4em]">{product.categorie}</span>
-
-              </div>
-
-              <h1 className="text-4xl md:text-6xl font-black text-[#0A1A3A] designer-title leading-tight uppercase tracking-tighter">
-
-                {product.nom}
-
-              </h1>
-
-              {/* Changement couleur : Noir profond pour la lisibilité */}
-
-              <p className="text-[#0A1A3A] font-medium leading-relaxed text-lg md:text-xl designer-body border-l-4 border-[#D4AF37] pl-8 py-2">
-
-                {product.description}
-
-              </p>
-
+              <span className="text-[#D4AF37] font-black uppercase text-xs tracking-[0.4em]">{product.categorie}</span>
+              <h1 className="text-4xl md:text-6xl font-black text-[#0A1A3A] designer-title uppercase tracking-tighter">{product.nom}</h1>
+              <p className="text-[#0A1A3A] font-medium leading-relaxed text-lg border-l-4 border-[#D4AF37] pl-8 py-2">{product.description}</p>
             </div>
-
-
-
-            <div className="p-8 md:p-12 bg-gray-50 rounded-[3.5rem] space-y-10 shadow-inner">
-
+            <div className="p-8 bg-gray-50 rounded-[3.5rem] space-y-10 shadow-inner">
               <div className="flex justify-between items-center">
-
                  <p className="text-[10px] font-black text-[#0A1A3A] uppercase tracking-[0.2em]">SÉLECTION QUANTITÉ</p>
-
                  <div className="flex items-center gap-8 bg-white px-8 py-4 rounded-[1.5rem] shadow-sm border border-gray-100">
-
-                    <button onClick={() => setQty(Math.max(1, qty - 1))} className="text-[#0A1A3A] hover:text-red-500 transition-colors active:scale-125"><Minus size={20}/></button>
-
-                    <span className="font-black text-2xl w-8 text-center text-[#0A1A3A]">{qty}</span>
-
-                    <button onClick={() => setQty(qty + 1)} className="text-[#0A1A3A] hover:text-green-500 transition-colors active:scale-125"><Plus size={20}/></button>
-
+                    <button onClick={() => setQty(Math.max(1, qty - 1))} className="text-[#0A1A3A] active:scale-125 transition-transform"><Minus size={20}/></button>
+                    <span className="font-black text-2xl w-8 text-center">{qty}</span>
+                    <button onClick={() => setQty(qty + 1)} className="text-[#0A1A3A] active:scale-125 transition-transform"><Plus size={20}/></button>
                  </div>
-
               </div>
-
-
-
-              {/* Box Avion/Bateau enlevée pour "COMMANDE" */}
-
-              
-
               <div className="flex justify-between items-end border-t border-gray-200 pt-8">
-
                 <div>
-
-                  <p className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.3em] mb-2">PRIX UNITAIRE</p>
-
-                  <p className="text-4xl md:text-5xl font-black text-[#0A1A3A] tracking-tighter">
-
-                    {Number(price)?.toLocaleString()} <span className="text-xl">FCFA</span>
-
-                  </p>
-
+                  <p className="text-[10px] font-black text-[#D4AF37] uppercase mb-2">PRIX UNITAIRE</p>
+                  <p className="text-4xl font-black text-[#0A1A3A]">{Number(price)?.toLocaleString()} F</p>
                 </div>
-
                 <div className="text-right">
-
                   <p className="text-[10px] font-black text-gray-400 uppercase mb-2">SOUS-TOTAL</p>
-
                   <p className="text-2xl font-bold text-[#D4AF37]">{(Number(price) * qty).toLocaleString()} F</p>
-
                 </div>
-
               </div>
-
             </div>
-
-
-
             <button 
-
-              onClick={handleAddToCart}
-
-              className={`w-full py-7 rounded-[2.5rem] font-black flex items-center justify-center gap-4 shadow-2xl active:scale-95 transition-all text-xl uppercase tracking-widest border-b-[10px] border-black/20 ${isOrder ? 'bg-[#25D366] text-white' : 'bg-[#0A1A3A] text-white'}`}
-
+              onClick={() => { onAddToCart(product, isOrder ? 'WHATSAPP' : 'STOCK', price, qty); setShowToast(true); setTimeout(() => setShowToast(false), 3000); }} 
+              className={`w-full py-7 rounded-[2.5rem] font-black flex items-center justify-center gap-4 shadow-2xl active:scale-95 transition-all text-xl uppercase tracking-widest border-b-[10px] border-black/20 ${isOrder ? 'bg-[#25D366]' : 'bg-[#0A1A3A] text-white'}`}
             >
-
               {isOrder ? <Phone size={24} /> : <ShoppingBag size={24} />}
-
-              {isOrder ? `Commander via WhatsApp (${qty})` : `Ajouter au Panier`}
-
+              {isOrder ? `Commander via WhatsApp` : `Ajouter au Panier`}
             </button>
-
-            
-
-            {isOrder && (
-
-              <p className="text-center text-[10px] font-bold text-[#25D366] uppercase tracking-widest animate-pulse">
-
-                * Les produits sur commande sont finalisés directement avec nos experts
-
-              </p>
-
-            )}
-
           </div>
-
         </div>
-
       </div>
-
     </div>
-
   );
-
 };
 
+// --- DASHBOARD ADMIN SÉCURISÉ ---
+const AdminDashboard = ({ products, categories, onRefresh, onBack, api, sb }) => {
+  const [user, setUser] = useState(null);
+  const [authForm, setAuthForm] = useState({ email: '', pass: '' });
+  const [authLoading, setAuthLoading] = useState(false);
+  const [adminSearch, setAdminSearch] = useState('');
+  const [editing, setEditing] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [newCatName, setNewCatName] = useState('');
+  const [showCatList, setShowCatList] = useState(false);
+
+  useEffect(() => {
+    if (!sb || !sb.auth) return;
+    const checkUser = async () => {
+      try {
+        const { data: { user } } = await sb.auth.getUser();
+        setUser(user);
+      } catch (e) {}
+    };
+    checkUser();
+  }, [sb]);
+
+  const filteredAdminProducts = useMemo(() => {
+    return products.filter(p => 
+      p.nom.toLowerCase().includes(adminSearch.toLowerCase()) || 
+      p.categorie.toLowerCase().includes(adminSearch.toLowerCase())
+    );
+  }, [products, adminSearch]);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    if (!sb || !sb.auth) return;
+    setAuthLoading(true);
+    const { data, error } = await sb.auth.signInWithPassword({
+      email: authForm.email, password: authForm.pass
+    });
+    setAuthLoading(false);
+    if (!error) setUser(data.user);
+  };
+
+  const handleLogout = async () => {
+    if (sb && sb.auth) await sb.auth.signOut();
+    setUser(null);
+  };
+
+  const openCloudinary = (index) => {
+    if (!window.cloudinary) return alert("Cloudinary non chargé.");
+    window.cloudinary.openUploadWidget({
+      cloudName: CLOUDINARY_CLOUD_NAME, 
+      uploadPreset: CLOUDINARY_UPLOAD_PRESET,
+      resourceType: 'auto', // Permet images ET vidéos
+      sources: ['local', 'url', 'camera'], 
+      multiple: false,
+    }, (error, result) => {
+      if (!error && result.event === "success") { 
+        const newImages = [...(editing.image_urls || Array(8).fill(''))];
+        newImages[index] = result.info.secure_url;
+        setEditing({...editing, image_urls: newImages});
+      }
+    });
+  };
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    const cleaned = { ...editing, image_urls: editing.image_urls.filter(u => u && u.trim() !== '') };
+    const success = await api.upsertProduct(cleaned);
+    setSaving(false);
+    if (success) { setEditing(null); onRefresh(); }
+  };
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#0A1A3A] p-6 font-sans">
+        <div className="bg-white p-10 rounded-[3rem] shadow-2xl w-full max-w-md text-center border-t-8 border-[#D4AF37]">
+          <Lock className="mx-auto text-[#0A1A3A] mb-6" size={56} />
+          <h2 className="text-2xl font-black text-[#0A1A3A] mb-8 uppercase designer-title">Administration</h2>
+          <form onSubmit={handleLogin} className="space-y-4">
+             <input required type="email" placeholder="Email" className="w-full bg-gray-100 p-5 rounded-2xl border-none outline-none font-bold shadow-inner" value={authForm.email} onChange={e => setAuthForm({...authForm, email: e.target.value})} />
+             <input required type="password" placeholder="Pass" className="w-full bg-gray-100 p-5 rounded-2xl border-none outline-none font-bold shadow-inner" value={authForm.pass} onChange={e => setAuthForm({...authForm, pass: e.target.value})} />
+             <button disabled={authLoading || !sb} type="submit" className="w-full bg-[#0A1A3A] text-white py-5 rounded-2xl font-black uppercase shadow-xl active:scale-95 transition-all">
+               {authLoading ? <Loader2 className="animate-spin" /> : "ACCÉDER"}
+             </button>
+          </form>
+          <button onClick={onBack} className="mt-8 text-gray-400 font-bold hover:text-[#0A1A3A] transition-colors uppercase text-xs">Retour</button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-[#F4F7FA] font-sans pb-20 p-4 md:p-12 animate-fade-in roboto-font">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 mb-12 bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
+        <div>
+          <h2 className="text-2xl font-black text-[#0A1A3A] uppercase tracking-tighter designer-title">Gestion Stock</h2>
+          <p className="text-[10px] font-bold text-blue-600 mt-2">{user.email}</p>
+        </div>
+        <div className="flex flex-wrap items-center gap-4 w-full lg:w-auto">
+          <div className="relative flex-1 lg:w-96">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+            <input type="text" placeholder="Trouver un produit..." className="w-full bg-gray-50 border border-gray-200 rounded-2xl py-3.5 pl-12 pr-4 text-xs focus:bg-white focus:border-[#D4AF37] outline-none transition-all shadow-inner font-medium" value={adminSearch} onChange={(e) => setAdminSearch(e.target.value)} />
+          </div>
+          <button onClick={handleLogout} className="p-3.5 bg-red-50 rounded-2xl text-red-600 hover:bg-red-600 hover:text-white transition-all font-black text-[10px] uppercase flex items-center gap-2 border border-red-100"><LogOut size={16}/> Quitter</button>
+          <button onClick={() => setShowCatList(!showCatList)} className="p-3.5 bg-white rounded-2xl shadow-sm border border-gray-200 text-[#0A1A3A] hover:bg-[#0A1A3A] hover:text-white transition-all"><Settings size={20}/></button>
+          <button onClick={onBack} className="p-3.5 bg-gray-100 rounded-full text-gray-500 hover:bg-white transition-all"><X size={20}/></button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+        <button onClick={() => setEditing({ nom: '', categorie: categories[0]?.name, type_dispo: 'STOCK', description: '', image_urls: Array(8).fill('') })} className="bg-white border-4 border-dashed border-gray-200 rounded-[3rem] p-8 flex flex-col items-center justify-center hover:border-blue-500 hover:bg-blue-50 transition-all group aspect-square shadow-sm">
+          <Plus size={40} className="text-gray-300 group-hover:text-blue-500 transition-all" />
+          <span className="font-black text-gray-400 text-[10px] uppercase mt-4">Ajouter</span>
+        </button>
+
+        {filteredAdminProducts.map(p => (
+          <div key={p.id} className="bg-white p-5 rounded-[3rem] shadow-sm flex flex-col items-center group relative border border-transparent hover:border-[#D4AF37] transition-all duration-500">
+            <button onClick={async () => { if(window.confirm("Supprimer ?")) { await api.deleteProduct(p.id); onRefresh(); } }} className="absolute top-4 right-4 p-2.5 bg-red-50 rounded-full text-red-500 opacity-0 group-hover:opacity-100 transition-all z-10"><Trash2 size={16}/></button>
+            <div className="w-full aspect-square rounded-[2rem] overflow-hidden mb-5 bg-gray-50 relative shadow-inner">
+              <MediaRenderer url={p.image_urls?.[0]} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" autoPlay={true} />
+              {isVideo(p.image_urls?.[0]) && <div className="absolute bottom-2 right-2 bg-[#D4AF37] text-[#0A1A3A] p-1.5 rounded-full"><Play size={10} fill="currentColor"/></div>}
+            </div>
+            <div className="w-full text-center">
+              <p className="text-[8px] font-black text-[#D4AF37] uppercase mb-1">{p.categorie}</p>
+              <p className="font-black text-[#0A1A3A] uppercase text-[11px] truncate w-full px-2">{p.nom}</p>
+            </div>
+            <button onClick={() => setEditing({ ...p, image_urls: [...(p.image_urls || []), ...Array(8).fill('')].slice(0, 8) })} className="mt-4 w-full py-3 bg-[#0A1A3A] rounded-2xl text-white font-black text-[9px] uppercase hover:bg-[#D4AF37] transition-all shadow-md">Modifier</button>
+          </div>
+        ))}
+      </div>
+
+      {editing && (
+        <div className="fixed inset-0 z-[1000] bg-[#0A1A3A]/90 backdrop-blur-lg flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-5xl rounded-[3.5rem] p-10 shadow-2xl max-h-[90vh] overflow-y-auto no-scrollbar animate-fade-in relative border-b-8 border-[#D4AF37]">
+            <button onClick={() => setEditing(null)} className="absolute top-8 right-8 p-3.5 bg-gray-100 rounded-full hover:bg-red-500 hover:text-white transition-all"><X size={20}/></button>
+            <h3 className="text-3xl font-black text-[#0A1A3A] mb-10 uppercase tracking-tighter roboto-font flex items-center gap-3"><Edit3 size={28} className="text-blue-500"/> Fiche Article (Max 8 Médias)</h3>
+            <form onSubmit={handleSave} className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+              <div className="space-y-6">
+                <input required className="w-full bg-gray-50 p-5 rounded-[1.2rem] border border-gray-100 focus:border-blue-500 outline-none font-bold shadow-inner" value={editing.nom} onChange={e=>setEditing({...editing, nom:e.target.value})} placeholder="Désignation" />
+                <select className="w-full bg-gray-50 p-5 rounded-[1.2rem] font-black border border-gray-100 shadow-inner" value={editing.categorie} onChange={e=>setEditing({...editing, categorie:e.target.value})}>
+                  {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
+                </select>
+                <textarea className="w-full bg-gray-50 p-5 rounded-[1.2rem] h-48 border border-gray-100 focus:border-blue-500 font-medium shadow-inner" value={editing.description} onChange={e=>setEditing({...editing, description:e.target.value})} placeholder="Description..." />
+              </div>
+              <div className="space-y-6">
+                <div className="grid grid-cols-4 gap-2.5">
+                  {editing.image_urls.map((url, i) => (
+                    <button key={i} type="button" onClick={() => openCloudinary(i)} className={`aspect-square rounded-xl border-2 border-dashed flex flex-col items-center justify-center overflow-hidden transition-all ${i === 0 ? 'border-blue-500 bg-blue-50' : 'border-gray-200 bg-gray-50 hover:border-blue-300'}`}>
+                      {url ? (
+                        isVideo(url) ? <div className="w-full h-full bg-slate-900 flex items-center justify-center text-white"><Play size={16}/></div> : <img src={url} className="w-full h-full object-cover" alt="" />
+                      ) : <Plus size={16} className="text-gray-300"/>}
+                    </button>
+                  ))}
+                </div>
+                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-100">
+                  <select className="w-full bg-gray-50 p-4 rounded-[1rem] font-black text-[10px] uppercase shadow-inner" value={editing.type_dispo} onChange={e=>setEditing({...editing, type_dispo:e.target.value})}>
+                    <option value="STOCK">STOCK ABIDJAN</option>
+                    <option value="COMMANDE">IMPORT USA</option>
+                  </select>
+                  <input type="number" className="w-full bg-gray-100 p-4 rounded-[1rem] font-black text-[#0A1A3A] text-xl shadow-inner outline-none focus:ring-2 focus:ring-[#D4AF37]" value={editing.prix_standard || editing.prix_avion || ''} onChange={e=>setEditing({...editing, prix_standard:e.target.value})} placeholder="Prix (F)" />
+                </div>
+                <button disabled={saving} type="submit" className="w-full bg-[#0A1A3A] text-white py-6 rounded-[1.5rem] font-black uppercase shadow-2xl active:scale-95 transition-all text-sm tracking-widest mt-2 flex items-center justify-center gap-3 border-b-4 border-black/30">
+                  {saving ? <Loader2 className="animate-spin" /> : <><Save size={20}/> ENREGISTRER PRODUIT</>}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 
 const CheckoutPage = ({ cart, total, onBack, api }) => {
@@ -1065,524 +1023,6 @@ const CheckoutPage = ({ cart, total, onBack, api }) => {
 
 
 // --- DASHBOARD ADMIN SÉCURISÉ & MODERNISÉ ---
-
-const AdminDashboard = ({ products, categories, onRefresh, onBack, api, sb }) => {
-
-  const [user, setUser] = useState(null);
-
-  const [authForm, setAuthForm] = useState({ email: '', pass: '' });
-
-  const [authLoading, setAuthLoading] = useState(false);
-
-  const [adminSearch, setAdminSearch] = useState(''); // Barre de recherche admin
-
-  const [editing, setEditing] = useState(null);
-
-  const [saving, setSaving] = useState(false);
-
-  const [newCatName, setNewCatName] = useState('');
-
-  const [showCatList, setShowCatList] = useState(false);
-
-
-
-
-
-
-
-  useEffect(() => {
-
-    const handlePopState = (event) => {
-
-      if (event.state && event.state.view) {
-
-        setView(event.state.view);
-
-        if (event.state.data) setSelectedProduct(event.state.data);
-
-      } else {
-
-        setView('home');
-
-      }
-
-    };
-
-    window.addEventListener('popstate', handlePopState);
-
-    window.history.replaceState({ view: 'home' }, '', '');
-
-    return () => window.removeEventListener('popstate', handlePopState);
-
-  }, []);
-
-
-
-  // Vérification sécurisée de sb.auth
-
-  useEffect(() => {
-
-    if (!sb || !sb.auth) return;
-
-    const checkUser = async () => {
-
-      try {
-
-        const { data: { user } } = await sb.auth.getUser();
-
-        setUser(user);
-
-      } catch (e) { console.error("Auth error", e); }
-
-    };
-
-    checkUser();
-
-  }, [sb]);
-
-
-
-  // Filtrage des produits pour la recherche admin
-
-  const filteredAdminProducts = useMemo(() => {
-
-    return products.filter(p => 
-
-      p.nom.toLowerCase().includes(adminSearch.toLowerCase()) || 
-
-      p.categorie.toLowerCase().includes(adminSearch.toLowerCase())
-
-    );
-
-  }, [products, adminSearch]);
-
-
-
-  const handleLogin = async (e) => {
-
-    e.preventDefault();
-
-    if (!sb || !sb.auth) return alert("Service de connexion non prêt.");
-
-    setAuthLoading(true);
-
-    const { data, error } = await sb.auth.signInWithPassword({
-
-      email: authForm.email,
-
-      password: authForm.pass
-
-    });
-
-    setAuthLoading(false);
-
-    if (error) alert("Accès refusé : " + error.message);
-
-    else setUser(data.user);
-
-  };
-
-
-
-  const handleLogout = async () => {
-
-    if (sb && sb.auth) await sb.auth.signOut();
-
-    setUser(null);
-
-  };
-
-
-
-   const openCloudinary = (index) => {
-
-    if (!window.cloudinary) return alert("Module d'image indisponible.");
-
-    window.cloudinary.openUploadWidget({
-
-      cloudName: CLOUDINARY_CLOUD_NAME, uploadPreset: CLOUDINARY_UPLOAD_PRESET,
-
-      sources: ['local', 'url', 'camera'], multiple: false,
-
-    }, (error, result) => {
-
-      if (!error && result.event === "success") { 
-
-        const newImages = [...(editing.image_urls || ['', '', '', '', ''])];
-
-        newImages[index] = result.info.secure_url;
-
-        setEditing({...editing, image_urls: newImages});
-
-      }
-
-    });
-
-  };
-
-
-
-  const handleSave = async (e) => {
-
-    e.preventDefault();
-
-    setSaving(true);
-
-    const cleaned = { ...editing, image_urls: editing.image_urls.filter(u => u && u.trim() !== '') };
-
-    const success = await api.upsertProduct(cleaned);
-
-    setSaving(false);
-
-    if (success) { setEditing(null); onRefresh(); }
-
-    else alert("Échec de sauvegarde.");
-
-  };
-
-
-
-  if (!user) {
-
-    return (
-
-      <div className="min-h-screen flex items-center justify-center bg-[#0A1A3A] p-6 font-sans">
-
-        <div className="bg-white p-10 rounded-[3rem] shadow-2xl w-full max-w-md text-center border-t-8 border-[#D4AF37]">
-
-          <Lock className="mx-auto text-[#0A1A3A] mb-6" size={56} />
-
-          <h2 className="text-3xl font-black text-[#0A1A3A] mb-8 uppercase tracking-tighter roboto-font">Espace Privé</h2>
-
-          <form onSubmit={handleLogin} className="space-y-4">
-
-             <input required type="email" placeholder="Email Admin" className="w-full bg-gray-100 p-5 rounded-2xl border-none focus:ring-2 focus:ring-[#D4AF37] outline-none" value={authForm.email} onChange={e => setAuthForm({...authForm, email: e.target.value})} />
-
-             <input required type="password" placeholder="Mot de passe" className="w-full bg-gray-100 p-5 rounded-2xl border-none focus:ring-2 focus:ring-[#D4AF37] outline-none" value={authForm.pass} onChange={e => setAuthForm({...authForm, pass: e.target.value})} />
-
-             <button disabled={authLoading || !sb} type="submit" className="w-full bg-[#0A1A3A] text-white py-5 rounded-2xl font-black uppercase shadow-xl flex items-center justify-center gap-3 active:scale-95 transition-all">
-
-               {authLoading ? <Loader2 className="animate-spin" /> : "ACCÉDER AU DASHBOARD"}
-
-             </button>
-
-          </form>
-
-          <button onClick={onBack} className="mt-8 text-gray-400 font-bold hover:text-[#0A1A3A] transition-colors uppercase text-xs tracking-widest">Retour au site</button>
-
-        </div>
-
-      </div>
-
-    );
-
-  }
-
-
-
-  return (
-
-    <div className="min-h-screen bg-[#F4F7FA] font-sans pb-20 p-4 md:p-12 animate-fade-in roboto-font">
-
-      {/* Header Admin */}
-
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 mb-12 bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
-
-        <div>
-
-          <div className="flex items-center gap-3 mb-2">
-
-            <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-
-            <h2 className="text-3xl font-black text-[#0A1A3A] uppercase tracking-tighter leading-none">Gestionnaire Boutique</h2>
-
-          </div>
-
-          <p className="text-[10px] font-bold text-[#D4AF37] uppercase tracking-[0.2em]">Session : {user.email}</p>
-
-        </div>
-
-        
-
-        <div className="flex flex-wrap items-center gap-4 w-full lg:w-auto">
-
-          {/* BARRE DE RECHERCHE ADMIN (NOUVEAU) */}
-
-          <div className="relative flex-1 lg:w-80">
-
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-
-            <input 
-
-              type="text" 
-
-              placeholder="Rechercher un produit..." 
-
-              className="w-full bg-gray-50 border border-gray-200 rounded-2xl py-3.5 pl-12 pr-4 text-sm focus:bg-white focus:border-[#D4AF37] outline-none transition-all shadow-inner"
-
-              value={adminSearch}
-
-              onChange={(e) => setAdminSearch(e.target.value)}
-
-            />
-
-          </div>
-
-
-
-          <button onClick={handleLogout} className="p-4 bg-red-50 rounded-2xl text-red-600 hover:bg-red-600 hover:text-white transition-all font-black text-[10px] uppercase tracking-widest flex items-center gap-2 shadow-sm border border-red-100"><LogOut size={16}/> Quitter</button>
-
-          
-
-          <button onClick={() => setShowCatList(!showCatList)} className="p-4 bg-white rounded-2xl shadow-sm border border-gray-200 text-[#0A1A3A] hover:bg-[#0A1A3A] hover:text-white transition-all"><Settings size={20}/></button>
-
-          
-
-          <button onClick={onBack} className="p-4 bg-gray-100 rounded-full text-gray-500 hover:bg-white hover:shadow-md transition-all"><X size={20}/></button>
-
-        </div>
-
-      </div>
-
-
-
-      {/* Gestion des Catégories */}
-
-      {showCatList && (
-
-        <div className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-[#D4AF37]/20 mb-12 animate-fade-in">
-
-            <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-8 border-b pb-6">
-
-               <h3 className="font-black text-[#0A1A3A] uppercase tracking-widest text-sm flex items-center gap-2"><Settings size={18} className="text-[#D4AF37]"/> Liste des Catégories</h3>
-
-               <div className="flex items-center gap-2 bg-gray-50 p-2 rounded-2xl border border-gray-100 w-full md:w-auto shadow-inner">
-
-                  <input placeholder="Nom de la catégorie" className="bg-transparent border-none text-sm px-4 focus:ring-0 w-full md:w-64 font-bold" value={newCatName} onChange={e=>setNewCatName(e.target.value)} />
-
-                  <button onClick={async () => { if(newCatName) { await api.addCategory(newCatName); setNewCatName(''); onRefresh(); } }} className="bg-[#D4AF37] p-3 rounded-xl text-[#0A1A3A] shadow-lg active:scale-90 transition-all"><Plus size={20}/></button>
-
-               </div>
-
-            </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-
-                {categories.map(c => (
-
-                  <div key={c.id} className="flex justify-between items-center bg-gray-50 p-4 rounded-2xl border border-gray-100 group hover:border-[#D4AF37] transition-all">
-
-                    <span className="text-xs font-black text-[#0A1A3A] truncate">{c.name}</span>
-
-                    <button onClick={async () => { if(window.confirm("Supprimer cette catégorie ?")) { await api.deleteCategory(c.id); onRefresh(); } }} className="text-red-400 opacity-0 group-hover:opacity-100 hover:text-red-600 transition-all"><Trash2 size={16}/></button>
-
-                  </div>
-
-                ))}
-
-            </div>
-
-        </div>
-
-      )}
-
-
-
-      {/* Grille des Produits */}
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-8">
-
-        {/* Bouton Ajouter */}
-
-        <button onClick={() => setEditing({ nom: '', categorie: categories[0]?.name, type_dispo: 'STOCK', description: '', image_urls: ['', '', '', '', ''] })} className="bg-white border-4 border-dashed border-gray-200 rounded-[3rem] p-10 flex flex-col items-center justify-center hover:border-[#D4AF37] hover:bg-orange-50 transition-all group aspect-square shadow-sm">
-
-          <div className="p-6 bg-gray-50 rounded-full group-hover:bg-[#D4AF37] transition-all mb-4">
-
-            <Plus size={48} className="text-gray-300 group-hover:text-white transition-all" />
-
-          </div>
-
-          <span className="font-black text-gray-400 group-hover:text-[#0A1A3A] text-xs uppercase tracking-[0.2em] text-center">Nouveau Produit</span>
-
-        </button>
-
-
-
-        {/* Liste Filtrée */}
-
-        {filteredAdminProducts.map(p => (
-
-          <div key={p.id} className="bg-white p-6 rounded-[3rem] shadow-sm flex flex-col items-center group relative border border-transparent hover:border-[#D4AF37] hover:shadow-2xl transition-all duration-500 animate-fade-in">
-
-            <button onClick={async () => { if(window.confirm("Supprimer l'article définitivement ?")) { await api.deleteProduct(p.id); onRefresh(); } }} className="absolute top-4 right-4 p-3 bg-red-50 rounded-full text-red-500 shadow-md opacity-0 group-hover:opacity-100 transition-all hover:bg-red-600 hover:text-white z-10"><Trash2 size={18}/></button>
-
-            
-
-            <div className="w-full aspect-square rounded-[2rem] overflow-hidden mb-6 bg-gray-50 shadow-inner relative">
-
-              <img src={p.image_urls?.[0]} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="" />
-
-              <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-[8px] text-white font-black uppercase tracking-widest">{p.type_dispo}</div>
-
-            </div>
-
-
-
-            <div className="w-full text-center space-y-1">
-
-              <p className="text-[9px] font-black text-[#D4AF37] uppercase tracking-widest mb-1">{p.categorie}</p>
-
-              <p className="font-black text-[#0A1A3A] uppercase text-xs truncate w-full px-2">{p.nom}</p>
-
-              <p className="text-sm font-bold text-gray-400 mt-2">{Number(p.prix_standard || p.prix_avion)?.toLocaleString()} F</p>
-
-            </div>
-
-
-
-            <button onClick={() => setEditing({ ...p, image_urls: [...(p.image_urls || []), '', '', '', '', ''].slice(0, 5) })} className="mt-6 w-full py-4 bg-[#0A1A3A] rounded-2xl text-white font-black text-[10px] uppercase tracking-widest hover:bg-[#D4AF37] transition-all shadow-lg active:scale-95">Modifier l'offre</button>
-
-          </div>
-
-        ))}
-
-      </div>
-
-
-
-      {/* Modal Edition */}
-
-      {editing && (
-
-        <div className="fixed inset-0 z-[1000] bg-[#0A1A3A]/90 backdrop-blur-lg flex items-center justify-center p-4">
-
-          <div className="bg-white w-full max-w-5xl rounded-[4rem] p-10 md:p-16 shadow-[0_0_100px_rgba(0,0,0,0.5)] max-h-[90vh] overflow-y-auto no-scrollbar animate-fade-in relative border-b-[12px] border-[#D4AF37]">
-
-            <button onClick={() => setEditing(null)} className="absolute top-10 right-10 p-4 bg-gray-100 rounded-full hover:bg-red-500 hover:text-white transition-all shadow-sm"><X size={24}/></button>
-
-            <div className="flex items-center gap-4 mb-12">
-
-               <div className="p-4 bg-[#D4AF37] rounded-3xl text-[#0A1A3A] shadow-xl"><Edit3 size={32}/></div>
-
-               <h3 className="text-4xl font-black text-[#0A1A3A] uppercase tracking-tighter roboto-font">Fiche Technique</h3>
-
-            </div>
-
-
-
-            <form onSubmit={handleSave} className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-
-              <div className="space-y-8">
-
-                <div className="space-y-2">
-
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Nom de l'article</label>
-
-                  <input required className="w-full bg-gray-50 p-6 rounded-[1.5rem] border border-gray-100 focus:border-[#D4AF37] outline-none font-bold shadow-inner" value={editing.nom} onChange={e=>setEditing({...editing, nom:e.target.value})} placeholder="Ex: iPhone 16 Pro Max..." />
-
-                </div>
-
-                
-
-                <div className="space-y-2">
-
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Rayon / Catégorie</label>
-
-                  <select className="w-full bg-gray-50 p-6 rounded-[1.5rem] font-black border border-gray-100 outline-none shadow-inner cursor-pointer" value={editing.categorie} onChange={e=>setEditing({...editing, categorie:e.target.value})}>
-
-                    {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
-
-                  </select>
-
-                </div>
-
-
-
-                <div className="space-y-2">
-
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Description & Specs</label>
-
-                  <textarea className="w-full bg-gray-50 p-6 rounded-[1.5rem] h-56 border border-gray-100 focus:border-[#D4AF37] outline-none font-medium shadow-inner no-scrollbar" value={editing.description} onChange={e=>setEditing({...editing, description:e.target.value})} placeholder="Détails techniques, état, couleurs dispos..." />
-
-                </div>
-
-              </div>
-
-
-
-              <div className="space-y-8">
-
-                <div className="space-y-4">
-
-                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2 flex items-center gap-2"><ImageIcon size={14}/> Galerie Photos (Max 5)</p>
-
-                  <div className="grid grid-cols-5 gap-3">
-
-                    {editing.image_urls.map((url, i) => (
-
-<button key={i} type="button" onClick={() => openCloudinary(i)} className={`aspect-square rounded-xl border-2 border-dashed flex flex-col items-center justify-center overflow-hidden transition-all ${i === 0 ? 'border-[#D0A050] bg-orange-50' : 'border-gray-200 bg-gray-50 hover:border-[#D0A050]'}`}>
-
-                      {url ? <img src={url} className="w-full h-full object-cover" alt="" /> : <ImageIcon size={18} className="text-gray-300"/>}
-
-                    </button>
-
-                    ))}
-
-                  </div>
-
-                </div>
-
-
-
-                <div className="grid grid-cols-2 gap-6 pt-6 border-t border-gray-100">
-
-                  <div className="space-y-2">
-
-                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Disponibilité</label>
-
-                    <select className="w-full bg-gray-50 p-6 rounded-[1.5rem] font-black border border-gray-100 outline-none shadow-inner" value={editing.type_dispo} onChange={e=>setEditing({...editing, type_dispo:e.target.value})}>
-
-                      <option value="STOCK">STOCK ABIDJAN</option>
-
-                      <option value="COMMANDE">SUR COMMANDE USA</option>
-
-                    </select>
-
-                  </div>
-
-                  <div className="space-y-2">
-
-                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-2">Prix Public (F)</label>
-
-                    <input type="number" className="w-full bg-gray-100 p-6 rounded-[1.5rem] font-black border-none text-[#0A1A3A] text-2xl shadow-inner outline-none focus:ring-2 focus:ring-[#D4AF37]" value={editing.prix_standard || editing.prix_avion || ''} onChange={e=>setEditing({...editing, prix_standard:e.target.value})} placeholder="0" />
-
-                  </div>
-
-                </div>
-
-
-
-                <button disabled={saving} type="submit" className="w-full bg-[#0A1A3A] text-white py-8 rounded-[2rem] font-black uppercase shadow-2xl active:scale-95 transition-all text-xl tracking-widest mt-4 flex items-center justify-center gap-4 border-b-8 border-black/30">
-
-                  {saving ? <Loader2 className="animate-spin" /> : <><Save size={24}/> METTRE EN LIGNE</>}
-
-                </button>
-
-              </div>
-
-            </form>
-
-          </div>
-
-        </div>
-
-      )}
-
-    </div>
-
-  );
-
-};
 
 const ProductCard = ({ product, onClick }) => (
   <div onClick={onClick} className="group bg-white rounded-[1rem] overflow-hidden border border-gray-100 hover:border-[#D4AF37]/40 shadow-sm hover:shadow-[0_40px_80px_rgba(0,0,0,0.08)] transition-all duration-700 cursor-pointer  animate-fade-in gap-2">

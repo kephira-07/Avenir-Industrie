@@ -120,6 +120,16 @@ const createApi = (supabase) => ({
 
 // --- COMPOSANTS ---
 
+const MediaRenderer = ({ url, className, autoPlay = false }) => {
+  if (isVideo(url)) {
+    return (
+      <video src={url} className={className} autoPlay={autoPlay} muted loop playsInline />
+    );
+  }
+  return <img src={url} className={className} alt="" />;
+};
+
+
 
 
 const Nudge = ({ api }) => {

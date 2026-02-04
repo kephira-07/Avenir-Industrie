@@ -646,7 +646,7 @@ const ProductDetail = ({ product, onBack, onAddToCart }) => {
           <button onClick={() => setIsFullscreen(false)} className="absolute top-6 right-6 text-white bg-white/10 p-3 rounded-full hover:bg-white/20 transition-all"><X size={32} /></button>
           <div className="relative w-full max-w-4xl flex items-center justify-center">
             {isVideo(product.image_urls[activeImgIndex]) ? (
-              <video src={product.image_urls[activeImgIndex]} className="max-w-full max-h-full" controls autoPlay />
+              <video src={product.image_urls[activeImgIndex]} className="max-w-full max-h-full" controls autoPlay  />
             ) : (
               <img src={product.image_urls[activeImgIndex]} className="max-w-full max-h-full object-contain" alt="" />
             )}
@@ -701,7 +701,7 @@ const ProductDetail = ({ product, onBack, onAddToCart }) => {
                   <p className="text-4xl font-black text-[#0A1A3A]">{Number(price)?.toLocaleString()} F</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-[10px] font-black text-gray-400 uppercase mb-2">SOUS-TOTAL</p>
+                  <p className="text-[10px] font-Roboto text-blue-800 uppercase mb-2">TOTAL</p>
                   <p className="text-2xl font-bold text-[#D4AF37]">{(Number(price) * qty).toLocaleString()} F</p>
                 </div>
               </div>
@@ -775,7 +775,7 @@ const AdminDashboard = ({ products, categories, onRefresh, onBack, api, sb }) =>
       multiple: false,
     }, (error, result) => {
       if (!error && result.event === "success") { 
-        const newImages = [...(editing.image_urls || Array(8).fill(''))];
+        const newImages = [...(editing.image_urls || Array(5).fill(''))];
         newImages[index] = result.info.secure_url;
         setEditing({...editing, image_urls: newImages});
       }
@@ -935,7 +935,7 @@ const CheckoutPage = ({ cart, total, onBack, api }) => {
 
     const text = `*COMMANDE Industrie-Avenir*%0A-----------------%0A${cart.map(i => `• ${i.nom} (${i.mode}) x${i.quantity}`).join('%0A')}%0A-----------------%0A*TOTAL : ${total.toLocaleString()} FCFA*%0A%0A*Client :* ${form.nom}%0A*Tél :* ${form.tel}%0A*Lieu :* ${form.adresse}`;
 
-    window.location.href = `https://wa.me/${WHATSAPP_NUMBER & Num}?text=${text}`;
+    window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${text}`;
 
   };
 

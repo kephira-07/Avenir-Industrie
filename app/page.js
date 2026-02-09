@@ -44,7 +44,7 @@ const useBackHandler = (onBack = []) => {
         window.history.back();
       }
     };
-  },[]);
+  }, [onBack]);
 };
 
 // --- COMPOSANT ROUTER SIMULÉ (pour remplacer useRouter si non utilisé) ---

@@ -22,45 +22,45 @@ const isVideo = (url) => {
 };
 
 // --- HOOK PERSONNALISÉ POUR GÉRER LE RETOUR ---
+import { useEffect, useRef } from 'react';
+
 const useBackHandler = (onBack, dependencies = []) => {
-  const router = useRouter();
+  // On utilise une ref pour éviter que le useEffect ne redémarre 
+  // si onBack change d'identité (performance)
+  const onBackRef = useRef(onBack);
   
   useEffect(() => {
+    onBackRef.current = onBack;
+  }, [onBack]);
+
+  useEffect(() => {
+    // 1. On pousse un état factice dans l'historique
+    // C'est ce qui "bloque" l'utilisateur sur la page
+    window.history.pushState({ intercepted: true }, '');
+
     const handlePopState = (event) => {
-      event.preventDefault();
-      if (onBack && typeof onBack === 'function') {
-        onBack();
+      // Si l'utilisateur clique sur "Précédent", le navigateur retire 
+      // l'état factice. On exécute alors notre logique.
+      if (onBackRef.current) {
+        onBackRef.current();
       }
     };
 
-    // Ajouter un état à l'historique pour intercepter le premier retour
-    window.history.pushState(null, '', window.location.pathname);
     window.addEventListener('popstate', handlePopState);
 
     return () => {
       window.removeEventListener('popstate', handlePopState);
-      // Nettoyer l'état ajouté si nécessaire
-      if (window.history.state) {
+      
+      // 2. Nettoyage intelligent : 
+      // Si on quitte le composant normalement (pas via le bouton retour),
+      // il faut supprimer l'état factice qu'on a ajouté pour ne pas 
+      // polluer l'historique de l'utilisateur.
+      if (window.history.state?.intercepted) {
         window.history.back();
       }
     };
-  }, dependencies);
-};
-
-// --- COMPOSANT ROUTER SIMULÉ (pour remplacer useRouter si non utilisé) ---
-const useRouter = () => {
-  return {
-    push: (url) => {
-      window.history.pushState({ url }, '', url);
-      window.dispatchEvent(new PopStateEvent('popstate'));
-    },
-    back: () => {
-      window.history.back();
-    },
-    replace: (url) => {
-      window.history.replaceState({ url }, '', url);
-    }
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, dependencies); 
 };
 
 // --- LOGIQUE API SUPABASE ---
@@ -1126,4 +1126,4 @@ function AppContent() {
   );
 }
 
-export default function App() 
+export default function App() { return <AppContent />; }

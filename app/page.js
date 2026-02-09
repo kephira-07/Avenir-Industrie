@@ -1126,4 +1126,4 @@ function AppContent() {
   );
 }
 
-export default function App() { return <AppContent />; }
+export default function App() 

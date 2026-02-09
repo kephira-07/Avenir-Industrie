@@ -142,99 +142,219 @@ const Nudge = ({ api }) => {
 
 // --- COMPOSANT HERO ---
 const HeroSection = () => {
+
+  // Images représentatives pour les colonnes
+
   const col1Images = [
-    "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=800&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=800&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=800&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1526170315870-efffd09636f7?q=80&w=800&auto=format&fit=crop"
+
+    "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=800&auto=format&fit=crop", // Tech
+
+    "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=800&auto=format&fit=crop", // Gadget
+
+    "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=800&auto=format&fit=crop", // Audio
+
+    "https://images.unsplash.com/photo-1526170315870-efffd09636f7?q=80&w=800&auto=format&fit=crop"  // Caméra
+
   ];
+
+
 
   const col2Images = [
-    "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?q=80&w=800&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=800&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1491553895911-0055eca6402d?q=80&w=800&auto=format&fit=crop"
+
+    "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800&auto=format&fit=crop", // Shoes
+
+    "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?q=80&w=800&auto=format&fit=crop", // Watch
+
+    "https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=800&auto=format&fit=crop", // Bag
+
+    "https://images.unsplash.com/photo-1491553895911-0055eca6402d?q=80&w=800&auto=format&fit=crop"  // Fashion
+
   ];
 
+
+
   return (
+
     <>
+
       <style dangerouslySetInnerHTML={{ __html: `
+
         @keyframes scrollUp { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
+
         @keyframes scrollDown { 0% { transform: translateY(-50%); } 100% { transform: translateY(0); } }
+
         .animate-vertical-up { animation: scrollUp 30s linear infinite; }
+
         .animate-vertical-down { animation: scrollDown 30s linear infinite; }
+
         .designer-title { font-family: 'Syne', sans-serif; letter-spacing: -0.04em; }
+
         .designer-body { font-family: 'Inter', sans-serif; }
+
       `}} />
 
+
+
       <section className="relative overflow-hidden bg-blue-100 py-5 lg:py-10 min-h-[85vh] flex items-center">
+
+        {/* IMAGE DE FOND DU HERO */}
+
         <div className="absolute inset-0 z-0">
+
           <img 
+
             src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=2000&auto=format&fit=crop" 
+
             className="w-full h-full object-cover opacity-20"
+
             alt="Background Logistics"
+
           />
+
           <div className="absolute inset-0 bg-gradient-to-r from-[#07101ac4] via-[#0F172A]/60 to-transparent"></div>
+
         </div>
+
+
 
         <div className="max-w-10xl mx-auto p-5 px-10 relative z-10 w-full">
+
           <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+
+            
+
+            {/* TEXTE & CTA */}
+
             <div className="w-full lg:w-1/2 space-y-10  animate-fade-in-up">
+
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-bold uppercase tracking-widest designer-body">
+
                 <Globe size={14} />
+
                 <span>Import direct &middot; Produit diponible en boutique</span>
+
               </div>
+
               
+
               <h1 className="text-3xl md:text-6xl font-Karla text-white leading-[1.1] uppercase m-0">
+
               Commandez vos produits <br />
+
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">Chez nous.</span>
+
               </h1>
+
               
+
               <p className="text-sm md:text-base text-white max-w-lg leading-relaxed designer-body font-light">
+
                 La plateforme qui vous permet de commander des produits locaux et internationaux, avec une livraison fiable partout en Afrique.
-                Accédez à des articles sélectionnés, provenant de fournisseurs locaux et de l'étranger, en toute simplicité.
+
+                Accédez à des articles sélectionnés, provenant de fournisseurs locaux et de l’étranger, en toute simplicité.
+
               </p>
 
+
+
+
+
+              {/* Badges de confiance */}
+
               <div className="flex flex-wrap items-center gap-6 pt-6 border-t border-slate-800">
+
                 <div className="flex items-center gap-2">
+
                   <ShieldCheck className="text-blue-500" size={18} />
+
                   <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter designer-body">Commandez en toute confiance </span>
+
                 </div>
+
                 <div className="flex items-center gap-2">
+
                   <Truck className="text-blue-500" size={18} />
+
                   <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter designer-body">Livraison partout</span>
+
                 </div>
+
               </div>
+
             </div>
 
+
+
+            {/* VISUEL DYNAMIQUE (BOX AVEC IMAGES) */}
+
             <div className="w-full lg:w-1/2 h-[500px] relative">
+
               <div className="grid grid-cols-2 gap-3 h-full overflow-hidden rounded-[2.5rem] border-8 border-slate-800/50 shadow-2xl bg-slate-900">
+
+                
+
+                {/* Colonne 1 : Monte */}
+
                 <div className="space-y-3 animate-vertical-up">
+
                   {[...col1Images, ...col1Images].map((img, i) => (
+
                     <div key={i} className="h-56 w-full relative overflow-hidden rounded-2xl group">
+
                       <img src={img} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Product" />
+
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+
                     </div>
+
                   ))}
+
                 </div>
+
+
+
+                {/* Colonne 2 : Descend */}
 
                 <div className="space-y-3 animate-vertical-down pt-10">
+
                   {[...col2Images, ...col2Images].map((img, i) => (
+
                     <div key={i} className="h-56 w-full relative overflow-hidden rounded-2xl group">
+
                       <img src={img} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Product" />
+
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+
                     </div>
+
                   ))}
+
                 </div>
 
+
+
+                {/* Filtre de fondu pour le haut et le bas */}
+
                 <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-[#0F172A] via-transparent to-[#0F172A] opacity-80"></div>
+
               </div>
+
+
+
              </div>
+
+
+
           </div>
+
         </div>
+
       </section>
+
     </>
+
   );
+
 };
 
 // --- ABOUT PAGE AVEC GESTION DU RETOUR ---

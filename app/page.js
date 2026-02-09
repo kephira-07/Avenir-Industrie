@@ -22,45 +22,45 @@ const isVideo = (url) => {
 };
 
 // --- HOOK PERSONNALISÉ POUR GÉRER LE RETOUR ---
-import { useEffect, useRef } from 'react';
-
-const useBackHandler = (onBack, dependencies = []) => {
-  // On utilise une ref pour éviter que le useEffect ne redémarre 
-  // si onBack change d'identité (performance)
-  const onBackRef = useRef(onBack);
+const useBackHandler = (onBack = []) => {
+  const router = useRouter();
   
   useEffect(() => {
-    onBackRef.current = onBack;
-  }, [onBack]);
-
-  useEffect(() => {
-    // 1. On pousse un état factice dans l'historique
-    // C'est ce qui "bloque" l'utilisateur sur la page
-    window.history.pushState({ intercepted: true }, '');
-
     const handlePopState = (event) => {
-      // Si l'utilisateur clique sur "Précédent", le navigateur retire 
-      // l'état factice. On exécute alors notre logique.
-      if (onBackRef.current) {
-        onBackRef.current();
+      event.preventDefault();
+      if (onBack && typeof onBack === 'function') {
+        onBack();
       }
     };
 
+    // Ajouter un état à l'historique pour intercepter le premier retour
+    window.history.pushState(null, '', window.location.pathname);
     window.addEventListener('popstate', handlePopState);
 
     return () => {
       window.removeEventListener('popstate', handlePopState);
-      
-      // 2. Nettoyage intelligent : 
-      // Si on quitte le composant normalement (pas via le bouton retour),
-      // il faut supprimer l'état factice qu'on a ajouté pour ne pas 
-      // polluer l'historique de l'utilisateur.
-      if (window.history.state?.intercepted) {
+      // Nettoyer l'état ajouté si nécessaire
+      if (window.history.state) {
         window.history.back();
       }
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, dependencies); 
+  },[]);
+};
+
+// --- COMPOSANT ROUTER SIMULÉ (pour remplacer useRouter si non utilisé) ---
+const useRouter = () => {
+  return {
+    push: (url) => {
+      window.history.pushState({ url }, '', url);
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    },
+    back: () => {
+      window.history.back();
+    },
+    replace: (url) => {
+      window.history.replaceState({ url }, '', url);
+    }
+  };
 };
 
 // --- LOGIQUE API SUPABASE ---
@@ -362,12 +362,13 @@ const ProductDetail = ({ product, onBack, onAddToCart }) => {
   return (
     <div className="min-h-screen bg-white animate-fade-in pb-20 font-sans overflow-x-hidden">
       {showToast && (
-        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[1000] bg-[#0A1A3A] text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 border border-[#D4AF37] animate-fade-in-up">
-          <div className="bg-[#D4AF37] p-1 rounded-full text-[#0A1A3A]"><CheckCircle size={16}/></div>
-          <p className="font-bold text-sm uppercase tracking-widest">Produit ajouté au panier !</p>
+           <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-6 py-4 rounded-xl shadow-lg flex items-center gap-3">
+              <div className="bg-[#D4AF37] p-1 rounded-full text-[#0A1A3A]"><CheckCircle size={16}/></div>
+            <span className="font-bold">Produit Ajouté au panier !</span>
+   
         </div>
       )}
-
+      
       {isFullscreen && (
         <div className="fixed inset-0 z-[1000] bg-black flex flex-col items-center justify-center p-4">
           <button onClick={() => setIsFullscreen(false)} className="absolute top-6 right-6 text-white bg-white/10 p-3 rounded-full hover:bg-white/20 transition-all"><X size={32} /></button>
@@ -385,7 +386,7 @@ const ProductDetail = ({ product, onBack, onAddToCart }) => {
 
       <div className="sticky top-0 bg-white/95 backdrop-blur-md z-[700] px-4 md:px-6 py-4 border-b flex items-center justify-between shadow-sm">
         <button onClick={onBack} className="p-2 bg-gray-100 rounded-full hover:bg-[#0A1A3A] hover:text-white transition-all active:scale-90"><ArrowLeft size={20}/></button>
-        <span className="text-[10px] font-black uppercase text-[#D4AF37] tracking-[0.3em]">Vitrine Afri-Tech</span>
+        <span className="text-[10px] font-black uppercase text-[#D4AF37] tracking-[0.3em]">A l'Industrie de l'Avenir </span>
         <div className="w-10" />
       </div>
 
@@ -408,10 +409,22 @@ const ProductDetail = ({ product, onBack, onAddToCart }) => {
           </div>
 
           <div className="space-y-10 flex flex-col justify-center">
-            <div className="space-y-4">
-              <span className="text-[#D4AF37] font-black uppercase text-xs tracking-[0.4em]">{product.categorie}</span>
-              <h1 className="text-4xl md:text-6xl font-black text-[#0A1A3A] designer-title uppercase tracking-tighter">{product.nom}</h1>
-              <p className="text-[#0A1A3A] font-medium leading-relaxed text-lg border-l-4 border-[#D4AF37] pl-8 py-2">{product.description}</p>
+            <div>
+              <div className="inline-flex px-3 py-1 bg-gradient-to-r from-cyan-50 to-purple-50 text-cyan-700 rounded-full text-sm font-medium mb-4">
+                {product.categorie}
+              </div>
+              <h1 className="text-4xl font-bold text-slate-900 mb-4">{product.nom}</h1>
+              <p className="text-lg text-slate-600 mb-6">{product.description}</p>
+              
+              {/* Note */}
+              <div className="flex items-center gap-2 mb-6">
+                <div className="flex">
+                  {[...Array(5)].map((_, i) => (
+                    <Icon key={i} name="star" size={20} className="text-yellow-400 fill-current" fill="currentColor" />
+                  ))}
+                </div>
+                <span className="text-slate-600">(4.9 • 128 avis)</span>
+              </div>
             </div>
             <div className="p-8 bg-gray-50 rounded-[3.5rem] space-y-10 shadow-inner">
               <div className="flex justify-between items-center">
@@ -422,24 +435,53 @@ const ProductDetail = ({ product, onBack, onAddToCart }) => {
                     <button onClick={() => setQty(qty + 1)} className="text-[#0A1A3A] active:scale-125 transition-transform"><Plus size={20}/></button>
                  </div>
               </div>
-              <div className="flex justify-between items-end border-t border-gray-200 pt-8">
+             <div className="flex items-end justify-between mb-8">
                 <div>
-                  <p className="text-[10px] font-black text-[#D4AF37] uppercase mb-2">PRIX UNITAIRE</p>
-                  <p className="text-4xl font-black text-[#0A1A3A]">{Number(price)?.toLocaleString()} F</p>
+                  <div className="text-sm text-slate-500 mb-1">Prix actuel</div>
+                  <div className="text-5xl font-bold text-slate-900">
+                    {Number(price).toLocaleString()} F
+                  </div>
+                  {isOrder && (
+                    <div className="text-sm text-emerald-600 mt-2">
+                      <Icon name="package" size={16} className="inline mr-2" />
+                    Ici vous avez le prix de l'article sans les frais livraisons 
+                    </div>
+                  )}
                 </div>
-                <div className="text-right">
-                  <p className="text-[10px] font-Roboto text-blue-800 uppercase mb-2">TOTAL</p>
-                  <p className="text-2xl font-bold text-[#D4AF37]">{(Number(price) * qty).toLocaleString()} F</p>
-                </div>
+               
               </div>
             </div>
-            <button 
-              onClick={() => { onAddToCart(product, isOrder ? 'WHATSAPP' : 'STOCK', price, qty); setShowToast(true); setTimeout(() => setShowToast(false), 3000); }} 
-              className={`w-full py-7 rounded-[2.5rem] font-black flex items-center justify-center gap-4 shadow-2xl active:scale-95 transition-all text-xl uppercase tracking-widest border-b-[10px] border-black/20 ${isOrder ? 'bg-[#25D366]' : 'bg-[#0A1A3A] text-white'}`}
-            >
-              {isOrder ? <Phone size={24} /> : <ShoppingBag size={24} />}
-              {isOrder ? `Commander via WhatsApp` : `Ajouter au Panier`}
-            </button>
+           {/* Boutons */}
+              <div className="space-y-4">
+                <button 
+                  onClick={() => {
+                    onAddToCart(product, isOrder ? 'WHATSAPP' : 'STOCK', price, quantity);
+                    setShowToast(true);
+                    setTimeout(() => setShowToast(false), 3000);
+                  }}
+                  className={`w-full py-4 rounded-xl font-bold text-lg transition-all ${
+                    isOrder 
+                      ? 'bg-gradient-to-r from-emerald-500 to-green-500 hover:shadow-lg hover:shadow-emerald-500/25' 
+                      : 'bg-gradient-to-r from-cyan-500 to-purple-500 hover:shadow-lg hover:shadow-cyan-500/25'
+                  } text-white`}
+                >
+                  {isOrder ? 'Commander maintenant' : 'Ajouter au panier'}
+                </button>
+                
+                <button className="w-full py-4 border-2 border-slate-300 text-slate-700 rounded-xl font-bold hover:bg-slate-50 transition-colors">
+                  Acheter maintenant
+                </button>
+              </div>
+                {/* Garanties */}
+                {isOrder && ( 
+                <div className="grid grid-cols-2 gap-4">
+                  <div  className="flex items-center gap-3 p-4 bg-white border border-slate-200 rounded-xl">
+                    <div className="bg-green-100 p-2 rounded-full text-green-500"><Ship size={20} className="text-cyan-600"/> <span className="text-sm font-medium text-slate-700">Bateau</span></div>
+                    <div className="bg-green-100 p-2 rounded-full text-green-500"><Plane size={20} className="text-cyan-600"/> <span className="text-sm font-medium text-slate-700">Avion</span></div>
+                          
+                </div>
+              )
+            </div>)}
           </div>
         </div>
       </div>
@@ -611,7 +653,7 @@ const AdminDashboard = ({ products, categories, onRefresh, onBack, api, sb }) =>
                 </div>
                 <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-100">
                   <select className="w-full bg-gray-50 p-4 rounded-[1rem] font-black text-[10px] uppercase shadow-inner" value={editing.type_dispo} onChange={e=>setEditing({...editing, type_dispo:e.target.value})}>
-                    <option value="STOCK">STOCK ABIDJAN</option>
+                    <option value="STOCK">STOCK </option>
                     <option value="COMMANDE">IMPORT USA</option>
                   </select>
                   <input type="number" className="w-full bg-gray-100 p-4 rounded-[1rem] font-black text-[#0A1A3A] text-xl shadow-inner outline-none focus:ring-2 focus:ring-[#D4AF37]" value={editing.prix_standard || editing.prix_avion || ''} onChange={e=>setEditing({...editing, prix_standard:e.target.value})} placeholder="Prix (F)" />

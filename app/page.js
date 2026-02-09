@@ -22,46 +22,25 @@ const isVideo = (url) => {
 };
 
 // --- HOOK PERSONNALISÉ POUR GÉRER LE RETOUR ---
-const useBackHandler = (onBack = []) => {
-  const router = useRouter();
-  
+const useBackHandler = (handler, deps = []) => {
+  const backHandlerRef = useRef(handler);
   useEffect(() => {
-    const handlePopState = (event) => {
-      event.preventDefault();
-      if (onBack && typeof onBack === 'function') {
-        onBack();
-      }
+    backHandlerRef.current = handler;
+  }, deps);
+  useEffect(() => {
+    const handlePopState = () => {
+      backHandlerRef.current();
     };
-
-    // Ajouter un état à l'historique pour intercepter le premier retour
-    window.history.pushState(null, '', window.location.pathname);
     window.addEventListener('popstate', handlePopState);
-
     return () => {
       window.removeEventListener('popstate', handlePopState);
-      // Nettoyer l'état ajouté si nécessaire
-      if (window.history.state) {
-        window.history.back();
-      }
     };
-  }, onBack);
+  }, []);
 };
 
+
 // --- COMPOSANT ROUTER SIMULÉ (pour remplacer useRouter si non utilisé) ---
-const useRouter = () => {
-  return {
-    push: (url) => {
-      window.history.pushState({ url }, '', url);
-      window.dispatchEvent(new PopStateEvent('popstate'));
-    },
-    back: () => {
-      window.history.back();
-    },
-    replace: (url) => {
-      window.history.replaceState({ url }, '', url);
-    }
-  };
-};
+
 
 // --- LOGIQUE API SUPABASE ---
 const createApi = (supabase) => ({

@@ -518,9 +518,9 @@ const ProductDetail = ({ product, onBack, onAddToCart }) => {
               {/* Note */}
               <div className="flex items-center gap-2 mb-6">
                 <div className="flex">
-                  {[...Array(5)].map((_, i) => (
-                    <Icon key={i} name="star" size={20} className="text-yellow-400 fill-current" fill="currentColor" />
-                  ))}
+                 
+                    <Star size={20} className="text-yellow-400 fill-current" fill="currentColor" />
+                 
                 </div>
                 <span className="text-slate-600">(4.9 • 128 avis)</span>
               </div>

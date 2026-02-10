@@ -449,7 +449,7 @@ const AboutPage = ({ onBack, sectionId }) => {
 const ProductDetail = ({ product, onBack, onAddToCart }) => {
   const [activeImgIndex, setActiveImgIndex] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [qty, setQty] = useState(1);
+   const [quantity, setQuantity] = useState(1);
   const [showToast, setShowToast] = useState(false);
 
   // Gestion du retour avec le hook personnalisé
@@ -599,25 +599,46 @@ const ProductDetail = ({ product, onBack, onAddToCart }) => {
             </div>
 
             {/* Prix et quantité */}
-            <div className="p-8 bg-gray-50 rounded-[3.5rem] space-y-10 shadow-inner">
-              <div className="flex justify-between items-center">
-                <p className="text-[10px] font-black text-[#0A1A3A] uppercase tracking-[0.2em]">
-                  SÉLECTION QUANTITÉ
-                </p>
-                <div className="flex items-center gap-8 bg-white px-8 py-4 rounded-[1.5rem] shadow-sm border border-gray-100">
-                  <button
-                    onClick={() => setQty(Math.max(1, qty - 1))}
-                    className="text-[#0A1A3A] active:scale-125 transition-transform"
+            <div className="bg-gradient-to-r from-slate-50 to-white p-6 rounded-2xl border border-slate-200">
+            <div className="flex items-end justify-between mb-8">
+                <div>
+                  <div className="text-sm text-slate-500 mb-1">Prix actuel</div>
+                  <div className="text-5xl font-bold text-slate-900">
+                    {Number(price).toLocaleString()} F
+                  </div>
+                  {isOrder && (
+                    <div className="text-sm text-emerald-600 mt-2">
+                      Ici vous avez le prix de l'article sans les frais de livraison
+                    </div>
+                  )}
+                </div>
+              </div>
+                           {/* Quantité */}
+              <div className="flex items-center justify-between mb-8">
+                <div className="text-sm font-medium text-slate-700">Quantité</div>
+                <div className="flex items-center gap-4 bg-white border border-slate-200 rounded-xl p-2">
+                  <button 
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-slate-100"
                   >
                     <Minus size={20} />
-                  </button>
-                  <span className="font-black text-2xl w-8 text-center">{qty}</span>
-                  <button
-                    onClick={() => setQty(qty + 1)}
-                    className="text-[#0A1A3A] active:scale-125 transition-transform"
+                   </button>
+                  <span className="text-xl font-bold w-12 text-center">{quantity}</span>
+                  <button 
+                    onClick={() => setQuantity(quantity + 1)}
+                    className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-slate-100"
                   >
+
                     <Plus size={20} />
                   </button>
+                </div>
+              </div>
+              <div className="border-t border-slate-200 pt-6 mb-8">
+                <div className="flex justify-between items-center">
+                  <div className="text-lg text-slate-700">Total</div>
+                  <div className="text-3xl font-bold text-slate-900">
+                    {(Number(price) * quantity).toLocaleString()} F
+                  </div>
                 </div>
               </div>
 
@@ -635,12 +656,7 @@ const ProductDetail = ({ product, onBack, onAddToCart }) => {
                 </div>
               </div>
             </div>
-
-          
-
-            
-               {/* Boutons */}
-              <div className="space-y-4">
+            <div className="space-y-4">
                 <button 
                   onClick={() => {
                     onAddToCart(product, isOrder ? 'WHATSAPP' : 'STOCK', price, quantity);
@@ -662,10 +678,10 @@ const ProductDetail = ({ product, onBack, onAddToCart }) => {
               </div>
                 {/* Garanties */}
                 {isOrder && ( 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2  gap-2">
                   <div  className="flex items-center gap-3 p-4 bg-white border border-slate-200 rounded-xl">
-                    <div className="bg-green-100 p-2 rounded-1xl text-green-500"><Ship size={20} className="text-amber-600"/> <span className="text-sm font-medium text-slate-700">Bateau</span></div>
-                    <div className="bg-green-100 p-2 rounded-1xl text-green-500"><Plane size={20} className="text-amber-600"/> <span className="text-sm font-medium text-slate-700">Avion</span></div>
+                    <div className="bg-green-100 p-2 w-full rounded-1.5xl text-green-500"><Ship size={20} className="text-amber-600"/> <span className="text-sm font-medium text-slate-700">Bateau</span></div>
+                    <div className="bg-green-100 p-2 rounded-1.5xl w-full text-green-500"><Plane size={20} className="text-amber-600"/> <span className="text-sm font-medium text-slate-700">Avion</span></div>
                           
                 </div>
               )
@@ -676,7 +692,6 @@ const ProductDetail = ({ product, onBack, onAddToCart }) => {
     </div>
   );
 };
-
 
 
 // --- ADMIN DASHBOARD AVEC GESTION DU RETOUR ---

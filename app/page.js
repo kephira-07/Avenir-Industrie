@@ -444,96 +444,230 @@ const AboutPage = ({ onBack, sectionId }) => {
 };
 
 // --- DÉTAIL PRODUIT AVEC GESTION DU RETOUR ---
+
+
 const ProductDetail = ({ product, onBack, onAddToCart }) => {
   const [activeImgIndex, setActiveImgIndex] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [qty, setQty] = useState(1);
   const [showToast, setShowToast] = useState(false);
-  
-  const isOrder = product.type_dispo === 'COMMANDE';
-  const price = isOrder ? product.prix_avion : product.prix_standard;
+
+  // Gestion du retour avec le hook personnalisé
+  useBackHandler(() => {
+    onBack();
+  });
+
+  const isOrder = product?.type_dispo === "COMMANDE";
+  const price = isOrder ? product?.prix_avion : product?.prix_standard;
+
+  // Vérification sécurisée pour éviter les erreurs
+  const images = Array.isArray(product?.image_urls) ? product.image_urls : [];
 
   return (
     <div className="min-h-screen bg-white animate-fade-in pb-20 font-sans overflow-x-hidden">
       {showToast && (
-        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[1000] bg-[#0A1A3A] text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 border border-[#D4AF37] animate-fade-in-up">
-          <div className="bg-[#D4AF37] p-1 rounded-full text-[#0A1A3A]"><CheckCircle size={16}/></div>
-          <p className="font-bold text-sm uppercase tracking-widest">Produit ajouté au panier !</p>
+        <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-6 py-4 rounded-xl shadow-lg flex items-center gap-3">
+          <div className="bg-[#D4AF37] p-1 rounded-full text-[#0A1A3A]">
+            <CheckCircle size={16} />
+          </div>
+          <span className="font-bold">Produit ajouté au panier !</span>
         </div>
       )}
 
-      {isFullscreen && (
+      {isFullscreen && images.length > 0 && (
         <div className="fixed inset-0 z-[1000] bg-black flex flex-col items-center justify-center p-4">
-          <button onClick={() => setIsFullscreen(false)} className="absolute top-6 right-6 text-white bg-white/10 p-3 rounded-full hover:bg-white/20 transition-all"><X size={32} /></button>
+          <button
+            onClick={() => setIsFullscreen(false)}
+            className="absolute top-6 right-6 text-white bg-white/10 p-3 rounded-full hover:bg-white/20 transition-all"
+          >
+            <X size={32} />
+          </button>
           <div className="relative w-full max-w-4xl flex items-center justify-center">
-            {isVideo(product.image_urls[activeImgIndex]) ? (
-              <video src={product.image_urls[activeImgIndex]} className="max-w-full max-h-full" controls autoPlay  />
+            {isVideo(images[activeImgIndex]) ? (
+              <video
+                src={images[activeImgIndex]}
+                className="max-w-full max-h-full"
+                controls
+                autoPlay
+              />
             ) : (
-              <img src={product.image_urls[activeImgIndex]} className="max-w-full max-h-full object-contain" alt="" />
+              <img
+                src={images[activeImgIndex]}
+                className="max-w-full max-h-full object-contain"
+                alt=""
+              />
             )}
-            <button onClick={() => setActiveImgIndex((prev) => (prev - 1 + product.image_urls.length) % product.image_urls.length)} className="absolute left-0 p-4 text-white"><ChevronLeft size={48} /></button>
-            <button onClick={() => setActiveImgIndex((prev) => (prev + 1) % product.image_urls.length)} className="absolute right-0 p-4 text-white"><ChevronRight size={48} /></button>
+            <button
+              onClick={() =>
+                setActiveImgIndex(
+                  (prev) => (prev - 1 + images.length) % images.length
+                )
+              }
+              className="absolute left-0 p-4 text-white"
+            >
+              <ChevronLeft size={48} />
+            </button>
+            <button
+              onClick={() =>
+                setActiveImgIndex((prev) => (prev + 1) % images.length)
+              }
+              className="absolute right-0 p-4 text-white"
+            >
+              <ChevronRight size={48} />
+            </button>
           </div>
         </div>
       )}
 
+      {/* Barre supérieure */}
       <div className="sticky top-0 bg-white/95 backdrop-blur-md z-[700] px-4 md:px-6 py-4 border-b flex items-center justify-between shadow-sm">
-        <button onClick={onBack} className="p-2 bg-gray-100 rounded-full hover:bg-[#0A1A3A] hover:text-white transition-all active:scale-90"><ArrowLeft size={20}/></button>
-        <span className="text-[10px] font-black uppercase text-[#D4AF37] tracking-[0.3em]">Vitrine Afri-Tech</span>
+        <button
+          onClick={onBack}
+          className="p-2 bg-gray-100 rounded-full hover:bg-[#0A1A3A] hover:text-white transition-all active:scale-90"
+        >
+          <ArrowLeft size={20} />
+        </button>
+        <span className="text-[10px] font-black uppercase text-[#D4AF37] tracking-[0.3em]">
+          A l'Industrie de l'Avenir
+        </span>
         <div className="w-10" />
       </div>
 
+      {/* Contenu principal */}
       <div className="max-w-7xl mx-auto px-4 md:px-12 mt-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24">
+          {/* Images */}
           <div className="space-y-6">
-            <div onClick={() => setIsFullscreen(true)} className="relative aspect-square rounded-[2rem] overflow-hidden bg-gray-50 border shadow-2xl cursor-zoom-in group">
-              <MediaRenderer url={product.image_urls[activeImgIndex]} className="w-full h-full object-cover transition-all" autoPlay={true} />
-              <div className="absolute bottom-6 right-6 p-4 bg-white/20 backdrop-blur-md rounded-2xl text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                {isVideo(product.image_urls[activeImgIndex]) ? <Play size={24} /> : <Maximize2 size={24} />}
+            {images.length > 0 && (
+              <div
+                onClick={() => setIsFullscreen(true)}
+                className="relative aspect-square rounded-[2rem] overflow-hidden bg-gray-50 border shadow-2xl cursor-zoom-in group"
+              >
+                <MediaRenderer
+                  url={images[activeImgIndex]}
+                  className="w-full h-full object-cover transition-all"
+                  autoPlay={true}
+                />
+                <div className="absolute bottom-6 right-6 p-4 bg-white/20 backdrop-blur-md rounded-2xl text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                  {isVideo(images[activeImgIndex]) ? (
+                    <Play size={24} />
+                  ) : (
+                    <Maximize2 size={24} />
+                  )}
+                </div>
               </div>
-            </div>
+            )}
             <div className="flex gap-4 overflow-x-auto no-scrollbar pb-4 px-2">
-              {product.image_urls?.map((url, i) => (
-                <button key={i} onClick={() => setActiveImgIndex(i)} className={`w-20 h-20 md:w-28 md:h-28 rounded-2xl overflow-hidden border-4 shrink-0 transition-all ${activeImgIndex === i ? 'border-[#D4AF37] scale-110 shadow-xl' : 'border-transparent opacity-40 hover:opacity-80'}`}>
-                  {isVideo(url) ? <div className="w-full h-full bg-slate-900 flex items-center justify-center text-white"><Play size={24}/></div> : <img src={url} className="w-full h-full object-cover" alt="" />}
+              {images.map((url, i) => (
+                <button
+                  key={i}
+                  onClick={() => setActiveImgIndex(i)}
+                  className={`w-20 h-20 md:w-28 md:h-28 rounded-2xl overflow-hidden border-4 shrink-0 transition-all ${
+                    activeImgIndex === i
+                      ? "border-[#D4AF37] scale-110 shadow-xl"
+                      : "border-transparent opacity-40 hover:opacity-80"
+                  }`}
+                >
+                  {isVideo(url) ? (
+                    <div className="w-full h-full bg-slate-900 flex items-center justify-center text-white">
+                      <Play size={24} />
+                    </div>
+                  ) : (
+                    <img src={url} className="w-full h-full object-cover" alt="" />
+                  )}
                 </button>
               ))}
             </div>
           </div>
 
+          {/* Détails produit */}
           <div className="space-y-10 flex flex-col justify-center">
-            <div className="space-y-4">
-              <span className="text-[#D4AF37] font-black uppercase text-xs tracking-[0.4em]">{product.categorie}</span>
-              <h1 className="text-4xl md:text-6xl font-black text-[#0A1A3A] designer-title uppercase tracking-tighter">{product.nom}</h1>
-              <p className="text-[#0A1A3A] font-medium leading-relaxed text-lg border-l-4 border-[#D4AF37] pl-8 py-2">{product.description}</p>
+            <div>
+              <div className="inline-flex px-3 py-1 bg-gradient-to-r from-cyan-50 to-purple-50 text-cyan-700 rounded-full text-sm font-medium mb-4">
+                {product?.categorie}
+              </div>
+              <h1 className="text-4xl font-bold text-slate-900 mb-4">
+                {product?.nom}
+              </h1>
+              <p className="text-lg text-slate-600 mb-6">{product?.description}</p>
+
+              {/* Note */}
+              <div className="flex items-center gap-2 mb-6">
+                <Star size={20} className="text-yellow-400 fill-current" />
+                <span className="text-slate-600">(4.9 • 128 avis)</span>
+              </div>
             </div>
+
+            {/* Prix et quantité */}
             <div className="p-8 bg-gray-50 rounded-[3.5rem] space-y-10 shadow-inner">
               <div className="flex justify-between items-center">
-                 <p className="text-[10px] font-black text-[#0A1A3A] uppercase tracking-[0.2em]">SÉLECTION QUANTITÉ</p>
-                 <div className="flex items-center gap-8 bg-white px-8 py-4 rounded-[1.5rem] shadow-sm border border-gray-100">
-                    <button onClick={() => setQty(Math.max(1, qty - 1))} className="text-[#0A1A3A] active:scale-125 transition-transform"><Minus size={20}/></button>
-                    <span className="font-black text-2xl w-8 text-center">{qty}</span>
-                    <button onClick={() => setQty(qty + 1)} className="text-[#0A1A3A] active:scale-125 transition-transform"><Plus size={20}/></button>
-                 </div>
-              </div>
-              <div className="flex justify-between items-end border-t border-gray-200 pt-8">
-                <div>
-                  <p className="text-[10px] font-black text-[#D4AF37] uppercase mb-2">PRIX UNITAIRE</p>
-                  <p className="text-4xl font-black text-[#0A1A3A]">{Number(price)?.toLocaleString()} F</p>
+                <p className="text-[10px] font-black text-[#0A1A3A] uppercase tracking-[0.2em]">
+                  SÉLECTION QUANTITÉ
+                </p>
+                <div className="flex items-center gap-8 bg-white px-8 py-4 rounded-[1.5rem] shadow-sm border border-gray-100">
+                  <button
+                    onClick={() => setQty(Math.max(1, qty - 1))}
+                    className="text-[#0A1A3A] active:scale-125 transition-transform"
+                  >
+                    <Minus size={20} />
+                  </button>
+                  <span className="font-black text-2xl w-8 text-center">{qty}</span>
+                  <button
+                    onClick={() => setQty(qty + 1)}
+                    className="text-[#0A1A3A] active:scale-125 transition-transform"
+                  >
+                    <Plus size={20} />
+                  </button>
                 </div>
-                <div className="text-right">
-                  <p className="text-[10px] font-Roboto text-blue-800 uppercase mb-2">TOTAL</p>
-                  <p className="text-2xl font-bold text-[#D4AF37]">{(Number(price) * qty).toLocaleString()} F</p>
+              </div>
+
+              <div className="flex items-end justify-between mb-8">
+                <div>
+                  <div className="text-sm text-slate-500 mb-1">Prix actuel</div>
+                  <div className="text-5xl font-bold text-slate-900">
+                    {Number(price).toLocaleString()} F
+                  </div>
+                  {isOrder && (
+                    <div className="text-sm text-emerald-600 mt-2">
+                      Ici vous avez le prix de l'article sans les frais de livraison
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
-            <button 
-              onClick={() => { onAddToCart(product, isOrder ? 'WHATSAPP' : 'STOCK', price, qty); setShowToast(true); setTimeout(() => setShowToast(false), 3000); }} 
-              className={`w-full py-7 rounded-[2.5rem] font-black flex items-center justify-center gap-4 shadow-2xl active:scale-95 transition-all text-xl uppercase tracking-widest border-b-[10px] border-black/20 ${isOrder ? 'bg-[#25D366]' : 'bg-[#0A1A3A] text-white'}`}
-            >
-              {isOrder ? <Phone size={24} /> : <ShoppingBag size={24} />}
-              {isOrder ? `Commander via WhatsApp` : `Ajouter au Panier`}
-            </button>
+
+            {/* Boutons */}
+             {/* Boutons */}
+              <div className="space-y-4">
+                <button 
+                  onClick={() => {
+                    onAddToCart(product, isOrder ? 'WHATSAPP' : 'STOCK', price, quantity);
+                    setShowToast(true);
+                    setTimeout(() => setShowToast(false), 3000);
+                  }}
+                  className={`w-full py-4 rounded-xl font-bold text-lg transition-all ${
+                    isOrder 
+                      ? 'bg-gradient-to-r from-emerald-500 to-green-500 hover:shadow-lg hover:shadow-emerald-500/25' 
+                      : 'bg-gradient-to-r from-cyan-500 to-purple-500 hover:shadow-lg hover:shadow-cyan-500/25'
+                  } text-white`}
+                >
+                  {isOrder ? 'Commander maintenant' : 'Ajouter au panier'}
+                </button>
+                
+                <button className="w-full py-4 border-2 border-slate-300 text-slate-700 rounded-xl font-bold hover:bg-slate-50 transition-colors">
+                  Acheter maintenant
+                </button>
+              </div>
+                {/* Garanties */}
+                {isOrder && ( 
+                <div className="grid grid-cols-2 gap-4">
+                  <div  className="flex items-center gap-3 p-4 bg-white border border-slate-200 rounded-xl">
+                    <div className="bg-green-100 p-2 rounded-full text-green-500"><Ship size={20} className="text-cyan-600"/> <span className="text-sm font-medium text-slate-700">Bateau</span></div>
+                    <div className="bg-green-100 p-2 rounded-full text-green-500"><Plane size={20} className="text-cyan-600"/> <span className="text-sm font-medium text-slate-700">Avion</span></div>
+                          
+                </div>
+              )
+            </div>)}
           </div>
         </div>
       </div>

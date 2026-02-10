@@ -984,7 +984,7 @@ const CheckoutPage = ({ cart, total, onBack, api }) => {
                 </div>
              
               <button type="submit" onClick={handleWhatsApp} className="w-full bg-[#25D366] text-white py-6 rounded-[2.5rem] font-Roboto shadow-xl uppercase border-b-8 border-green-800/20"> Finaliser la commande PAR WHATSAPP</button>
-            </div>
+           
           </form>
         </div>
           <div className="space-y-8">
@@ -1029,7 +1029,8 @@ const CheckoutPage = ({ cart, total, onBack, api }) => {
             </div>
           </div>
       </div>
-    </div>
+     </div>
+     </div>
   );
 };
 

@@ -373,7 +373,6 @@ const HeroSection = () => {
   );
 };
 
-// --- ABOUT PAGE AVEC GESTION DU RETOUR ---
 const AboutPage = ({ onBack, sectionId }) => {
   // Utilisation du hook pour gérer le retour
   useBackHandler(() => {
@@ -388,70 +387,380 @@ const AboutPage = ({ onBack, sectionId }) => {
   }, [sectionId]);
 
   return (
-    <div className="min-h-screen bg-white animate-fade-in pb-20">
-      <div className="sticky top-0 bg-white/95 backdrop-blur-md z-50 px-6 py-4 border-b flex items-center gap-4">
-        <button onClick={onBack} className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"><ArrowLeft size={20}/></button>
-        <h2 className="text-xl font-black text-[#135290] google-sans-header">À Propos</h2>
+    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 animate-fade-in pb-20">
+      {/* Header fixe */}
+      <div className="sticky top-0 bg-white/95 backdrop-blur-md z-50 px-6 py-4 border-b border-gray-200 flex items-center justify-between shadow-sm">
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={onBack} 
+            className="p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors hover:scale-105 active:scale-95"
+            aria-label="Retour"
+          >
+            <ArrowLeft size={20} className="text-gray-700" />
+          </button>
+          <h2 className="text-xl font-black text-[#135290] google-sans-header">À Propos de Nous</h2>
+        </div>
+        <div className="flex items-center gap-2 text-sm text-gray-500">
+          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+          <span>En ligne</span>
+        </div>
       </div>
-      <div className="max-w-4xl mx-auto px-6 mt-12 space-y-24 font-sans">
 
-        <section id="nous" className="space-y-6 scroll-mt-24">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-orange-100 text-[#D0A050] rounded-2xl flex items-center justify-center"><CircleQuestionMark size={24}/></div>
-            <h2 className="text-3xl font-black text-[#002D5A] google-sans-header">Qui somme nous</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-6 bg-gray-50 rounded-3xl border border-gray-100 space-y-3">
-              <span className="text-3xl font-black text-[#D0A050]">01</span>
-              <p className="text-gray-600">Les industries de l'avenir est une plateforme de vente et d'importation créée pour simplifier l'accès aux produits du monde entier, tout en proposant des articles disponibles localement..</p>
-            </div>
-             <div className="p-6 bg-gray-50 rounded-3xl border border-gray-100 space-y-3">
-              <span className="text-3xl font-black text-[#D0A050]">03</span>
-              <p className="text-gray-600"> Nous combinons :importation directe depuis les usines (USA & Chine) vente locale sur le terrain accompagnement personnalisé</p>
-            </div>
-          </div>
-        </section>
+      {/* Contenu principal */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-20 font-sans pb-20">
         
-        <section id="processus" className="space-y-6 scroll-mt-24">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-orange-100 text-[#D0A050] rounded-2xl flex items-center justify-center"><Globe size={24}/></div>
-            <h2 className="text-3xl font-black text-[#002D5A] google-sans-header">Processus Importation</h2>
+        {/* Section 1: Notre Mission */}
+        <section id="mission" className="space-y-8 scroll-mt-24">
+          <div className="text-center space-y-4">
+            <h1 className="text-4xl md:text-5xl font-black text-[#002D5A] google-sans-header">
+              Industrie de l'Avenir
+            </h1>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              Votre partenaire de confiance pour l'importation et la vente de produits de qualité 
+              depuis la Chine vers le Togo
+            </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-6 bg-gray-50 rounded-3xl border border-gray-100 space-y-3">
-              <span className="text-3xl font-black text-[#D0A050]">01</span>
-              <p className="text-gray-600">Sourcing direct auprès des usines internationales.</p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+            <div className="bg-white p-8 rounded-3xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow space-y-4">
+              <div className="flex items-center justify-center w-16 h-16 bg-blue-100 rounded-2xl">
+                <span className="text-3xl font-black text-blue-600">🏭</span>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900">Sourcing Direct</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Nous travaillons directement avec les usines en Chine pour vous garantir 
+                les meilleurs prix et une qualité contrôlée à la source.
+              </p>
             </div>
-            <div className="p-6 bg-gray-50 rounded-3xl border border-gray-100 space-y-3">
-              <span className="text-3xl font-black text-[#D0A050]">02</span>
-              <p className="text-gray-600">Transport au choix : Avion (rapide) ou Bateau (économique).</p>
+
+            <div className="bg-white p-8 rounded-3xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow space-y-4">
+              <div className="flex items-center justify-center w-16 h-16 bg-green-100 rounded-2xl">
+                <span className="text-3xl font-black text-green-600">📦</span>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900">Gestion Complète</h3>
+              <p className="text-gray-600 leading-relaxed">
+                De la commande chez le fournisseur jusqu'à la livraison chez vous au Togo, 
+                nous gérons toute la logistique.
+              </p>
             </div>
-            <div className="p-6 bg-gray-50 rounded-3xl border border-gray-100 space-y-3">
-              <span className="text-3xl font-black text-[#D0A050]">03</span>
-              <p className="text-gray-600">Dédouanement et livraison locale assurée.</p>
+
+            <div className="bg-white p-8 rounded-3xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow space-y-4">
+              <div className="flex items-center justify-center w-16 h-16 bg-amber-100 rounded-2xl">
+                <span className="text-3xl font-black text-amber-600">🤝</span>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900">Accompagnement Personnalisé</h3>
+              <p className="text-gray-600 leading-relaxed">
+                Chaque client bénéficie d'un suivi individuel via WhatsApp pour un service 
+                adapté à ses besoins.
+              </p>
             </div>
           </div>
         </section>
 
-        <section id="suivi" className="space-y-6 scroll-mt-24">
+        {/* Section 2: Nos Catégories de Produits */}
+        <section id="categories" className="space-y-8 scroll-mt-24">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-orange-100 text-[#D0A050] rounded-2xl flex items-center justify-center"><History size={24}/></div>
-            <h2 className="text-3xl font-black text-[#002D5A] google-sans-header">Suivi de Commande</h2>
+            <div className="flex items-center justify-center w-14 h-14 bg-gradient-to-br from-blue-100 to-blue-50 rounded-2xl">
+              <span className="text-2xl">🛍️</span>
+            </div>
+            <div>
+              <h2 className="text-3xl font-black text-[#002D5A] google-sans-header">Notre Catalogue</h2>
+              <p className="text-gray-500 mt-2">Des produits sélectionnés pour toutes vos envies</p>
+            </div>
           </div>
-          <div className="bg-[#002D5A] p-10 rounded-[3rem] text-white">
-             <p className="text-lg opacity-80 mb-8">Consultez le statut de votre expédition avec votre code de suivi.</p>
-             <button className="bg-[#D0A050] text-[#002D5A] px-8 py-4 rounded-2xl font-black active:scale-95">SUIVRE COLIS</button>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { icon: "👔", title: "Mode Homme", items: ["Vêtements", "Chaussures", "Accessoires"] },
+              { icon: "👗", title: "Mode Femme", items: ["Robes", "Bijoux", "Sacs"] },
+              { icon: "🚜", title: "Agricole", items: ["Machines", "Outils", "Équipements"] },
+              { icon: "🏡", title: "Fournitures", items: ["Électronique", "Ménager", "Bureau"] }
+            ].map((cat, index) => (
+              <div key={index} className="bg-white p-6 rounded-2xl border border-gray-200 hover:border-blue-300 transition-all hover:scale-[1.02]">
+                <div className="text-3xl mb-4">{cat.icon}</div>
+                <h3 className="font-bold text-lg text-gray-900 mb-3">{cat.title}</h3>
+                <ul className="space-y-2">
+                  {cat.items.map((item, i) => (
+                    <li key={i} className="flex items-center gap-2 text-gray-600">
+                      <div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          <div className="bg-blue-50 border border-blue-100 rounded-2xl p-6 mt-6">
+            <div className="flex items-start gap-4">
+              <div className="flex items-center justify-center w-12 h-12 bg-white rounded-xl border border-blue-200">
+                <span className="text-xl">ℹ️</span>
+              </div>
+              <div>
+                <h4 className="font-bold text-blue-900">Produits sur Commande</h4>
+                <p className="text-blue-800 mt-2">
+                  Certains articles ne sont pas disponibles immédiatement en stock. 
+                  Nous les commandons spécialement pour vous depuis la Chine. 
+                  Le délai de livraison vous sera communiqué avant validation.
+                </p>
+              </div>
+            </div>
           </div>
         </section>
 
-        <section id="legal" className="space-y-6 scroll-mt-24">
+        {/* Section 3: Notre Processus */}
+        <section id="processus" className="space-y-8 scroll-mt-24">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-orange-100 text-[#D0A050] rounded-2xl flex items-center justify-center"><ShieldCheck size={24}/></div>
-            <h2 className="text-3xl font-black text-[#002D5A] google-sans-header">Mentions Légales</h2>
+            <div className="flex items-center justify-center w-14 h-14 bg-gradient-to-br from-amber-100 to-amber-50 rounded-2xl">
+              <span className="text-2xl">🌍</span>
+            </div>
+            <div>
+              <h2 className="text-3xl font-black text-[#002D5A] google-sans-header">Comment ça marche ?</h2>
+              <p className="text-gray-500 mt-2">Un processus simple et transparent</p>
+            </div>
           </div>
-          <div className="prose text-gray-500 space-y-4">
-             <p>L'INDUSTRIE DE L'AVENIR. RCCM ABJ-2024-B-XXXX.</p>
-             <p>Tous les équipements électroniques bénéficient d'une garantie SAV locale de 12 mois.</p>
+
+          <div className="relative">
+            {/* Ligne de connexion pour desktop */}
+            <div className="hidden md:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-3/4 h-1 bg-gradient-to-r from-blue-400 via-amber-400 to-green-400 rounded-full"></div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
+              {[
+                { 
+                  number: "01", 
+                  title: "Commande sur le Site", 
+                  description: "Parcourez notre catalogue et passez votre commande directement sur le site. Aucun paiement n'est requis à cette étape.",
+                  icon: "🛒"
+                },
+                { 
+                  number: "02", 
+                  title: "Contact WhatsApp", 
+                  description: "Nous vous contactons sur WhatsApp pour finaliser les détails : quantité exacte, options de livraison, et devis personnalisé.",
+                  icon: "💬"
+                },
+                { 
+                  number: "03", 
+                  title: "Livraison au Togo", 
+                  description: "Nous gérons l'importation depuis la Chine et la livraison jusqu'à votre adresse au Togo. Vous suivez chaque étape !",
+                  icon: "📦"
+                }
+              ].map((step, index) => (
+                <div key={index} className="bg-white p-8 rounded-3xl border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300">
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-50 to-white rounded-2xl border border-blue-100">
+                      <span className="text-2xl">{step.icon}</span>
+                    </div>
+                    <span className="text-4xl font-black text-gray-200">{step.number}</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">{step.title}</h3>
+                  <p className="text-gray-600 leading-relaxed">{step.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Section 4: Options de Livraison */}
+        <section id="livraison" className="space-y-8 scroll-mt-24">
+          <div className="bg-gradient-to-r from-[#002D5A] to-[#135290] rounded-3xl p-8 text-white">
+            <div className="flex items-center gap-4 mb-8">
+              <div className="flex items-center justify-center w-14 h-14 bg-white/20 rounded-2xl backdrop-blur-sm">
+                <span className="text-2xl">✈️</span>
+              </div>
+              <div>
+                <h2 className="text-3xl font-black google-sans-header">Options de Livraison</h2>
+                <p className="text-blue-100 mt-2">Choisissez le mode qui correspond à vos besoins</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl border border-white/20">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="flex items-center justify-center w-12 h-12 bg-blue-500 rounded-xl">
+                    <span className="text-xl">✈️</span>
+                  </div>
+                  <h3 className="text-xl font-bold">Par Avion (Express)</h3>
+                </div>
+                <ul className="space-y-3 text-blue-100">
+                  <li className="flex items-center gap-3">
+                    <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                    <span>Livraison en 15-25 jours</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                    <span>Idéal pour les commandes urgentes</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                    <span>Coût calculé au poids et volume</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl border border-white/20">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="flex items-center justify-center w-12 h-12 bg-green-500 rounded-xl">
+                    <span className="text-xl">🚢</span>
+                  </div>
+                  <h3 className="text-xl font-bold">Par Bateau (Économique)</h3>
+                </div>
+                <ul className="space-y-3 text-blue-100">
+                  <li className="flex items-center gap-3">
+                    <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                    <span>Livraison en 45-60 jours</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                    <span>Parfait pour les grosses commandes</span>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                    <span>Coût réduit pour les volumes importants</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="mt-8 p-6 bg-white/5 rounded-2xl border border-white/10">
+              <p className="text-center text-blue-100">
+                💡 <strong>Le prix final</strong> (produit + livraison) vous sera communiqué sur WhatsApp 
+                après discussion de vos besoins spécifiques.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 5: Notre Engagement */}
+        <section id="engagement" className="space-y-8 scroll-mt-24">
+          <div className="text-center space-y-4">
+            <h2 className="text-3xl font-black text-[#002D5A] google-sans-header">Pourquoi Nous Faire Confiance ?</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Des années d'expérience dans l'importation et un engagement total envers la satisfaction client
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { 
+                icon: "🔒", 
+                title: "Transparence Totale", 
+                desc: "Devis détaillé avec tous les frais inclus. Pas de surprise à l'arrivée." 
+              },
+              { 
+                icon: "📱", 
+                title: "Suivi en Temps Réel", 
+                desc: "Recevez des mises à jour régulières sur l'état de votre commande." 
+              },
+              { 
+                icon: "🏭", 
+                title: "Fournisseurs Vérifiés", 
+                desc: "Nous travaillons uniquement avec des usines certifiées et fiables en Chine." 
+              },
+              { 
+                icon: "🤝", 
+                title: "Support Dédié", 
+                desc: "Un conseiller personnel vous accompagne du début à la fin de votre commande." 
+              }
+            ].map((item, index) => (
+              <div key={index} className="text-center p-6">
+                <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-50 to-white rounded-2xl border border-blue-100 mx-auto mb-4">
+                  <span className="text-2xl">{item.icon}</span>
+                </div>
+                <h3 className="font-bold text-gray-900 mb-2">{item.title}</h3>
+                <p className="text-sm text-gray-600">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-3xl p-8">
+            <div className="flex items-center gap-6">
+              <div className="hidden md:flex items-center justify-center w-20 h-20 bg-white rounded-2xl border border-amber-300">
+                <span className="text-3xl">💰</span>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-amber-900 mb-3">Information Importante sur les Paiements</h3>
+                <p className="text-amber-800 mb-4">
+                  <strong>Ce site sert uniquement de catalogue et de plateforme de commande.</strong><br/>
+                  Aucune transaction financière n'est effectuée ici. Tous les paiements sont finalisés 
+                  de manière sécurisée via WhatsApp après confirmation des détails de votre commande.
+                </p>
+                <div className="flex items-center gap-4 text-amber-700">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
+                    <span className="text-sm">Paiements sécurisés</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
+                    <span className="text-sm">Reçu officiel fourni</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 6: Contact & Démarrage */}
+        <section id="contact" className="space-y-8 scroll-mt-24 text-center">
+          <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-3xl p-10">
+            <div className="max-w-2xl mx-auto space-y-6">
+              <h2 className="text-3xl font-black text-gray-900 google-sans-header">Prêt à Commander ?</h2>
+              <p className="text-gray-700 text-lg">
+                Commencez par parcourir notre catalogue, sélectionnez vos articles, 
+                et nous vous contacterons dans les 24 heures sur WhatsApp.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
+                <button 
+                  onClick={onBack}
+                  className="bg-[#002D5A] text-white px-8 py-4 rounded-2xl font-bold hover:bg-[#135290] transition-colors hover:scale-105 active:scale-95 shadow-lg"
+                >
+                  Voir le Catalogue
+                </button>
+                <a 
+                  href="https://wa.me/228XXXXXXXXX"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-4 rounded-2xl font-bold hover:from-green-600 hover:to-green-700 transition-all hover:scale-105 active:scale-95 shadow-lg flex items-center justify-center gap-3"
+                >
+                  <span className="text-xl">💬</span>
+                  Nous Contacter sur WhatsApp
+                </a>
+              </div>
+              
+              <p className="text-sm text-gray-500 pt-6">
+                <strong>Heures de contact :</strong> Lundi - Samedi • 8h00 - 20h00
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 7: Mentions Légales */}
+        <section id="mentions" className="space-y-6 scroll-mt-24 pt-12 border-t border-gray-200">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center justify-center w-12 h-12 bg-gray-100 text-gray-600 rounded-2xl">
+              <ShieldCheck size={24} />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900">Informations Légales</h2>
+          </div>
+          
+          <div className="bg-gray-50 p-6 rounded-2xl space-y-4">
+            <div>
+              <h3 className="font-bold text-gray-900 mb-2">Industrie de l'Avenir</h3>
+              <p className="text-gray-600">RCCM ABJ-2024-B-XXXX • NIF: XXXXXXXXX</p>
+            </div>
+            
+            <div>
+              <h3 className="font-bold text-gray-900 mb-2">Garanties</h3>
+              <p className="text-gray-600">
+                Tous les équipements électroniques bénéficient d'une garantie SAV locale de 12 mois. 
+                Pour les autres produits, une garantie de conformité est appliquée.
+              </p>
+            </div>
+            
+            <div>
+              <h3 className="font-bold text-gray-900 mb-2">Siège</h3>
+              <p className="text-gray-600">Lomé, Togo • Service client disponible au +228 XX XX XX XX</p>
+            </div>
           </div>
         </section>
       </div>
@@ -465,7 +774,7 @@ const AboutPage = ({ onBack, sectionId }) => {
 const ProductDetail = ({ product, onBack, onAddToCart }) => {
   const [activeImgIndex, setActiveImgIndex] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
-   const [quantity, setQuantity] = useState(1);
+   const [qty, setQty] = useState(1);
   const [showToast, setShowToast] = useState(false);
 
   // Gestion du retour avec le hook personnalisé
@@ -639,14 +948,14 @@ const ProductDetail = ({ product, onBack, onAddToCart }) => {
                 <div className="text-sm font-medium text-slate-700">Quantité</div>
                 <div className="flex items-center gap-4 bg-white border border-slate-200 rounded-xl p-2">
                   <button 
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    onClick={() =>setQty(Math.max(1, qty - 1))}
                     className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-slate-100"
                   >
                     <Minus size={20} />
                    </button>
-                  <span className="text-xl font-bold w-12 text-center">{quantity}</span>
+                  <span className="text-xl font-bold w-12 text-center">{qty}</span>
                   <button 
-                    onClick={() => setQuantity(quantity + 1)}
+                    onClick={() => setQty(qty + 1)}
                     className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-slate-100"
                   >
 
@@ -658,29 +967,16 @@ const ProductDetail = ({ product, onBack, onAddToCart }) => {
                 <div className="flex justify-between items-center">
                   <div className="text-lg text-slate-700">Total</div>
                   <div className="text-3xl font-bold text-slate-900">
-                    {(Number(price) * quantity).toLocaleString()} F
+                    {(Number(price) * qty).toLocaleString()} F
                   </div>
                 </div>
               </div>
 
               <div className="flex items-end justify-between mb-8">
-                <div>
-                  <div className="text-sm text-slate-500 mb-1">Prix actuel</div>
-                  <div className="text-5xl font-bold text-slate-900">
-                    {Number(price).toLocaleString()} F
-                  </div>
-                  {isOrder && (
-                    <div className="text-sm text-emerald-600 mt-2">
-                      Ici vous avez le prix de l'article sans les frais de livraison
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-            <div className="space-y-4">
+               <div className="space-y-4">
                 <button 
                   onClick={() => {
-                    onAddToCart(product, isOrder ? 'WHATSAPP' : 'STOCK', price, quantity);
+                    onAddToCart(product, isOrder ? 'WHATSAPP' : 'STOCK', price, qty);
                     setShowToast(true);
                     setTimeout(() => setShowToast(false), 3000);
                   }}
@@ -693,16 +989,19 @@ const ProductDetail = ({ product, onBack, onAddToCart }) => {
                   {isOrder ? 'Commander maintenant' : 'Ajouter au panier'}
                 </button>
                 
-                <button onClick={handleWhatsApp} className="w-full py-4 border-2 border-slate-300 text-slate-700 rounded-xl font-bold hover:bg-slate-50 transition-colors">
+                <button onClick={handleWhatsApp} className="w-full py-4 border-2 border-slate-300 text-slate-700 rounded-xl font-bold  hover:bg-slate-50">
                   Acheter maintenant
                 </button>
               </div>
+              </div>
+            </div>
+           
                 {/* Garanties */}
                 {isOrder && ( 
-                <div className="grid grid-cols-2  gap-2">
+                <div className="grid grid-cols-2 w-full gap-2">
                   <div  className="flex items-center gap-3 p-4 bg-white border border-slate-200 rounded-xl">
-                    <div className="bg-green-100 p-2 w-full rounded-1.5xl text-green-500"><Ship size={20} className="text-amber-600"/> <span className="text-sm font-medium text-slate-700">Bateau</span></div>
-                    <div className="bg-green-100 p-2 rounded-1.5xl w-full text-green-500"><Plane size={20} className="text-amber-600"/> <span className="text-sm font-medium text-slate-700">Avion</span></div>
+                    <div className="bg-green-100 p-2  rounded-1.5xl text-green-500"><Ship size={20} className="text-amber-600"/> <span className="text-sm font-medium text-slate-700">Bateau</span></div>
+                    <div className="bg-green-100 p-2 rounded-1.5xl  text-green-500"><Plane size={20} className="text-amber-600"/> <span className="text-sm font-medium text-slate-700">Avion</span></div>
                           
                 </div>
               )

@@ -38,26 +38,6 @@ const useBackHandler = (handler, deps = []) => {
 };
 
 
-const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    const success = await api.postOrder({
-      nom_client: form.nom, telephone: form.tel, adresse: form.adresse,
-      panier_details: cart.map(i => `${i.nom} (${i.mode}) x${i.quantity}`).join(', '),
-      total_prix: total, mode_livraison: 'Site Web'
-    });
-    setLoading(false);
-    if (success) setDone(true);
-    else alert("Erreur de sauvegarde.");
-  };
-
-  const handleWhatsApp = () => {
-    if(!form.nom || !form.tel) return alert("Veuillez remplir votre nom et numéro.");
-    const text = `*COMMANDE Industrie-Avenir*%0A-----------------%0A${cart.map(i => `• ${i.nom} (${i.mode}) x${i.quantity}`).join('%0A')}%0A-----------------%0A*TOTAL : ${total.toLocaleString()} FCFA*%0A%0A*Client :* ${form.nom}%0A*Tél :* ${form.tel}%0A*Lieu :* ${form.adresse}`;
-    window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${text}`;
-  };
-
-
 // --- LOGIQUE API SUPABASE ---
 const createApi = (supabase) => ({
   async getCategories() {
@@ -158,219 +138,239 @@ const Nudge = ({ api }) => {
 
 // --- COMPOSANT HERO ---
 const HeroSection = () => {
-
-  // Images représentatives pour les colonnes
-
   const col1Images = [
-
-    "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=800&auto=format&fit=crop", // Tech
-
-    "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=800&auto=format&fit=crop", // Gadget
-
-    "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=800&auto=format&fit=crop", // Audio
-
-    "https://images.unsplash.com/photo-1526170315870-efffd09636f7?q=80&w=800&auto=format&fit=crop"  // Caméra
-
+    "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=800&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=800&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=800&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1526170315870-efffd09636f7?q=80&w=800&auto=format&fit=crop"
   ];
-
-
 
   const col2Images = [
-
-    "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800&auto=format&fit=crop", // Shoes
-
-    "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?q=80&w=800&auto=format&fit=crop", // Watch
-
-    "https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=800&auto=format&fit=crop", // Bag
-
-    "https://images.unsplash.com/photo-1491553895911-0055eca6402d?q=80&w=800&auto=format&fit=crop"  // Fashion
-
+    "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?q=80&w=800&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=800&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1491553895911-0055eca6402d?q=80&w=800&auto=format&fit=crop"
   ];
 
-
-
   return (
-
     <>
-
       <style dangerouslySetInnerHTML={{ __html: `
-
-        @keyframes scrollUp { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
-
-        @keyframes scrollDown { 0% { transform: translateY(-50%); } 100% { transform: translateY(0); } }
-
-        .animate-vertical-up { animation: scrollUp 30s linear infinite; }
-
-        .animate-vertical-down { animation: scrollDown 30s linear infinite; }
-
-        .designer-title { font-family: 'Syne', sans-serif; letter-spacing: -0.04em; }
-
-        .designer-body { font-family: 'Inter', sans-serif; }
-
+        @keyframes float {
+          0%, 100% { transform: translateY(0px) rotate(-1deg); }
+          50% { transform: translateY(-10px) rotate(1deg); }
+        }
+        @keyframes shimmer {
+          0% { background-position: -200% center; }
+          100% { background-position: 200% center; }
+        }
+        @keyframes scrollUp {
+          0% { transform: translateY(0); }
+          100% { transform: translateY(-50%); }
+        }
+        @keyframes scrollDown {
+          0% { transform: translateY(-50%); }
+          100% { transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-float {
+          animation: float 6s ease-in-out infinite;
+        }
+        .animate-shimmer {
+          background: linear-gradient(90deg, 
+            rgba(59, 130, 246, 0.1) 0%, 
+            rgba(245, 158, 11, 0.2) 25%, 
+            rgba(239, 68, 68, 0.1) 50%, 
+            rgba(245, 158, 11, 0.2) 75%, 
+            rgba(59, 130, 246, 0.1) 100%);
+          background-size: 200% auto;
+          animation: shimmer 8s linear infinite;
+        }
+        .animate-vertical-up {
+          animation: scrollUp 35s linear infinite;
+        }
+        .animate-vertical-down {
+          animation: scrollDown 35s linear infinite;
+        }
+        .animate-fade-in-up {
+          animation: fadeInUp 0.8s ease-out forwards;
+        }
+        .text-gradient {
+          background: linear-gradient(135deg, #3b82f6 0%, #f59e0b 50%, #ef4444 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+        .border-gradient {
+          border: 2px solid transparent;
+          background: linear-gradient(white, white) padding-box,
+                      linear-gradient(135deg, #3b82f6, #f59e0b, #ef4444) border-box;
+        }
       `}} />
 
-
-
-      <section className="relative overflow-hidden bg-blue-100 py-5 lg:py-10 min-h-[85vh] flex items-center">
-
-        {/* IMAGE DE FOND DU HERO */}
-
-        <div className="absolute inset-0 z-0">
-
-          <img 
-
-            src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=2000&auto=format&fit=crop" 
-
-            className="w-full h-full object-cover opacity-20"
-
-            alt="Background Logistics"
-
-          />
-
-          <div className="absolute inset-0 bg-gradient-to-r from-[#07101ac4] via-[#0F172A]/60 to-transparent"></div>
-
+      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-950 to-slate-950 py-8 lg:py-12 min-h-[90vh] flex items-center">
+        {/* Effets d'arrière-plan animés */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          <div className="absolute top-1/4 -left-20 w-72 h-72 bg-blue-600/10 rounded-full blur-3xl animate-float"></div>
+          <div className="absolute bottom-1/4 -right-20 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl animate-float" style={{animationDelay: '2s'}}></div>
+          <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-red-500/10 rounded-full blur-3xl animate-float" style={{animationDelay: '4s'}}></div>
+          
+          {/* Grille subtile */}
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
         </div>
 
-
-
-        <div className="max-w-10xl mx-auto p-5 px-10 relative z-10 w-full">
-
-          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
-
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+          <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
             
-
             {/* TEXTE & CTA */}
-
-            <div className="w-full lg:w-1/2 space-y-10  animate-fade-in-up">
-
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-bold uppercase tracking-widest designer-body">
-
-                <Globe size={14} />
-
-                <span>Import direct &middot; Produit diponible en boutique</span>
-
+            <div className="w-full lg:w-1/2 space-y-8 animate-fade-in-up">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-900/30 to-amber-900/20 border border-blue-500/30 text-blue-300 text-xs font-medium tracking-wider transition-all duration-300 hover:scale-105 hover:border-amber-500/40">
+                <div className="w-2 h-2 bg-amber-400 rounded-full animate-pulse"></div>
+                <span>Import direct • Disponible en boutique</span>
               </div>
-
               
-
-              <h1 className="text-3xl md:text-6xl font-Karla text-white leading-[1.1] uppercase m-0">
-
-              Commandez vos produits <br />
-
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-300">Chez nous.</span>
-
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
+                Commandez vos produits
+                <br />
+                <span className="text-gradient relative inline-block">
+                  Chez nous
+                  <span className="absolute -bottom-2 left-0 w-full h-0.5 bg-gradient-to-r from-blue-500 via-amber-400 to-red-500"></span>
+                </span>
               </h1>
-
               
-
-              <p className="text-sm md:text-base text-white max-w-lg leading-relaxed designer-body font-light">
-
-                La plateforme qui vous permet de commander des produits locaux et internationaux, avec une livraison fiable partout en Afrique.
-
-                Accédez à des articles sélectionnés, provenant de fournisseurs locaux et de l’étranger, en toute simplicité.
-
+              <p className="text-base md:text-lg text-slate-300 max-w-xl leading-relaxed font-light">
+                La plateforme qui vous permet de commander des produits locaux et internationaux,
+                avec une livraison fiable partout en Afrique.
+                <span className="block mt-2 text-amber-200/80">
+                  Accédez à des articles sélectionnés, en toute simplicité.
+                </span>
               </p>
 
-
-
-
+              {/* Boutons CTA */}
+              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                <button className="px-8 py-3.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/20 flex items-center justify-center gap-2">
+                  Commander maintenant
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </button>
+                <button className="px-8 py-3.5 border-gradient bg-slate-900/50 text-slate-200 font-medium rounded-xl hover:bg-slate-800/50 transition-all duration-300 hover:scale-105">
+                  Explorer les produits
+                </button>
+              </div>
 
               {/* Badges de confiance */}
-
-              <div className="flex flex-wrap items-center gap-6 pt-6 border-t border-slate-800">
-
-                <div className="flex items-center gap-2">
-
-                  <ShieldCheck className="text-blue-500" size={18} />
-
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter designer-body">Commandez en toute confiance </span>
-
+              <div className="pt-8 mt-8 border-t border-slate-800/50">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="flex items-center gap-3 p-3 bg-slate-800/30 rounded-xl hover:bg-slate-800/50 transition-all duration-300 group">
+                    <div className="p-2 bg-blue-500/10 rounded-lg group-hover:bg-blue-500/20 transition-colors">
+                      <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-white">Commande sécurisée</p>
+                      <p className="text-xs text-slate-400">Paiements 100% protégés</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 bg-slate-800/30 rounded-xl hover:bg-slate-800/50 transition-all duration-300 group">
+                    <div className="p-2 bg-amber-500/10 rounded-lg group-hover:bg-amber-500/20 transition-colors">
+                      <svg className="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-white">Livraison rapide</p>
+                      <p className="text-xs text-slate-400">48h-72h en moyenne</p>
+                    </div>
+                  </div>
                 </div>
-
-                <div className="flex items-center gap-2">
-
-                  <Truck className="text-blue-500" size={18} />
-
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter designer-body">Livraison partout</span>
-
-                </div>
-
               </div>
-
             </div>
 
-
-
-            {/* VISUEL DYNAMIQUE (BOX AVEC IMAGES) */}
-
-            <div className="w-full lg:w-1/2 h-[500px] relative">
-
-              <div className="grid grid-cols-2 gap-3 h-full overflow-hidden rounded-[2.5rem] border-8 border-slate-800/50 shadow-2xl bg-slate-900">
-
+            {/* VISUEL DYNAMIQUE */}
+            <div className="w-full lg:w-1/2 h-[550px] relative animate-float">
+              {/* Conteneur principal avec effet de brillance */}
+              <div className="relative h-full overflow-hidden rounded-[2.5rem] border-4 border-slate-700/50 shadow-2xl bg-gradient-to-br from-slate-900 to-slate-950 animate-shimmer">
                 
+                {/* Effet de lumière */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/5 via-transparent to-amber-500/5"></div>
+                
+                {/* Colonnes d'images */}
+                <div className="grid grid-cols-2 gap-4 h-full p-4">
+                  {/* Colonne 1 : Monte */}
+                  <div className="space-y-4 animate-vertical-up">
+                    {[...col1Images, ...col1Images].map((img, i) => (
+                      <div key={i} className="h-52 w-full relative overflow-hidden rounded-2xl group">
+                        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-transparent z-10"></div>
+                        <img 
+                          src={img} 
+                          className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:rotate-1"
+                          alt="Product"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div className="absolute bottom-3 left-3 text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          Produit {i % 4 + 1}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
 
-                {/* Colonne 1 : Monte */}
-
-                <div className="space-y-3 animate-vertical-up">
-
-                  {[...col1Images, ...col1Images].map((img, i) => (
-
-                    <div key={i} className="h-56 w-full relative overflow-hidden rounded-2xl group">
-
-                      <img src={img} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Product" />
-
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-
-                    </div>
-
-                  ))}
-
+                  {/* Colonne 2 : Descend */}
+                  <div className="space-y-4 animate-vertical-down pt-12">
+                    {[...col2Images, ...col2Images].map((img, i) => (
+                      <div key={i} className="h-52 w-full relative overflow-hidden rounded-2xl group">
+                        <div className="absolute inset-0 bg-gradient-to-bl from-amber-500/20 to-transparent z-10"></div>
+                        <img 
+                          src={img} 
+                          className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:-rotate-1"
+                          alt="Product"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div className="absolute bottom-3 left-3 text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          Produit {i % 4 + 5}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
-
-
-                {/* Colonne 2 : Descend */}
-
-                <div className="space-y-3 animate-vertical-down pt-10">
-
-                  {[...col2Images, ...col2Images].map((img, i) => (
-
-                    <div key={i} className="h-56 w-full relative overflow-hidden rounded-2xl group">
-
-                      <img src={img} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Product" />
-
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-
-                    </div>
-
-                  ))}
-
-                </div>
-
-
-
-                {/* Filtre de fondu pour le haut et le bas */}
-
-                <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-[#0F172A] via-transparent to-[#0F172A] opacity-80"></div>
-
+                {/* Overlay de dégradé pour cacher les bords */}
+                <div className="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-slate-950 to-transparent pointer-events-none"></div>
+                <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-slate-950 to-transparent pointer-events-none"></div>
+                
+                {/* Élément décoratif */}
+                <div className="absolute -top-3 -right-3 w-6 h-6 bg-gradient-to-br from-blue-500 to-amber-400 rounded-full"></div>
+                <div className="absolute -bottom-3 -left-3 w-6 h-6 bg-gradient-to-tr from-red-500 to-amber-400 rounded-full"></div>
               </div>
 
-
-
-             </div>
-
-
-
+              {/* Éléments flottants décoratifs */}
+              <div className="absolute -top-4 -right-4 w-32 h-32 bg-blue-500/5 rounded-full blur-xl"></div>
+              <div className="absolute -bottom-4 -left-4 w-40 h-40 bg-amber-500/5 rounded-full blur-xl"></div>
+            </div>
           </div>
 
+          {/* Indicateur de défilement */}
+          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 hidden lg:block">
+            <div className="flex flex-col items-center gap-2 animate-bounce">
+              <span className="text-xs text-slate-400 font-light">Explorer</span>
+              <div className="w-6 h-10 border-2 border-slate-600 rounded-full flex justify-center">
+                <div className="w-1 h-3 bg-gradient-to-b from-blue-400 to-amber-400 rounded-full mt-2"></div>
+              </div>
+            </div>
+          </div>
         </div>
-
       </section>
-
     </>
-
   );
-
 };
 
 // --- ABOUT PAGE AVEC GESTION DU RETOUR ---
@@ -472,6 +472,11 @@ const ProductDetail = ({ product, onBack, onAddToCart }) => {
   useBackHandler(() => {
     onBack();
   });
+  const handleWhatsApp = () => {
+    if(!form.nom || !form.tel) return alert("Veuillez remplir votre nom et numéro.");
+    const text = `*COMMANDE Industrie-Avenir*%0A-----------------%0A${cart.map(i => `• ${i.nom} (${i.mode}) x${i.quantity}`).join('%0A')}%0A-----------------%0A*TOTAL : ${total.toLocaleString()} FCFA*%0A%0A*Client :* ${form.nom}%0A*Tél :* ${form.tel}%0A*Lieu :* ${form.adresse}`;
+    window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${text}`;
+  };
 
   const isOrder = product?.type_dispo === "COMMANDE";
   const price = isOrder ? product?.prix_avion : product?.prix_standard;
@@ -480,13 +485,13 @@ const ProductDetail = ({ product, onBack, onAddToCart }) => {
   const images = Array.isArray(product?.image_urls) ? product.image_urls : [];
 
   return (
-    <div className="min-h-screen bg-white animate-fade-in pb-20 font-sans overflow-x-hidden">
+     <div className="min-h-screen bg-gradient-to-b from-white to-slate-50">
       {showToast && (
-        <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-6 py-4 rounded-xl shadow-lg flex items-center gap-3">
-          <div className="bg-[#D4AF37] p-1 rounded-full text-[#0A1A3A]">
-            <CheckCircle size={16} />
+        <div className="fixed top-6 right-6 z-[1000] animate-slide-in">
+          <div className="bg-gradient-to-r from-green-500 to-emerald-700 text-white px-6 py-4 rounded-xl shadow-lg flex items-center gap-3">
+            <CheckCircle size={20} />
+            <span className="font-Roboto font-2xl">Ajouté au panier ! 🛒😉</span>
           </div>
-          <span className="font-bold">Produit ajouté au panier !</span>
         </div>
       )}
 
@@ -898,7 +903,7 @@ const AdminDashboard = ({ products, categories, onRefresh, onBack, api, sb }) =>
 // --- CHECKOUT PAGE AVEC GESTION DU RETOUR ---
 const CheckoutPage = ({ cart, total, onBack, api }) => {
   const [form, setForm] = useState({ nom: '', tel: '', adresse: '' });
-  const [loading, setLoading] = useState(false);
+ 
   const [done, setDone] = useState(false);
 
   // Gestion du retour pour checkout
@@ -908,7 +913,24 @@ const CheckoutPage = ({ cart, total, onBack, api }) => {
     }
   }, [done]);
 
-  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const success = await api.postOrder({
+      nom_client: form.nom, telephone: form.tel, adresse: form.adresse,
+      panier_details: cart.map(i => `${i.nom} (${i.mode}) x${i.quantity}`).join(', '),
+      total_prix: total, mode_livraison: 'Site Web'
+    });
+    setLoading(false);
+    if (success) setDone(true);
+    else alert("Erreur de sauvegarde.");
+  };
+
+  const handleWhatsApp = () => {
+    if(!form.nom || !form.tel) return alert("Veuillez remplir votre nom et numéro.");
+    const text = `*COMMANDE Industrie-Avenir*%0A-----------------%0A${cart.map(i => `• ${i.nom} (${i.mode}) x${i.quantity}`).join('%0A')}%0A-----------------%0A*TOTAL : ${total.toLocaleString()} FCFA*%0A%0A*Client :* ${form.nom}%0A*Tél :* ${form.tel}%0A*Lieu :* ${form.adresse}`;
+    window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${text}`;
+  };
 
   if (done) return (
     <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-white font-sans text-center">
@@ -929,14 +951,17 @@ const CheckoutPage = ({ cart, total, onBack, api }) => {
               className="p-3 bg-gradient-to-r from-slate-100 to-white rounded-xl border hover:shadow-md transition-shadow"
             ><ArrowLeft size={20}/></button>
             <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-600 to-blue-700 bg-clip-text text-transparent">
-              Finaliser la commande
+              Finalisez la commande
             </h1>
           </div>
         </div>
       </div>
-      <div className="max-w-5xl mx-auto px-4 mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-white p-8 md:p-12 rounded-[3.5rem] shadow-xl border">
-          <div className="bg-white rounded-2xl border border-slate-200 p-8">
+      
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="grid lg:grid-cols-2 gap-8">
+          {/* Formulaire */}
+          <div className="space-y-8">
+            <div className="bg-white rounded-2xl border border-slate-200 p-8">
               <h2 className="text-2xl font-bold text-slate-900 mb-6">Informations personnelles</h2>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
@@ -988,7 +1013,7 @@ const CheckoutPage = ({ cart, total, onBack, api }) => {
           </form>
         </div>
           <div className="space-y-8">
-            <div className="bg-gradient-to-br from-slate-900 to-purple-900 text-white rounded-2xl p-8">
+            <div className="bg-gradient-to-br from-amber-100 to-amber-400 text-black rounded-1.5xl p-4">
               <h2 className="text-2xl font-bold mb-8">Résumé de commande</h2>
               
               <div className="space-y-4 mb-8 max-h-80 overflow-y-auto">
@@ -1013,14 +1038,8 @@ const CheckoutPage = ({ cart, total, onBack, api }) => {
               </div>
               
               <div className="space-y-4 pt-6 border-t border-white/20">
-                <div className="flex justify-between">
-                  <span>Sous-total</span>
-                  <span>{total.toLocaleString()} F</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Livraison</span>
-                  <span className="text-emerald-400">GRATUIT</span>
-                </div>
+                         
+                
                 <div className="flex justify-between text-xl font-bold pt-4 border-t border-white/20">
                   <span>Total</span>
                   <span>{total.toLocaleString()} F</span>
@@ -1029,6 +1048,7 @@ const CheckoutPage = ({ cart, total, onBack, api }) => {
             </div>
           </div>
       </div>
+     </div>
      </div>
      </div>
   );

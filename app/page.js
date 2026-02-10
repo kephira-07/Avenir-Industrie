@@ -1,6 +1,5 @@
 'use client';
 import React, { useState, useEffect, useRef,useMemo } from 'react';
-import Image from 'next/image';
 import { 
   ShoppingBag, Plane, Ship, X, CheckCircle, ArrowRight, ShoppingCart, 
   Menu, Search, Facebook, Instagram, ArrowLeft, Truck, Send, 
@@ -39,7 +38,24 @@ const useBackHandler = (handler, deps = []) => {
 };
 
 
-// --- COMPOSANT ROUTER SIMULÉ (pour remplacer useRouter si non utilisé) ---
+const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const success = await api.postOrder({
+      nom_client: form.nom, telephone: form.tel, adresse: form.adresse,
+      panier_details: cart.map(i => `${i.nom} (${i.mode}) x${i.quantity}`).join(', '),
+      total_prix: total, mode_livraison: 'Site Web'
+    });
+    setLoading(false);
+    if (success) setDone(true);
+    else alert("Erreur de sauvegarde.");
+  };
+
+  const handleWhatsApp = () => {
+    if(!form.nom || !form.tel) return alert("Veuillez remplir votre nom et numéro.");
+    const text = `*COMMANDE Industrie-Avenir*%0A-----------------%0A${cart.map(i => `• ${i.nom} (${i.mode}) x${i.quantity}`).join('%0A')}%0A-----------------%0A*TOTAL : ${total.toLocaleString()} FCFA*%0A%0A*Client :* ${form.nom}%0A*Tél :* ${form.tel}%0A*Lieu :* ${form.adresse}`;
+    window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${text}`;
+  };
 
 
 // --- LOGIQUE API SUPABASE ---
@@ -672,7 +688,7 @@ const ProductDetail = ({ product, onBack, onAddToCart }) => {
                   {isOrder ? 'Commander maintenant' : 'Ajouter au panier'}
                 </button>
                 
-                <button className="w-full py-4 border-2 border-slate-300 text-slate-700 rounded-xl font-bold hover:bg-slate-50 transition-colors">
+                <button onClick={handleWhatsApp} className="w-full py-4 border-2 border-slate-300 text-slate-700 rounded-xl font-bold hover:bg-slate-50 transition-colors">
                   Acheter maintenant
                 </button>
               </div>
@@ -892,24 +908,7 @@ const CheckoutPage = ({ cart, total, onBack, api }) => {
     }
   }, [done]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    const success = await api.postOrder({
-      nom_client: form.nom, telephone: form.tel, adresse: form.adresse,
-      panier_details: cart.map(i => `${i.nom} (${i.mode}) x${i.quantity}`).join(', '),
-      total_prix: total, mode_livraison: 'Site Web'
-    });
-    setLoading(false);
-    if (success) setDone(true);
-    else alert("Erreur de sauvegarde.");
-  };
-
-  const handleWhatsApp = () => {
-    if(!form.nom || !form.tel) return alert("Veuillez remplir votre nom et numéro.");
-    const text = `*COMMANDE Industrie-Avenir*%0A-----------------%0A${cart.map(i => `• ${i.nom} (${i.mode}) x${i.quantity}`).join('%0A')}%0A-----------------%0A*TOTAL : ${total.toLocaleString()} FCFA*%0A%0A*Client :* ${form.nom}%0A*Tél :* ${form.tel}%0A*Lieu :* ${form.adresse}`;
-    window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${text}`;
-  };
+  
 
   if (done) return (
     <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-white font-sans text-center">
@@ -921,38 +920,114 @@ const CheckoutPage = ({ cart, total, onBack, api }) => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans pb-20 animate-fade-in">
-      <div className="sticky top-0 bg-white/95 backdrop-blur-md z-[700] px-4 md:px-6 py-4 border-b flex items-center gap-4">
-        <button onClick={onBack} className="p-2 bg-gray-100 rounded-full"><ArrowLeft size={20}/></button>
-        <h2 className="text-xl font-black text-[#002D5A] uppercase">Caisse</h2>
+   <div className="min-h-screen bg-gradient-to-b from-white to-slate-50">
+      <div className="sticky top-0 bg-white/90 backdrop-blur-md z-50 border-b">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={onBack}
+              className="p-3 bg-gradient-to-r from-slate-100 to-white rounded-xl border hover:shadow-md transition-shadow"
+            ><ArrowLeft size={20}/></button>
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-600 to-blue-700 bg-clip-text text-transparent">
+              Finaliser la commande
+            </h1>
+          </div>
+        </div>
       </div>
       <div className="max-w-5xl mx-auto px-4 mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="bg-white p-8 md:p-12 rounded-[3.5rem] shadow-xl border">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <input required placeholder="Nom complet" className="w-full bg-gray-50 p-5 rounded-2xl border-none focus:ring-2 focus:ring-[#D0A050]" value={form.nom} onChange={e=>setForm({...form, nom:e.target.value})} />
-            <input required type="tel" placeholder="WhatsApp" className="w-full bg-gray-50 p-5 rounded-2xl border-none focus:ring-2 focus:ring-[#D0A050]" value={form.tel} onChange={e=>setForm({...form, tel:e.target.value})} />
-            <input required placeholder="Lieu de livraison" className="w-full bg-gray-50 p-5 rounded-2xl border-none focus:ring-2 focus:ring-[#D0A050]" value={form.adresse} onChange={e=>setForm({...form, adresse:e.target.value})} />
-            <div className="pt-8 space-y-4">
-              <button disabled={loading} type="submit" className="w-full bg-[#002D5A] text-white py-6 rounded-[2.5rem] font-black shadow-xl uppercase border-b-8 border-black/20">CONFIRMER SUR LE SITE</button>
-              <button type="button" onClick={handleWhatsApp} className="w-full bg-[#25D366] text-white py-6 rounded-[2.5rem] font-black shadow-xl uppercase border-b-8 border-green-800/20">COMMANDER PAR WHATSAPP</button>
+          <div className="bg-white rounded-2xl border border-slate-200 p-8">
+              <h2 className="text-2xl font-bold text-slate-900 mb-6">Informations personnelles</h2>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">Nom complet *</label>
+                    <input 
+                      type="text" 
+                      required
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                      value={form.nom}
+                      onChange={e => setForm({...form, nom: e.target.value})}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">Téléphone *</label>
+                    <input 
+                      type="tel" 
+                      required
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                      value={form.tel}
+                      onChange={e => setForm({...form, tel: e.target.value})}
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Email</label>
+                  <input 
+                    type="email" 
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                    value={form.email}
+                    onChange={e => setForm({...form, email: e.target.value})}
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">Adresse de livraison *</label>
+                  <textarea 
+                    required
+                    rows={3}
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                    value={form.adresse}
+                    onChange={e => setForm({...form, adresse: e.target.value})}
+                  />
+                </div>
+             
+              <button type="submit" onClick={handleWhatsApp} className="w-full bg-[#25D366] text-white py-6 rounded-[2.5rem] font-Roboto shadow-xl uppercase border-b-8 border-green-800/20"> Finaliser la commande PAR WHATSAPP</button>
             </div>
           </form>
         </div>
-        <div className="bg-[#002D5A] text-white p-10 rounded-[3.5rem] shadow-2xl h-fit">
-          <h3 className="text-[#D0A050] font-black text-xs uppercase mb-10 tracking-[0.4em]">Résumé</h3>
-          <div className="space-y-4 mb-10 max-h-48 overflow-y-auto no-scrollbar">
-            {cart.map((item, idx) => (
-              <div key={idx} className="flex justify-between text-sm border-b border-white/10 pb-2">
-                <span>{item.nom} x{item.quantity}</span>
-                <span className="font-black">{(item.finalPrice * item.quantity).toLocaleString()} F</span>
+          <div className="space-y-8">
+            <div className="bg-gradient-to-br from-slate-900 to-purple-900 text-white rounded-2xl p-8">
+              <h2 className="text-2xl font-bold mb-8">Résumé de commande</h2>
+              
+              <div className="space-y-4 mb-8 max-h-80 overflow-y-auto">
+                {cart.map((item, idx) => (
+                  <div key={idx} className="flex items-center justify-between py-4 border-b border-white/10">
+                    <div className="flex items-center gap-4">
+                      <img 
+                        src={item.image_urls?.[0]} 
+                        alt={item.nom}
+                        className="w-16 h-16 object-cover rounded-lg"
+                      />
+                      <div>
+                        <div className="font-medium">{item.nom}</div>
+                        <div className="text-sm text-slate-300">x{item.quantity}</div>
+                      </div>
+                    </div>
+                    <div className="font-bold">
+                      {(item.finalPrice * item.quantity).toLocaleString()} F
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
+              
+              <div className="space-y-4 pt-6 border-t border-white/20">
+                <div className="flex justify-between">
+                  <span>Sous-total</span>
+                  <span>{total.toLocaleString()} F</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Livraison</span>
+                  <span className="text-emerald-400">GRATUIT</span>
+                </div>
+                <div className="flex justify-between text-xl font-bold pt-4 border-t border-white/20">
+                  <span>Total</span>
+                  <span>{total.toLocaleString()} F</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="pt-6 border-t-4 border-[#D0A050] flex justify-between items-end">
-             <span className="text-xs uppercase opacity-60">Total Net</span>
-             <span className="text-3xl font-black text-[#D0A050]">{total.toLocaleString()} F</span>
-          </div>
-        </div>
       </div>
     </div>
   );

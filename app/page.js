@@ -562,9 +562,9 @@ const ProductDetail = ({ product, onBack, onAddToCart }) => {
                 <button
                   key={i}
                   onClick={() => setActiveImgIndex(i)}
-                  className={`w-20 h-20 md:w-28 md:h-28 rounded-2xl overflow-hidden border-4 shrink-0 transition-all ${
+                  className={`flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${
                     activeImgIndex === i
-                      ? "border-[#D4AF37] scale-110 shadow-xl"
+                      ? "border-[#f3be0f] scale-110 shadow-xl"
                       : "border-transparent opacity-40 hover:opacity-80"
                   }`}
                 >
@@ -598,29 +598,8 @@ const ProductDetail = ({ product, onBack, onAddToCart }) => {
               </div>
             </div>
 
-            {/* Prix et quantité */}
-            <div className="p-8 bg-gray-50 rounded-[3.5rem] space-y-10 shadow-inner">
-              <div className="flex justify-between items-center">
-                <p className="text-[10px] font-black text-[#0A1A3A] uppercase tracking-[0.2em]">
-                  SÉLECTION QUANTITÉ
-                </p>
-                <div className="flex items-center gap-8 bg-white px-8 py-4 rounded-[1.5rem] shadow-sm border border-gray-100">
-                  <button
-                    onClick={() => setQty(Math.max(1, qty - 1))}
-                    className="text-[#0A1A3A] active:scale-125 transition-transform"
-                  >
-                    <Minus size={20} />
-                  </button>
-                  <span className="font-black text-2xl w-8 text-center">{qty}</span>
-                  <button
-                    onClick={() => setQty(qty + 1)}
-                    className="text-[#0A1A3A] active:scale-125 transition-transform"
-                  >
-                    <Plus size={20} />
-                  </button>
-                </div>
-              </div>
-
+           {/* Prix */}
+            <div className="bg-gradient-to-r from-slate-50 to-white p-8 rounded-2xl border border-slate-200">
               <div className="flex items-end justify-between mb-8">
                 <div>
                   <div className="text-sm text-slate-500 mb-1">Prix actuel</div>
@@ -629,15 +608,48 @@ const ProductDetail = ({ product, onBack, onAddToCart }) => {
                   </div>
                   {isOrder && (
                     <div className="text-sm text-emerald-600 mt-2">
-                      Ici vous avez le prix de l'article sans les frais de livraison
+                      <Icon name="package" size={16} className="inline mr-2" />
+                      Envoi direct depuis l'international
                     </div>
                   )}
                 </div>
+                <div className="text-right">
+                  <div className="text-sm text-slate-500 mb-1">Économisez</div>
+                  <div className="text-2xl font-bold text-emerald-600">15%</div>
+                </div>
               </div>
-            </div>
 
-            {/* Boutons */}
-             {/* Boutons */}
+              {/* Quantité */}
+              <div className="flex items-center justify-between mb-8">
+                <div className="text-sm font-medium text-slate-700">Quantité</div>
+                <div className="flex items-center gap-4 bg-white border border-slate-200 rounded-xl p-2">
+                  <button 
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-slate-100"
+                  >
+                    <Icon name="minus" size={20} />
+                  </button>
+                  <span className="text-xl font-bold w-12 text-center">{quantity}</span>
+                  <button 
+                    onClick={() => setQuantity(quantity + 1)}
+                    className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-slate-100"
+                  >
+                    <Icon name="plus" size={20} />
+                  </button>
+                </div>
+              </div>
+
+              {/* Total */}
+              <div className="border-t border-slate-200 pt-6 mb-8">
+                <div className="flex justify-between items-center">
+                  <div className="text-lg text-slate-700">Total</div>
+                  <div className="text-3xl font-bold text-slate-900">
+                    {(Number(price) * quantity).toLocaleString()} F
+                  </div>
+                </div>
+              </div>
+
+              {/* Boutons */}
               <div className="space-y-4">
                 <button 
                   onClick={() => {
@@ -658,6 +670,7 @@ const ProductDetail = ({ product, onBack, onAddToCart }) => {
                   Acheter maintenant
                 </button>
               </div>
+            </div>
                 {/* Garanties */}
                 {isOrder && ( 
                 <div className="grid grid-cols-2 gap-4">

@@ -449,7 +449,7 @@ const AboutPage = ({ onBack, sectionId }) => {
 const ProductDetail = ({ product, onBack, onAddToCart }) => {
   const [activeImgIndex, setActiveImgIndex] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [qty, setQty] = useState(1);
+  const [quantity, setQuantity] = useState(1);
   const [showToast, setShowToast] = useState(false);
 
   // Gestion du retour avec le hook personnalisé

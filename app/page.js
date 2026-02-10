@@ -1542,74 +1542,183 @@ function AppContent() {
       `}</style>
 
       {/* Header */}
-      <header className={`fixed top-0 left-0 right-0 z-[600] transition-all duration-500 ease-in-out transform  ${isScrolled ? 'bg-white/90 backdrop-blur-xl shadow-lg border-b border-[#D4AF37]/30 py-3' : 'bg-blue-800 py-5'}`}>
-        <div className="max-w-7xl mx-auto px-4 md:px-12 flex flex-wrap items-center justify-between gap-y-3">
-          <div className="flex items-center gap-1 md:gap-4 shrink-0">
-            <button onClick={() => setIsMenuOpen(true)} className={`p-2 rounded-full transition-all active:scale-90 ${isScrolled ? 'text-[#0A1A3A] hover:bg-gray-100' : 'text-white hover:bg-white/10'}`}>
-              <Menu size={24} strokeWidth={2.5}/>
+      <header className={`fixed top-0 left-0 right-0 z-[600] transition-all duration-500 ease-in-out transform ${isScrolled ? 'bg-white/95 backdrop-blur-xl shadow-lg border-b border-[#D4AF37]/20 py-3' : 'bg-gradient-to-r from-[#002D5A] to-[#135290] py-5'}`}>
+  <div className="max-w-7xl mx-auto px-4 md:px-8 flex flex-wrap items-center justify-between gap-y-3">
+    
+    {/* Partie gauche : Menu burger + Logo */}
+    <div className="flex items-center gap-3 md:gap-4 shrink-0">
+      <button 
+        onClick={() => setIsMenuOpen(true)} 
+        className={`p-2.5 rounded-full transition-all active:scale-90 hover:scale-105 ${isScrolled ? 'text-[#0A1A3A] hover:bg-gray-100/80' : 'text-white hover:bg-white/20'}`}
+        aria-label="Menu principal"
+      >
+        <Menu size={22} strokeWidth={2.5} />
+      </button>
+      <div 
+        className="flex items-center gap-2 cursor-pointer group" 
+        onClick={() => scrollToCategory("Tout")}
+      >
+        <div className="relative">
+          <img 
+            src="/logoah.jpeg" 
+            className="h-10 md:h-14 w-auto rounded-xl shadow-md border-2 border-[#D4AF37]/40 group-hover:scale-105 transition-transform duration-300" 
+            alt="Logo Industrie de l'Avenir" 
+          />
+          <div className="absolute -inset-1 bg-[#D4AF37]/10 rounded-xl blur-sm opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        </div>
+        {!isScrolled && (
+          <span className="hidden md:block text-sm font-bold text-white/90 tracking-tight">
+            Industrie<br/>de l'Avenir
+          </span>
+        )}
+      </div>
+    </div>
+
+    {/* Barre de recherche - Centre */}
+    <div className="order-last w-full sm:order-none sm:w-auto sm:flex-1 sm:max-w-[500px] lg:max-w-[600px] relative px-1 sm:px-0" ref={searchRef}>
+      <div className={`flex items-center rounded-[2rem] px-4 py-2.5 md:px-5 md:py-3 gap-3 transition-all duration-300 shadow-sm ${isScrolled ? 'bg-gray-50 border border-gray-200 hover:border-[#D4AF37]/40' : 'bg-white/10 backdrop-blur-md border border-white/30 hover:border-white/50'}`}>
+        <Search size={18} className={isScrolled ? 'text-gray-500' : 'text-white/70'} />
+        <input 
+          type="text" 
+          placeholder="Rechercher un produit, une catégorie..." 
+          className={`bg-transparent border-none text-xs md:text-sm w-full focus:ring-0 focus:outline-none p-0 font-medium placeholder:font-normal ${isScrolled ? 'text-[#0A1A3A] placeholder-gray-400' : 'text-white placeholder-white/60'}`} 
+          value={search} 
+          onChange={e => {setSearch(e.target.value); setShowSuggestions(true);}} 
+          onFocus={() => setShowSuggestions(true)}
+        />
+        {search && (
+          <button 
+            onClick={() => {setSearch(''); setShowSuggestions(false);}} 
+            className={`p-1 rounded-full hover:scale-110 transition-transform ${isScrolled ? 'bg-gray-200 text-gray-500 hover:bg-gray-300' : 'bg-white/20 text-white hover:bg-white/30'}`}
+            aria-label="Effacer la recherche"
+          >
+            <X size={14}/>
+          </button>
+        )}
+      </div>
+
+      {/* Suggestions de recherche */}
+      {showSuggestions && searchSuggestions.length > 0 && (
+        <div className="absolute top-[110%] left-0 right-0 bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_20px_60px_rgba(0,45,90,0.25)] border border-gray-100 overflow-hidden z-[800] animate-fade-in mx-1 sm:mx-0 p-4">
+          <div className="flex items-center justify-between mb-3 px-2">
+            <span className="text-xs font-bold text-[#002D5A] uppercase tracking-wider">
+              {searchSuggestions.length} résultat{searchSuggestions.length > 1 ? 's' : ''}
+            </span>
+            <button 
+              onClick={() => setShowSuggestions(false)} 
+              className="text-[10px] font-medium text-gray-400 hover:text-red-500 transition-colors flex items-center gap-1"
+            >
+              <X size={10} /> Fermer
             </button>
-            <div className="flex items-center gap-2 cursor-pointer" onClick={() => scrollToCategory("Tout")}>
-              <img src="/logoah.jpeg" className="h-10 md:h-16 w-auto rounded-lg shadow-md border border-[#D4AF37]/30" alt="Logo" />
-            </div>
           </div>
-
-          {/* Search Bar */}
-          <div className="order-last w-full sm:order-none sm:w-auto sm:flex-1 sm:max-w-[600px] relative px-1 sm:px-0" ref={searchRef}>
-            <div className={`flex items-center rounded-[2rem] px-5 py-3 gap-3 transition-all ${isScrolled ? 'bg-gray-100 border border-gray-200' : 'bg-white/10 backdrop-blur-md border border-white/20'}`}>
-              <Search size={18} className={isScrolled ? 'text-gray-400' : 'text-white/60'} />
-              <input 
-                type="text" 
-                placeholder="Trouver une pépite, un article..." 
-                className={`bg-transparent border-none text-xs md:text-sm w-full focus:ring-0 focus:outline-none p-0 font-medium ${isScrolled ? 'text-[#0A1A3A]' : 'text-white placeholder-white/50'}`} 
-                value={search} 
-                onChange={e => {setSearch(e.target.value); setShowSuggestions(true);}} 
-                onFocus={() => setShowSuggestions(true)}
-              />
-              {search && (
-                <button onClick={() => {setSearch(''); setShowSuggestions(false);}} className={`p-1 rounded-full ${isScrolled ? 'bg-gray-200 text-gray-500' : 'bg-white/20 text-white'}`}><X size={12}/></button>
-              )}
-            </div>
-
-            {/* Suggestions */}
-            {showSuggestions && searchSuggestions.length > 0 && (
-              <div className="absolute top-[110%] left-0 right-0 bg-white/95 backdrop-blur-xl rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-gray-100 overflow-hidden z-[800] animate-fade-in mx-1 sm:mx-0 p-4">
-                 <div className="flex items-center justify-between mb-4 px-2">
-                    <span className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.2em]">Pépites trouvées</span>
-                    <button onClick={() => setShowSuggestions(false)} className="text-[10px] font-bold text-gray-400 hover:text-red-500">FERMER</button>
-                 </div>
-                 
-                 <div className="flex flex-row overflow-x-auto no-scrollbar gap-4 pb-2">
-                    {searchSuggestions.map(p => (
-                      <div 
-                        key={p.id} 
-                        onClick={() => {navigateTo('detail', p); setShowSuggestions(false); setSearch(''); window.scrollTo(0,0);}} 
-                        className="flex-shrink-0 w-44 bg-gray-50/50 hover:bg-white border border-gray-100 hover:border-[#D4AF37]/40 rounded-[2rem] p-3 transition-all cursor-pointer group shadow-sm"
-                      >
-                         <div className="aspect-square w-full rounded-2xl overflow-hidden mb-3 bg-white">
-                            <img src={p.image_urls?.[0]} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="" />
-                         </div>
-                         <div className="px-1 min-w-0">
-                            <p className="text-[11px] font-bold text-[#0A1A3A] truncate uppercase leading-tight">{p.nom}</p>
-                            <div className="flex items-center justify-between mt-1">
-                               <span className="text-[8px] font-black text-[#D4AF37] uppercase truncate max-w-[60%]">{p.categorie}</span>
-                               <span className="text-[10px] font-black text-[#0A1A3A]">{(p.prix_standard || p.prix_avion)?.toLocaleString()}F</span>
-                            </div>
-                         </div>
-                      </div>
-                    ))}
-                 </div>
+          
+          <div className="flex flex-row overflow-x-auto no-scrollbar gap-4 pb-3 scrollbar-thin">
+            {searchSuggestions.map(p => (
+              <div 
+                key={p.id} 
+                onClick={() => {
+                  navigateTo('detail', p); 
+                  setShowSuggestions(false); 
+                  setSearch(''); 
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }} 
+                className="flex-shrink-0 w-44 bg-gradient-to-br from-gray-50 to-white hover:from-white hover:to-gray-50 border border-gray-100 hover:border-[#D4AF37]/50 rounded-2xl p-3 transition-all duration-300 cursor-pointer group shadow-sm hover:shadow-md"
+              >
+                <div className="aspect-square w-full rounded-xl overflow-hidden mb-3 bg-gray-100 relative">
+                  <img 
+                    src={p.image_urls?.[0]} 
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                    alt={p.nom} 
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </div>
+                <div className="px-1 min-w-0">
+                  <p className="text-xs font-bold text-[#0A1A3A] truncate uppercase leading-tight tracking-tight">
+                    {p.nom}
+                  </p>
+                  <div className="flex items-center justify-between mt-2">
+                    <span className="text-[9px] font-bold text-[#135290] uppercase truncate max-w-[60%] bg-blue-50 px-2 py-0.5 rounded-full">
+                      {p.categorie}
+                    </span>
+                    <span className="text-xs font-black text-[#002D5A]">
+                      {(p.prix_standard || p.prix_avion)?.toLocaleString()} FCFA
+                    </span>
+                  </div>
+                </div>
               </div>
-            )}
-          </div>
-
-          <div className="flex items-center gap-1 md:gap-4 shrink-0">
-            <button onClick={() => setIsCartOpen(true)} className={`relative p-2.5 md:p-4 rounded-full shadow-2xl transition-all active:scale-90 ${isScrolled ? 'bg-[#0A1A3A] text-white border-4 border-[#D4AF37]/20' : 'bg-white/20 backdrop-blur-md text-white border-2 border-white/20'}`}>
-              <ShoppingBag size={18} className="md:w-6 md:h-6" />
-              {cart.length > 0 && <span className="absolute -top-1 -right-1 bg-[#D4AF37] text-[#0A1A3A] text-[9px] font-black w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center border-2 border-white shadow-lg animate-bounce">{cart.length}</span>}
-            </button>
+            ))}
           </div>
         </div>
-      </header>
+      )}
+    </div>
+
+    {/* Partie droite : Boutons d'action */}
+    <div className="flex items-center gap-2 md:gap-4 shrink-0">
+      
+      {/* Bouton À Propos */}
+      <button 
+        onClick={() => navigateTo('about')}
+        className={`relative p-2.5 md:p-3 rounded-full transition-all active:scale-90 hover:scale-105 group ${isScrolled ? 'text-[#0A1A3A] hover:bg-gray-100/80' : 'text-white hover:bg-white/20'}`}
+        aria-label="À propos de nous"
+        title="À propos de notre entreprise"
+      >
+        <svg 
+          className={`w-5 h-5 md:w-6 md:h-6 transition-transform group-hover:rotate-12 ${isScrolled ? 'text-[#135290]' : 'text-white'}`}
+          fill="none" 
+          stroke="currentColor" 
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        {!isScrolled && (
+          <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-[8px] font-medium text-white/80 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+            À Propos
+          </span>
+        )}
+      </button>
+
+      {/* Bouton Panier */}
+      <button 
+        onClick={() => setIsCartOpen(true)} 
+        className={`relative p-2.5 md:p-3 rounded-full shadow-lg transition-all active:scale-90 hover:scale-105 group ${isScrolled ? 'bg-gradient-to-r from-[#002D5A] to-[#135290] text-white border border-[#D4AF37]/30' : 'bg-white/20 backdrop-blur-md text-white border border-white/30 hover:border-white/50'}`}
+        aria-label="Panier d'achat"
+      >
+        <ShoppingBag size={18} className="md:w-5 md:h-5" />
+        {cart.length > 0 && (
+          <>
+            <span className="absolute -top-1 -right-1 bg-gradient-to-br from-[#D4AF37] to-[#e8b969] text-[#002D5A] text-[10px] font-black w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center border-2 border-white shadow-lg animate-pulse">
+              {cart.length}
+            </span>
+            <div className="absolute -top-1 -right-1 w-5 h-5 md:w-6 md:h-6 rounded-full bg-[#D4AF37]/30 animate-ping"></div>
+          </>
+        )}
+        {!isScrolled && cart.length === 0 && (
+          <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-[8px] font-medium text-white/80 opacity-0 group-hover:opacity-100 transition-opacity">
+            Panier
+          </span>
+        )}
+      </button>
+
+      {/* Bouton WhatsApp (Optionnel - visible seulement en mobile ou selon besoin) */}
+      <a
+        href={`https://wa.me/${WHATSAPP_NUMBER}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`md:hidden p-2.5 rounded-full transition-all active:scale-90 hover:scale-105 ${isScrolled ? 'bg-green-500 text-white' : 'bg-green-500/90 text-white'}`}
+        aria-label="Contact WhatsApp"
+      >
+        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M17.507 14.307l-.009.075c-2.199-1.096-2.429-1.242-2.713-.816-.197.295-.771.964-.944 1.162-.175.195-.349.21-.646.075-.3-.15-1.263-.465-2.403-1.485-.888-.795-1.484-1.77-1.66-2.07-.293-.506.32-.578.878-1.634.1-.21.049-.375-.025-.524-.075-.15-.672-1.62-.922-2.206-.24-.584-.487-.51-.672-.51-.576-.05-.997-.05-1.368.344-1.614 1.774-1.207 3.604.174 5.55 2.714 3.552 4.16 4.206 6.8 5.114.714.227 1.365.195 1.88.121.574-.091 1.754-.721 2-1.426.255-.705.255-1.29.18-1.425-.074-.135-.27-.21-.574-.346z"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+
+  {/* Indicateur de scroll pour desktop */}
+  {isScrolled && (
+    <div className="hidden md:block absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-[#D4AF37]/40 to-transparent"></div>
+  )}
+</header>
 
       <HeroSection/>
 
@@ -1655,38 +1764,263 @@ function AppContent() {
         </div>
       </main>
 
-      <footer className="bg-[#002D5A] text-white pt-24 pb-12 px-8 rounded-t-[4rem] md:rounded-t-[6rem] font-sans mt-20">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-16 mb-20 text-center md:text-left">
-          <div className="space-y-8">
-            <h2 className="text-3xl font-black tracking-tighter uppercase google-sans-header">Industrie de l'avenir</h2>
-            <p className="text-gray-400 text-sm leading-relaxed max-w-xs mx-auto md:mx-0 font-medium">vente.</p>
-            <div className="flex justify-center md:justify-start gap-4">
-               <div className="p-4 bg-white/5 rounded-2xl hover:bg-[#D0A050] transition-all cursor-pointer shadow-lg"><Facebook size={20}/></div>
-               <div className="p-4 bg-white/5 rounded-2xl hover:bg-[#D0A050] transition-all cursor-pointer shadow-lg"><Instagram size={20}/></div>
+      <footer className="bg-gradient-to-b from-[#002D5A] to-[#001a3d] text-white pt-24 pb-12 px-4 sm:px-6 lg:px-8 rounded-t-[4rem] md:rounded-t-[6rem] font-sans mt-32 relative overflow-hidden">
+  {/* Éléments décoratifs */}
+  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#D0A050] via-[#135290] to-[#D0A050]"></div>
+  <div className="absolute -top-20 -right-20 w-60 h-60 bg-[#D0A050]/5 rounded-full blur-3xl"></div>
+  <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-[#135290]/10 rounded-full blur-3xl"></div>
+
+  <div className="max-w-7xl mx-auto relative z-10">
+    {/* Contenu principal */}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+      
+      {/* Colonne 1: Brand & Description */}
+      <div className="space-y-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 bg-gradient-to-br from-[#D0A050] to-[#e8b969] rounded-xl flex items-center justify-center">
+            <span className="text-xl font-bold">🏭</span>
+          </div>
+          <h2 className="text-2xl font-black tracking-tight google-sans-header">Industrie de l'Avenir</h2>
+        </div>
+        <p className="text-gray-300 text-sm leading-relaxed max-w-xs font-medium">
+          Votre partenaire de confiance pour l'importation directe depuis la Chine et la vente de produits 
+          de qualité au Togo. Mode, équipements agricoles, électronique et bien plus.
+        </p>
+        <p className="text-gray-400 text-xs leading-relaxed">
+          RCCM ABJ-2024-B-XXXX • NIF: XXXXXXXXX
+        </p>
+        <div className="flex gap-3 pt-4">
+          <a 
+            href="https://facebook.com" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="p-3 bg-white/5 hover:bg-[#D0A050] hover:scale-105 transition-all duration-300 rounded-xl shadow-lg hover:shadow-[#D0A050]/20 group"
+            aria-label="Facebook"
+          >
+            <Facebook size={18} className="group-hover:scale-110 transition-transform" />
+          </a>
+          <a 
+            href="https://instagram.com" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="p-3 bg-white/5 hover:bg-gradient-to-r hover:from-pink-600 hover:to-purple-600 hover:scale-105 transition-all duration-300 rounded-xl shadow-lg hover:shadow-pink-500/20 group"
+            aria-label="Instagram"
+          >
+            <Instagram size={18} className="group-hover:scale-110 transition-transform" />
+          </a>
+          <a 
+            href={`https://wa.me/${WHATSAPP_NUMBER}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-3 bg-white/5 hover:bg-green-500 hover:scale-105 transition-all duration-300 rounded-xl shadow-lg hover:shadow-green-500/20 group"
+            aria-label="WhatsApp"
+          >
+            <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M17.507 14.307l-.009.075c-2.199-1.096-2.429-1.242-2.713-.816-.197.295-.771.964-.944 1.162-.175.195-.349.21-.646.075-.3-.15-1.263-.465-2.403-1.485-.888-.795-1.484-1.77-1.66-2.07-.293-.506.32-.578.878-1.634.1-.21.049-.375-.025-.524-.075-.15-.672-1.62-.922-2.206-.24-.584-.487-.51-.672-.51-.576-.05-.997-.05-1.368.344-1.614 1.774-1.207 3.604.174 5.55 2.714 3.552 4.16 4.206 6.8 5.114.714.227 1.365.195 1.88.121.574-.091 1.754-.721 2-1.426.255-.705.255-1.29.18-1.425-.074-.135-.27-.21-.574-.346z"/>
+              <path d="M20.52 3.449C17.943.985 14.466 0 11.986 0 5.849 0 .453 4.989.087 11.13-.28 17.344 4.095 22.752 10.211 23.68c3.104.488 6.011-.258 8.625-2.115l4.355 1.423c.398.13.795-.198.924-.597.13-.398-.198-.795-.597-.924l-4.45-1.456c2.757-1.885 4.588-4.725 4.873-8.261.573-7.019-4.826-12.99-11.82-13.03zM12 22.165c-5.384 0-9.833-4.353-10.087-9.746-.254-5.393 4.064-9.885 9.449-9.885 5.385 0 9.834 4.353 10.087 9.746.253 5.393-4.064 9.885-9.449 9.885z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      {/* Colonne 2: Catégories */}
+      <div className="space-y-6">
+        <div className="flex items-center gap-2 mb-2">
+          <div className="w-2 h-2 bg-[#D0A050] rounded-full"></div>
+          <h4 className="text-[#D0A050] font-bold uppercase text-xs tracking-[0.3em]">NOS CATÉGORIES</h4>
+        </div>
+        <ul className="space-y-3">
+          {categories.slice(0, 6).map(c => (
+            <li key={c.id}>
+              <button
+                onClick={() => { 
+                  setActiveCategory(c.name); 
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="text-gray-300 hover:text-[#D0A050] transition-colors duration-300 text-sm font-medium flex items-center gap-2 group"
+              >
+                <div className="w-1.5 h-1.5 bg-gray-500 rounded-full group-hover:bg-[#D0A050] transition-colors"></div>
+                {c.name}
+                {c.count && (
+                  <span className="text-xs bg-white/10 px-2 py-0.5 rounded-full ml-auto">
+                    {c.count}
+                  </span>
+                )}
+              </button>
+            </li>
+          ))}
+        </ul>
+        <div className="pt-4 border-t border-white/10">
+          <p className="text-xs text-gray-400">
+            Produits disponibles en stock ou sur commande spéciale depuis la Chine
+          </p>
+        </div>
+      </div>
+
+      {/* Colonne 3: Liens utiles */}
+      <div className="space-y-6">
+        <div className="flex items-center gap-2 mb-2">
+          <div className="w-2 h-2 bg-[#135290] rounded-full"></div>
+          <h4 className="text-[#135290] font-bold uppercase text-xs tracking-[0.3em]">LIENS UTILES</h4>
+        </div>
+        <ul className="space-y-3">
+          <li>
+            <button 
+              onClick={() => navigateTo('about')}
+              className="text-gray-300 hover:text-white transition-colors duration-300 text-sm font-medium flex items-center gap-2 group"
+            >
+              <div className="w-1.5 h-1.5 bg-gray-500 rounded-full group-hover:bg-white transition-colors"></div>
+              À Propos de nous
+            </button>
+          </li>
+          <li>
+            <button 
+              onClick={() => navigateTo('about#processus')}
+              className="text-gray-300 hover:text-white transition-colors duration-300 text-sm font-medium flex items-center gap-2 group"
+            >
+              <div className="w-1.5 h-1.5 bg-gray-500 rounded-full group-hover:bg-white transition-colors"></div>
+              Notre processus d'importation
+            </button>
+          </li>
+          <li>
+            <button 
+              onClick={() => navigateTo('about#livraison')}
+              className="text-gray-300 hover:text-white transition-colors duration-300 text-sm font-medium flex items-center gap-2 group"
+            >
+              <div className="w-1.5 h-1.5 bg-gray-500 rounded-full group-hover:bg-white transition-colors"></div>
+              Options de livraison
+            </button>
+          </li>
+          <li>
+            <button 
+              onClick={() => navigateTo('about#mentions')}
+              className="text-gray-300 hover:text-white transition-colors duration-300 text-sm font-medium flex items-center gap-2 group"
+            >
+              <div className="w-1.5 h-1.5 bg-gray-500 rounded-full group-hover:bg-white transition-colors"></div>
+              Mentions légales
+            </button>
+          </li>
+          <li>
+            <button 
+              onClick={() => navigateTo('about#contact')}
+              className="text-gray-300 hover:text-white transition-colors duration-300 text-sm font-medium flex items-center gap-2 group"
+            >
+              <div className="w-1.5 h-1.5 bg-gray-500 rounded-full group-hover:bg-white transition-colors"></div>
+              Contact & Support
+            </button>
+          </li>
+          {process.env.NODE_ENV === 'development' && (
+            <li>
+              <button 
+                onClick={() => navigateTo('admin')}
+                className="text-gray-400 hover:text-red-300 transition-colors duration-300 text-sm font-medium flex items-center gap-2 group mt-4 pt-4 border-t border-white/10"
+              >
+                <div className="w-1.5 h-1.5 bg-gray-600 rounded-full group-hover:bg-red-300 transition-colors"></div>
+                Interface Administrateur
+              </button>
+            </li>
+          )}
+        </ul>
+      </div>
+
+      {/* Colonne 4: Contact & Horaires */}
+      <div className="space-y-6">
+        <div className="flex items-center gap-2 mb-2">
+          <div className="w-2 h-2 bg-[#D0A050] rounded-full"></div>
+          <h4 className="text-[#D0A050] font-bold uppercase text-xs tracking-[0.3em]">NOUS CONTACTER</h4>
+        </div>
+        
+        <div className="space-y-4">
+          <div className="flex items-start gap-3 p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-all duration-300 group">
+            <div className="p-2 bg-[#D0A050]/20 rounded-lg group-hover:bg-[#D0A050]/30">
+              <svg className="w-5 h-5 text-[#D0A050]" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+              </svg>
+            </div>
+            <div>
+              <p className="text-xs text-gray-400">Email</p>
+              <p className="text-sm font-medium">contact@industrie-avenir.tg</p>
             </div>
           </div>
-          <div className="space-y-8">
-            <h4 className="text-[#D0A050] font-black uppercase text-[10px] tracking-[0.4em]">Rayons</h4>
-            <ul className="space-y-4 text-sm font-bold opacity-60">
-              {categories.slice(0, 5).map(c => <li key={c.id} className="cursor-pointer hover:text-[#D0A050]" onClick={() => {setActiveCategory(c.name); window.scrollTo(0,0);}}>{c.name}</li>)}
-            </ul>
+
+          <div className="flex items-start gap-3 p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-all duration-300 group">
+            <div className="p-2 bg-green-500/20 rounded-lg group-hover:bg-green-500/30">
+              <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M20.52 3.449C17.943.985 14.466 0 11.986 0 5.849 0 .453 4.989.087 11.13-.28 17.344 4.095 22.752 10.211 23.68c3.104.488 6.011-.258 8.625-2.115l4.355 1.423c.398.13.795-.198.924-.597.13-.398-.198-.795-.597-.924l-4.45-1.456c2.757-1.885 4.588-4.725 4.873-8.261.573-7.019-4.826-12.99-11.82-13.03zM12 22.165c-5.384 0-9.833-4.353-10.087-9.746-.254-5.393 4.064-9.885 9.449-9.885 5.385 0 9.834 4.353 10.087 9.746.253 5.393-4.064 9.885-9.449 9.885z"/>
+              </svg>
+            </div>
+            <div>
+              <p className="text-xs text-gray-400">WhatsApp Business</p>
+              <p className="text-lg font-bold tracking-tight">{WHATSAPP_NUMBER.replace('228', '+228 ')}</p>
+            </div>
           </div>
-          <div className="space-y-8">
-            <h4 className="text-[#D0A050] font-black uppercase text-[10px] tracking-[0.4em]">Société</h4>
-            <ul className="space-y-4 text-sm font-bold opacity-60">
-              <li className="cursor-pointer hover:text-[#D0A050]" onClick={()=>navigateTo('about')}>À Propos de l'industrie de l'avenir</li>
-              <li className="cursor-pointer hover:text-white" onClick={()=>navigateTo('admin')}>Admin</li>
-            </ul>
-          </div>
-          <div className="space-y-8 md:col-span-1">
-            <h4 className="text-[#D0A050] font-black uppercase text-[10px] tracking-[0.4em]">Contact</h4>
-            <p className="text-xl font-black">{WHATSAPP_NUMBER.replace('228', '+228 ')}</p>
-            <p className="text-gray-400 text-sm font-medium leading-relaxed">lome TOGO.</p>
+
+          <div className="flex items-start gap-3 p-4 bg-white/5 rounded-xl hover:bg-white/10 transition-all duration-300 group">
+            <div className="p-2 bg-blue-500/20 rounded-lg group-hover:bg-blue-500/30">
+              <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-xs text-gray-400">Siège Social</p>
+              <p className="text-sm font-medium">Lomé, Togo</p>
+              <p className="text-xs text-gray-400 mt-1">Zone portuaire, Bâtiment A3</p>
+            </div>
           </div>
         </div>
-        <p className="text-[9px] text-gray-600 uppercase text-center border-t border-white/5 pt-10 font-black tracking-[0.5em] tracking-widest">© 2024 l'industie de l'avenir . L'EXCELLENCE SANS FRONTIÈRES</p>
-      </footer>
 
+        <div className="pt-4 border-t border-white/10">
+          <p className="text-xs text-gray-400 mb-2">📅 Horaires d'ouverture :</p>
+          <p className="text-sm">
+            Lundi - Vendredi: 8h00 - 18h00<br/>
+            Samedi: 9h00 - 16h00<br/>
+            <span className="text-gray-400">Fermé le dimanche</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    {/* Section inférieure */}
+    <div className="border-t border-white/10 pt-10">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+        <div className="text-center md:text-left">
+          <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">
+            🌍 Importation directe depuis la Chine • Livraison partout au Togo
+          </p>
+          <p className="text-[10px] text-gray-600 tracking-wide">
+            Tous les prix sont indiqués en FCFA. Les délais de livraison varient selon le mode de transport choisi.
+          </p>
+        </div>
+        
+        <div className="flex items-center gap-6">
+          <div className="text-center">
+            <div className="text-2xl font-black text-[#D0A050]">100%</div>
+            <div className="text-[10px] text-gray-400 uppercase tracking-wider">Satisfaction</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-black text-[#135290]">24/7</div>
+            <div className="text-[10px] text-gray-400 uppercase tracking-wider">Support WhatsApp</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-black text-white">✓</div>
+            <div className="text-[10px] text-gray-400 uppercase tracking-wider">Sans intermédiaire</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {/* Copyright */}
+    <div className="mt-12 pt-8 border-t border-white/5">
+      <p className="text-xs text-gray-500 uppercase text-center tracking-[0.3em] font-medium">
+        © {new Date().getFullYear()} Industrie de l'Avenir • Excellence Sans Frontières • Tous droits réservés
+      </p>
+      <p className="text-[10px] text-gray-600 text-center mt-2 tracking-wide">
+        Ce site sert de catalogue. Les transactions sont finalisées via WhatsApp après confirmation des détails.
+      </p>
+    </div>
+  </div>
+</footer>
       {/* Drawer Panier */}
       {isCartOpen && (
         <div className="fixed inset-0 z-[1000] flex justify-end">

@@ -499,7 +499,7 @@ const ProductDetail = ({ product, onBack, onAddToCart }) => {
               </div>
             </div>
             <div className="flex gap-4 overflow-x-auto no-scrollbar pb-4 px-2">
-              {product.image_urls?.map((url, i) => (
+              {product.image_urls?.map((url,i) => (
                 <button key={i} onClick={() => setActiveImgIndex(i)} className={`w-20 h-20 md:w-28 md:h-28 rounded-2xl overflow-hidden border-4 shrink-0 transition-all ${activeImgIndex === i ? 'border-[#D4AF37] scale-110 shadow-xl' : 'border-transparent opacity-40 hover:opacity-80'}`}>
                   {isVideo(url) ? <div className="w-full h-full bg-slate-900 flex items-center justify-center text-white"><Play size={24}/></div> : <img src={url} className="w-full h-full object-cover" alt="" />}
                 </button>
@@ -700,13 +700,17 @@ const AdminDashboard = ({ products, categories, onRefresh, onBack, api, sb }) =>
             <input type="text" placeholder="Trouver un produit..." className="w-full bg-gray-50 border border-gray-200 rounded-2xl py-3.5 pl-12 pr-4 text-xs focus:bg-white focus:border-[#D4AF37] outline-none transition-all shadow-inner font-medium" value={adminSearch} onChange={(e) => setAdminSearch(e.target.value)} />
           </div>
           <button onClick={handleLogout} className="p-3.5 bg-red-50 rounded-2xl text-red-600 hover:bg-red-600 hover:text-white transition-all font-black text-[10px] uppercase flex items-center gap-2 border border-red-100"><LogOut size={16}/> Quitter</button>
+          <div className="bg-white p-2 rounded-2xl shadow-sm border flex items-center gap-2">
+             <input placeholder="Nouvelle catégorie" className="bg-transparent border-none text-xs px-4 focus:ring-0 w-32 md:w-48" value={newCatName} onChange={e=>setNewCatName(e.target.value)} />
+             <button onClick={async () => { await api.addCategory(newCatName); setNewCatName(''); onRefresh(); }} className="bg-[#D0A050] p-2 rounded-xl text-[#002D5A]"><Plus size={18}/></button>
+          </div>
           <button onClick={() => setShowCatList(!showCatList)} className="p-3.5 bg-white rounded-2xl shadow-sm border border-gray-200 text-[#0A1A3A] hover:bg-[#0A1A3A] hover:text-white transition-all"><Settings size={20}/></button>
           <button onClick={onBack} className="p-3.5 bg-gray-100 rounded-full text-gray-500 hover:bg-white transition-all"><X size={20}/></button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-8">
-        <button onClick={() => setEditing({ nom: '', categorie: categories[0]?.name, type_dispo: 'STOCK', description: '', image_urls: Array(8).fill('') })} className="bg-white border-4 border-dashed border-gray-200 rounded-[3rem] p-8 flex flex-col items-center justify-center hover:border-blue-500 hover:bg-blue-50 transition-all group aspect-square shadow-sm">
+        <button onClick={() => setEditing({ nom: '', categorie: categories[0]?.name, type_dispo: 'STOCK', description: '', image_urls: Array(5).fill('') })} className="bg-white border-4 border-dashed border-gray-200 rounded-[3rem] p-8 flex flex-col items-center justify-center hover:border-blue-500 hover:bg-blue-50 transition-all group aspect-square shadow-sm">
           <Plus size={40} className="text-gray-300 group-hover:text-blue-500 transition-all" />
           <span className="font-black text-gray-400 text-[10px] uppercase mt-4">Ajouter</span>
         </button>
@@ -722,7 +726,7 @@ const AdminDashboard = ({ products, categories, onRefresh, onBack, api, sb }) =>
               <p className="text-[8px] font-black text-[#D4AF37] uppercase mb-1">{p.categorie}</p>
               <p className="font-black text-[#0A1A3A] uppercase text-[11px] truncate w-full px-2">{p.nom}</p>
             </div>
-            <button onClick={() => setEditing({ ...p, image_urls: [...(p.image_urls || []), ...Array(8).fill('')].slice(0, 8) })} className="mt-4 w-full py-3 bg-[#0A1A3A] rounded-2xl text-white font-black text-[9px] uppercase hover:bg-[#D4AF37] transition-all shadow-md">Modifier</button>
+            <button onClick={() => setEditing({ ...p, image_urls: [...(p.image_urls || []), ...Array(5).fill('')].slice(0, 5) })} className="mt-4 w-full py-3 bg-[#0A1A3A] rounded-2xl text-white font-black text-[9px] uppercase hover:bg-[#D4AF37] transition-all shadow-md">Modifier</button>
           </div>
         ))}
       </div>

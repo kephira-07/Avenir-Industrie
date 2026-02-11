@@ -799,8 +799,8 @@ const ProductDetail = ({ product, onBack, onAddToCart }) => {
     window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${text}`;
   };
 
-  const isOrder = product?.type_dispo === "COMMANDE";
-  const price = isOrder ? product?.prix_avion : product?.prix_standard;
+ const isOrder = product?.type_dispo === "COMMANDE"; // Gardé si utile ailleurs
+const price = product?.prix_standard ?? 0;          // Toujours le prix standard
 
   // Vérification sécurisée pour éviter les erreurs
   const images = Array.isArray(product?.image_urls) ? product.image_urls : [];
@@ -1197,7 +1197,7 @@ const AdminDashboard = ({ products, categories, onRefresh, onBack, api, sb }) =>
                     <option value="STOCK">STOCK </option>
                     <option value="COMMANDE">IMPORT USA</option>
                   </select>
-                  <input type="number" className="w-full bg-gray-100 p-4 rounded-[1rem] font-black text-[#0A1A3A] text-xl shadow-inner outline-none focus:ring-2 focus:ring-[#D4AF37]" value={editing.prix_standard || editing.prix_avion || ''} onChange={e=>setEditing({...editing, prix_standard:e.target.value})} placeholder="Prix (F)" />
+                  <input type="number" className="w-full bg-gray-100 p-4 rounded-[1rem] font-black text-[#0A1A3A] text-xl shadow-inner outline-none focus:ring-2 focus:ring-[#D4AF37]" value={editing.prix_standard } onChange={e=>setEditing({...editing, prix_standard:e.target.value})} placeholder="Prix (F)" />
                 </div>
                 <button disabled={saving} type="submit" className="w-full bg-[#0A1A3A] text-white py-6 rounded-[1.5rem] font-black uppercase shadow-2xl active:scale-95 transition-all text-sm tracking-widest mt-2 flex items-center justify-center gap-3 border-b-4 border-black/30">
                   {saving ? <Loader2 className="animate-spin" /> : <><Save size={20}/> ENREGISTRER PRODUIT</>}
@@ -1378,7 +1378,7 @@ const ProductCard = ({ product, onClick }) => (
       <p className="text-[#D4AF37] text-[8px] font-black uppercase ">{product.categorie}</p>
       <h3 className="text-lg font-Karla text-[#0A1A3A] designer-title uppercase leading-tight truncate">{product.nom}</h3>
       <div className="flex justify-between items-center pt-5 border-t border-gray-100">
-        <p className="text-xl font-Karla text-[#0A1A3A] ">{(product.prix_standard || product.prix_avion)?.toLocaleString()} F</p>
+        <p className="text-xl font-Karla text-[#0A1A3A] ">{(product.prix_standard )?.toLocaleString()} F</p>
         <div className="p-3 bg-gray-50 group-hover:bg-[#0A1A3A] group-hover:text-white transition-all rounded-xl shadow-inner"><ArrowRight size={13}/></div>
       </div>
     </div>
@@ -1483,8 +1483,8 @@ function AppContent() {
   const filtered = useMemo(() => {
     let res = products.filter(p => (activeCategory === "Tout" || p.categorie === activeCategory) && p.nom.toLowerCase().includes(search.toLowerCase()));
     return res.sort((a, b) => {
-      const pa = Number(a.prix_standard || a.prix_avion || a.prix_bateau || 0);
-      const pb = Number(b.prix_standard || b.prix_avion || b.prix_bateau || 0);
+      const pa = Number(a.prix_standard );
+      const pb = Number(b.prix_standard );
       return sortOrder === 'asc' ? pa - pb : pb - pa;
     });
   }, [products, activeCategory, search, sortOrder]);
@@ -1557,7 +1557,7 @@ function AppContent() {
         <div className="fixed inset-0 -z-10">
         <div className="absolute inset-0 z-10" /> {/* Overlay plus fort pour lisibilité */}
         <img
-          src="/bg.jpg"
+          src="/bg.jpeg"
           alt="Fond de la boutique"
           className="w-full h-full object-cover"
         />
@@ -2160,52 +2160,6 @@ function AppContent() {
               ))}
             </div>
 
-            {/* Résumé de la commande - Sticky en bas */}
-            <div className="sticky bottom-0 bg-white pt-6 pb-4 border-t border-gray-200 mt-8">
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-gray-500">Sous-total</span>
-                  <span className="font-bold text-[#002D5A]">
-                    {cart.reduce((s, i) => s + i.finalPrice * i.quantity, 0).toLocaleString()} F
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-gray-500">Frais de livraison</span>
-                  <span className="text-sm text-gray-400 bg-gray-100 px-3 py-1 rounded-full">
-                    Calculés à l'étape suivante
-                  </span>
-                </div>
-                <div className="flex justify-between items-center pt-4 border-t border-gray-200">
-                  <span className="text-base font-black text-[#002D5A]">Total TTC</span>
-                  <span className="text-2xl font-black text-[#002D5A]">
-                    {cart.reduce((s, i) => s + i.finalPrice * i.quantity, 0).toLocaleString()} F
-                  </span>
-                </div>
-              </div>
-
-              {/* Bouton de validation */}
-              <button
-                onClick={() => {
-                  setIsCartOpen(false);
-                  navigateTo('checkout');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                className="w-full mt-6 bg-gradient-to-r from-[#002D5A] to-[#135290] text-white py-4 rounded-xl font-bold text-base hover:from-[#135290] hover:to-[#002D5A] transition-all hover:shadow-lg active:scale-[0.98] flex items-center justify-center gap-3"
-              >
-                <span>Passer la commande</span>
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-              </button>
-
-              {/* Message de confiance */}
-              <p className="text-xs text-center text-gray-400 mt-4 flex items-center justify-center gap-1">
-                <svg className="w-4 h-4 text-[#D4AF37]" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-                </svg>
-                Paiement sécurisé • Finalisation sur WhatsApp
-              </p>
-            </div>
           </>
         )}
       </div>

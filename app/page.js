@@ -216,7 +216,7 @@ const HeroSection = () => {
         }
       `}} />
 
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-400 via-blue-450 to-slate-500 py-8 lg:py-12 min-h-[60vh] flex items-center pt-20">
+      <section className="relative overflow-hidden bg-gradient-to-br from-slate-400 via-blue-450 to-slate-500 py-8 lg:py-12 min-h-[60vh] flex items-center pt-100">
         {/* Effets d'arrière-plan animés */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           <div className="absolute top-1/4 -left-20 w-72 h-72 bg-blue-600/10 rounded-full blur-3xl animate-float"></div>
@@ -728,7 +728,7 @@ useEffect(() => {
                   Voir le Catalogue
                 </button>
                 <a 
-                  href="https://wa.me/228XXXXXXXXX"
+                  href="https://wa.me/22879987000?text=Bonjour%20Industrie%20de%20l'Avenir%2C%20je%20souhaite%20passer%20une%20commande."
                   target="_blank"
                   rel="noopener noreferrer"
                   className="bg-gradient-to-r from-green-500 to-green-600 text-white px-8 py-4 rounded-2xl font-bold hover:from-green-600 hover:to-green-700 transition-all hover:scale-105 active:scale-95 shadow-lg flex items-center justify-center gap-3"
@@ -739,7 +739,7 @@ useEffect(() => {
               </div>
               
               <p className="text-sm text-gray-500 pt-6">
-                <strong>Heures de contact :</strong> Lundi - Samedi • 8h00 - 20h00
+                <strong>Heures de contact :</strong> Lundi - Samedi • 7h00 - 20h00
               </p>
             </div>
           </div>
@@ -757,7 +757,7 @@ useEffect(() => {
           <div className="bg-gray-50 p-6 rounded-2xl space-y-4">
             <div>
               <h3 className="font-bold text-gray-900 mb-2">Industrie de l'Avenir</h3>
-              <p className="text-gray-600">RCCM ABJ-2024-B-XXXX • NIF: XXXXXXXXX</p>
+           
             </div>
             
             <div>
@@ -770,7 +770,7 @@ useEffect(() => {
             
             <div>
               <h3 className="font-bold text-gray-900 mb-2">Siège</h3>
-              <p className="text-gray-600">Lomé, Togo • Service client disponible au +228 XX XX XX XX</p>
+              <p className="text-gray-600">Lomé, Togo • Service client disponible au +228 79987000</p>
             </div>
           </div>
         </section>
@@ -1011,12 +1011,12 @@ const price = product?.prix_standard ?? 0;          // Toujours le prix standard
                 {/* Garanties */}
                 {isOrder && ( 
                 <div className="grid grid-cols-2 w-full gap-2">
-                  <div  className="flex items-center gap-3 p-4 bg-white border border-slate-200 rounded-xl">
-                    <div className="bg-green-100 p-2  rounded-1.5xl text-green-500"><Ship size={20} className="text-amber-600"/> <span className="text-sm font-medium text-slate-700">Bateau</span></div>
-                    <div className="bg-green-100 p-2 rounded-1.5xl  text-green-500"><Plane size={20} className="text-amber-600"/> <span className="text-sm font-medium text-slate-700">Avion</span></div>
+                  <div  className="flex items-center gap-3 p-2 w-full bg-white border border-slate-200 rounded-xl">
+                    <div className="bg-green-100 p-2 w-full rounded-2xl text-green-500"><Ship size={20} className="text-amber-600"/> <span className="text-sm font-medium text-slate-700">Bateau</span></div>
+                    <div className="bg-green-100 p-2 rounded-2xl w-full text-green-500"><Plane size={20} className="text-amber-600"/> <span className="text-sm font-medium text-slate-700">Avion</span></div>
                           
                 </div>
-              )
+              
             </div>)}
           </div>
         </div>

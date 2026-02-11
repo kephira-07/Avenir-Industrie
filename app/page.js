@@ -89,6 +89,7 @@ const Nudge = ({ api }) => {
   const [pseudo, setPseudo] = useState('');
   const [email, setEmail] = useState('');
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const dismissed = localStorage.getItem('afri_nudge_dismissed');
@@ -100,37 +101,136 @@ const Nudge = ({ api }) => {
 
   const submit = async () => {
     if (!pseudo || !email || !api) return;
-    setSent(true);
-    await api.postProspect(pseudo, email);
-    setTimeout(() => {
-      localStorage.setItem('afri_nudge_dismissed', 'true');
-      setVisible(false);
-    }, 3000);
+    setLoading(true);
+    try {
+      await api.postProspect(pseudo, email);
+      setSent(true);
+      setTimeout(() => {
+        localStorage.setItem('afri_nudge_dismissed', 'true');
+        setVisible(false);
+      }, 3000);
+    } catch (error) {
+      console.error('Erreur inscription:', error);
+      // Optionnel : afficher une erreur à l'utilisateur
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!visible) return null;
 
   return (
-    <div className="fixed bottom-6 right-6 left-6 md:left-auto md:max-w-sm z-[800] animate-fade-in font-sans">
-      <div className="bg-white rounded-[2.5rem] shadow-2xl border-4 border-[#D0A050] p-8 relative overflow-hidden">
-        <button onClick={() => setVisible(false)} className="absolute top-4 right-4 text-gray-400 hover:text-black"><X size={20}/></button>
-        {!sent ? (
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="bg-orange-100 p-3 rounded-2xl text-[#D0A050]"><Bell size={24} className="animate-bounce" /></div>
-              <h4 className="font-black text-[#002D5A] text-xl tracking-tight">Voulez-vous les pépites ?</h4>
+    <div className="fixed bottom-6 right-6 left-6 md:left-auto md:max-w-sm z-[800] animate-slide-up">
+      <div className="relative bg-gradient-to-br from-white via-white to-blue-50/30 rounded-3xl shadow-2xl border border-blue-100/50 overflow-hidden backdrop-blur-sm">
+        
+        {/* Accent décoratif en haut */}
+        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#D0A050] via-[#135290] to-[#D0A050]" />
+
+        <button
+          onClick={() => setVisible(false)}
+          className="absolute top-4 right-4 z-10 p-2 bg-gray-100 hover:bg-gray-200 rounded-full transition-all hover:scale-105 active:scale-95 text-gray-500 hover:text-gray-700"
+          aria-label="Fermer"
+        >
+          <X size={16} />
+        </button>
+
+        <div className="p-6 sm:p-8">
+          {!sent ? (
+            <div className="space-y-5">
+              {/* En-tête avec icône et titre */}
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-[#D0A050]/20 to-[#135290]/20 rounded-2xl flex items-center justify-center">
+                  <Bell size={24} className="text-[#D0A050]" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-black text-[#002D5A] tracking-tight leading-tight">
+                    Ne ratez aucune pépite
+                  </h3>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Recevez en exclusivité les nouveaux arrivages USA et Chine avant tout le monde.
+                  </p>
+                </div>
+              </div>
+
+              {/* Formulaire */}
+              <div className="space-y-4 pt-2">
+                <div>
+                  <label htmlFor="nudge-pseudo" className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1.5 ml-1">
+                    Pseudo
+                  </label>
+                  <input
+                    id="nudge-pseudo"
+                    type="text"
+                    placeholder="Comment t'appelles-tu ?"
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-5 py-3.5 text-sm focus:border-[#D0A050] focus:ring-2 focus:ring-[#D0A050]/20 transition-all outline-none"
+                    value={pseudo}
+                    onChange={(e) => setPseudo(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="nudge-email" className="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1.5 ml-1">
+                    Email
+                  </label>
+                  <input
+                    id="nudge-email"
+                    type="email"
+                    placeholder="ton@email.com"
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-5 py-3.5 text-sm focus:border-[#135290] focus:ring-2 focus:ring-[#135290]/20 transition-all outline-none"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              {/* Bouton d'inscription */}
+              <button
+                onClick={submit}
+                disabled={!pseudo || !email || loading}
+                className="w-full mt-2 bg-gradient-to-r from-[#002D5A] to-[#135290] text-white py-4 rounded-xl font-bold text-base hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {loading ? (
+                  <>
+                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span>Inscription...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>M'inscrire à l'alerte</span>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                  </>
+                )}
+              </button>
+
+              {/* Mention de confidentialité */}
+              <p className="text-[10px] text-gray-400 text-center pt-2">
+                🔒 1 email par semaine • Désinscription instantanée
+              </p>
             </div>
-            <p className="text-sm text-gray-500">Laisse-nous ton email pour recevoir les nouveaux arrivages USA en exclusivité !</p>
-            <input type="text" placeholder="Ton pseudo" className="w-full bg-gray-50 border-none rounded-xl p-4 text-sm focus:ring-2 focus:ring-[#D0A050]" value={pseudo} onChange={e => setPseudo(e.target.value)} />
-            <input type="email" placeholder="Ton email" className="w-full bg-gray-50 border-none rounded-xl p-4 text-sm focus:ring-2 focus:ring-[#D0A050]" value={email} onChange={e => setEmail(e.target.value)} />
-            <button onClick={submit} className="w-full bg-[#D0A050] text-[#002D5A] py-4 rounded-2xl font-black text-sm shadow-lg active:scale-95 transition-all uppercase">M'inscrire</button>
-          </div>
-        ) : (
-          <div className="py-6 text-center animate-fade-in">
-            <CheckCircle size={50} className="text-green-500 mx-auto mb-4" />
-            <h4 className="font-black text-[#002D5A]">C'est noté, {pseudo} !</h4>
-          </div>
-        )}
+          ) : (
+            /* État de confirmation */
+            <div className="py-8 text-center animate-fade-in">
+              <div className="w-20 h-20 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-5">
+                <CheckCircle size={40} className="text-green-600" />
+              </div>
+              <h4 className="text-xl font-black text-[#002D5A] mb-2">
+                Merci {pseudo} !
+              </h4>
+              <p className="text-gray-500 text-sm mb-6">
+                Tu recevras les prochaines pépites en exclusivité.
+              </p>
+              <div className="w-16 h-1 bg-gradient-to-r from-[#D0A050] to-[#135290] mx-auto rounded-full" />
+            </div>
+          )}
+        </div>
+
+        {/* Élément décoratif flou en arrière-plan */}
+        <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-[#D0A050]/5 rounded-full blur-3xl -z-0" />
+        <div className="absolute -top-10 -left-10 w-40 h-40 bg-[#135290]/5 rounded-full blur-3xl -z-0" />
       </div>
     </div>
   );
@@ -216,7 +316,7 @@ const HeroSection = () => {
         }
       `}} />
 
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-400 via-blue-450 to-slate-500 py-8 lg:py-12 min-h-[60vh] flex items-center pt-30">
+      <section className="relative overflow-hidden bg-gradient-to-br from-slate-400 via-blue-450 to-slate-500 py-8 lg:py-12 min-h-[60vh] flex items-center pt-40">
         {/* Effets d'arrière-plan animés */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           <div className="absolute top-1/4 -left-20 w-72 h-72 bg-blue-600/10 rounded-full blur-3xl animate-float"></div>

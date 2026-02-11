@@ -1001,9 +1001,7 @@ const price = product?.prix_standard ?? 0;          // Toujours le prix standard
                   {isOrder ? 'Commander maintenant' : 'Ajouter au panier'}
                 </button>
                 
-                <button onClick={handleWhatsApp} className="w-full py-4 border-2 border-slate-300 text-slate-700 rounded-xl font-bold  hover:bg-slate-50">
-                  Acheter maintenant
-                </button>
+              
               </div>
               </div>
             </div>
@@ -1762,7 +1760,7 @@ function AppContent() {
                 <div className="flex items-center gap-6 mb-10  bg-amber-50 px-4 py-2 rounded-2xl shadow-lg">
                   <h2 className="text-3xl md:text-5xl font-black text-[#0A1A3A] designer-title uppercase ">{cat.name}</h2>
                   <div className="h-px flex-1 bg-gradient-to-r from-[#D4AF37]/40 to-transparent"></div>
-                  <span className="text-[10px] font-black text-gray-400 uppercase ">{groupedProducts[cat.name].length} Produits</span>
+                  <span className="text-[10px] font-black text-gray-400 uppercase ">{groupedProducts[cat.name].length} P</span>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
                   {groupedProducts[cat.name].map(p => ( 

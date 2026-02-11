@@ -216,7 +216,7 @@ const HeroSection = () => {
         }
       `}} />
 
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-950 to-slate-950 py-8 lg:py-12 min-h-[60vh] flex items-center pt-20">
+      <section className="relative overflow-hidden bg-gradient-to-br from-slate-400 via-blue-450 to-slate-500 py-8 lg:py-12 min-h-[60vh] flex items-center pt-20">
         {/* Effets d'arrière-plan animés */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           <div className="absolute top-1/4 -left-20 w-72 h-72 bg-blue-600/10 rounded-full blur-3xl animate-float"></div>
@@ -232,10 +232,7 @@ const HeroSection = () => {
             
             {/* TEXTE & CTA */}
             <div className="w-full lg:w-1/2 space-y-8 animate-fade-in-up">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-900/30 to-amber-900/20 border border-blue-500/30 text-blue-300 text-xs font-medium tracking-wider transition-all duration-300 hover:scale-105 hover:border-amber-500/40">
-                <div className="w-2 h-2 bg-amber-400 rounded-full animate-pulse"></div>
-                <span>Import direct • Disponible en boutique</span>
-              </div>
+             
               
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
                 Commandez vos produits
@@ -1545,14 +1542,7 @@ function AppContent() {
 
   return (
     <div className="min-h-screen font-sans text-gray-900 overflow-x-hidden ">
-      <div
-  className="absolute inset-0 z-0 bg-cover bg-center"
-  style={{
-    backgroundImage: `url('../public/bg.jpg')`,
-  }}
->
-  <div className="absolute inset-0 bg-gradient-to-r from-[#07101ac4] via-[#0F172A]/60 to-transparent"></div>
-</div>
+      
       <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -1567,7 +1557,7 @@ function AppContent() {
         <div className="fixed inset-0 -z-10">
         <div className="absolute inset-0 z-10" /> {/* Overlay plus fort pour lisibilité */}
         <img
-          src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=2070&auto=format&fit=crop"
+          src="/bg.jpg"
           alt="Fond de la boutique"
           className="w-full h-full object-cover"
         />
@@ -1769,7 +1759,7 @@ function AppContent() {
           {activeCategory === "Tout" ? (
             categories.map(cat => groupedProducts[cat.name]?.length > 0 && (
               <section key={cat.id} id={`section-${cat.name.replace(/\s+/g, '-').toLowerCase()}`} className="animate-fade-in-up scroll-mt-24">
-                <div className="flex items-center gap-6 mb-10">
+                <div className="flex items-center gap-6 mb-10  bg-amber-50 px-4 py-2 rounded-2xl shadow-lg">
                   <h2 className="text-3xl md:text-5xl font-black text-[#0A1A3A] designer-title uppercase ">{cat.name}</h2>
                   <div className="h-px flex-1 bg-gradient-to-r from-[#D4AF37]/40 to-transparent"></div>
                   <span className="text-[10px] font-black text-gray-400 uppercase ">{groupedProducts[cat.name].length} Produits</span>
@@ -1815,9 +1805,7 @@ function AppContent() {
           Votre partenaire de confiance pour l'importation directe depuis la Chine et la vente de produits 
           de qualité au Togo. Mode, équipements agricoles, électronique et bien plus.
         </p>
-        <p className="text-gray-400 text-xs leading-relaxed">
-          RCCM ABJ-2024-B-XXXX • NIF: XXXXXXXXX
-        </p>
+       
         <div className="flex gap-3 pt-4">
           <a 
             href="https://facebook.com" 
@@ -1939,17 +1927,7 @@ function AppContent() {
               Contact & Support
             </button>
           </li>
-          {process.env.NODE_ENV === 'development' && (
-            <li>
-              <button 
-                onClick={() => navigateTo('admin')}
-                className="text-gray-400 hover:text-red-300 transition-colors duration-300 text-sm font-medium flex items-center gap-2 group mt-4 pt-4 border-t border-white/10"
-              >
-                <div className="w-1.5 h-1.5 bg-gray-600 rounded-full group-hover:bg-red-300 transition-colors"></div>
-                Interface Administrateur
-              </button>
-            </li>
-          )}
+         
         </ul>
       </div>
 
@@ -1980,7 +1958,7 @@ function AppContent() {
               </svg>
             </div>
             <div>
-              <p className="text-xs text-gray-400">WhatsApp Business</p>
+              <p className="text-xs text-gray-400">WhatsApp</p>
               <p className="text-lg font-bold tracking-tight">{WHATSAPP_NUMBER.replace('228', '+228 ')}</p>
             </div>
           </div>
@@ -1993,21 +1971,14 @@ function AppContent() {
               </svg>
             </div>
             <div>
-              <p className="text-xs text-gray-400">Siège Social</p>
+            
               <p className="text-sm font-medium">Lomé, Togo</p>
-              <p className="text-xs text-gray-400 mt-1">Zone portuaire, Bâtiment A3</p>
+             
             </div>
           </div>
         </div>
 
-        <div className="pt-4 border-t border-white/10">
-          <p className="text-xs text-gray-400 mb-2">📅 Horaires d'ouverture :</p>
-          <p className="text-sm">
-            Lundi - Vendredi: 8h00 - 18h00<br/>
-            Samedi: 9h00 - 16h00<br/>
-            <span className="text-gray-400">Fermé le dimanche</span>
-          </p>
-        </div>
+        
       </div>
     </div>
 
@@ -2051,50 +2022,196 @@ function AppContent() {
     </div>
   </div>
 </footer>
-      {/* Drawer Panier */}
-      {isCartOpen && (
-        <div className="fixed inset-0 z-[1000] flex justify-end">
-          <div className="absolute inset-0 bg-[#002D5A]/85 backdrop-blur-md" onClick={() => setIsCartOpen(false)}></div>
-          <div className="relative w-full sm:max-w-md bg-white h-full shadow-2xl flex flex-col p-8 md:p-12 animate-slide-in-right overflow-y-auto no-scrollbar font-sans">
-             <div className="flex justify-between items-center mb-10 md:mb-16">
-               <h2 className="text-3xl md:text-4xl font-black text-[#002D5A] tracking-tighter uppercase leading-none">Votre Panier</h2>
-               <button onClick={() => setIsCartOpen(false)} className="p-4 bg-gray-100 rounded-full active:scale-90 hover:bg-red-50 hover:text-red-500 transition-all"><X size={20}/></button>
-             </div>
-             <div className="flex-1 space-y-6">
-                {cart.length === 0 ? (
-                  <div className="text-center py-40 opacity-10 flex flex-col items-center">
-                    <ShoppingCart size={120} strokeWidth={0.5}/><p className="mt-8 font-black uppercase text-sm tracking-[0.3em] font-sans">Votre panier est vide</p>
+      {/* Drawer Panier - Version Premium */}
+{isCartOpen && (
+  <div className="fixed inset-0 z-[1000] overflow-hidden">
+    {/* Overlay avec dégradé et flou */}
+    <div
+      className="absolute inset-0 bg-gradient-to-br from-[#002D5A]/90 via-[#002D5A]/80 to-[#135290]/80 backdrop-blur-sm transition-opacity"
+      onClick={() => setIsCartOpen(false)}
+      aria-hidden="true"
+    />
+
+    {/* Drawer - Slide-in depuis la droite */}
+    <div className="absolute inset-y-0 right-0 w-full sm:max-w-md bg-white shadow-2xl flex flex-col animate-slide-in-right">
+      
+      {/* Header fixe */}
+      <div className="sticky top-0 bg-white/95 backdrop-blur-md z-10 px-6 py-5 md:px-8 md:py-6 border-b border-gray-100 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-[#D4AF37]/10 rounded-full flex items-center justify-center">
+            <ShoppingCart size={18} className="text-[#D4AF37]" />
+          </div>
+          <h2 className="text-xl md:text-2xl font-black text-[#002D5A] tracking-tight">
+            Mon panier
+            {cart.length > 0 && (
+              <span className="ml-2 text-sm font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+                {cart.length}
+              </span>
+            )}
+          </h2>
+        </div>
+        <button
+          onClick={() => setIsCartOpen(false)}
+          className="p-3 bg-gray-100 hover:bg-gray-200 rounded-full transition-all hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50"
+          aria-label="Fermer le panier"
+        >
+          <X size={18} className="text-gray-600" />
+        </button>
+      </div>
+
+      {/* Corps scrollable */}
+      <div className="flex-1 overflow-y-auto px-6 py-6 md:px-8 md:py-8 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
+        {cart.length === 0 ? (
+          /* État vide - design élégant */
+          <div className="flex flex-col items-center justify-center h-full min-h-[450px] text-center">
+            <div className="w-32 h-32 bg-gradient-to-br from-gray-50 to-gray-100 rounded-full flex items-center justify-center mb-6 shadow-inner">
+              <ShoppingCart size={48} className="text-gray-300" strokeWidth={1.5} />
+            </div>
+            <p className="text-gray-400 font-medium text-sm uppercase tracking-[0.3em] mb-3">
+              Votre panier est vide
+            </p>
+            <p className="text-gray-500 text-sm max-w-xs">
+              Découvrez nos collections et ajoutez vos premières pépites.
+            </p>
+            <button
+              onClick={() => setIsCartOpen(false)}
+              className="mt-8 px-6 py-3 bg-[#002D5A] text-white rounded-full font-bold text-sm hover:bg-[#135290] transition-colors shadow-md hover:shadow-lg"
+            >
+              Continuer mes achats
+            </button>
+          </div>
+        ) : (
+          <>
+            {/* Liste des articles */}
+            <div className="space-y-5">
+              {cart.map((item) => (
+                <div
+                  key={item.cartId}
+                  className="group relative flex gap-4 p-4 bg-white border border-gray-100 hover:border-[#D4AF37]/40 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300"
+                >
+                  {/* Image avec effet zoom */}
+                  <div className="flex-shrink-0 w-20 h-20 md:w-24 md:h-24 rounded-xl overflow-hidden bg-gradient-to-br from-gray-100 to-gray-50 border border-gray-200 shadow-sm">
+                    <img
+                      src={item.image_urls?.[0] || '/placeholder-product.jpg'}
+                      alt={item.nom}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
                   </div>
-                ) : cart.map((item) => (
-                  <div key={item.cartId} className="flex gap-4 md:gap-6 items-center bg-gray-50 p-6 rounded-[2.5rem] border shadow-sm relative animate-fade-in">
-                    <img src={item.image_urls?.[0]} className="w-20 h-20 rounded-[1.5rem] object-cover shadow-lg border" alt="" />
-                    <div className="flex-1 min-w-0">
-                      <p className="font-black text-[#002D5A] truncate uppercase text-[10px] leading-tight mb-2 pr-4">{item.nom}</p>
-                      <div className="flex items-center gap-4 flex-wrap">
-                         <div className="flex items-center gap-3 bg-white px-3 py-1.5 rounded-xl border shadow-sm">
-                            <button onClick={() => updateCartQty(item.cartId, -1)} className="text-gray-400 active:scale-110"><Minus size={12}/></button>
-                            <span className="font-black text-xs min-w-[12px] text-center">{item.quantity}</span>
-                            <button onClick={() => updateCartQty(item.cartId, 1)} className="text-gray-400 active:scale-110"><Plus size={12}/></button>
-                         </div>
-                         <p className="font-black text-[#002D5A] text-xs">{(item.finalPrice * item.quantity).toLocaleString()} F</p>
+
+                  {/* Informations produit */}
+                  <div className="flex-1 min-w-0 flex flex-col">
+                    <div className="flex justify-between items-start gap-2">
+                      <h3 className="font-bold text-[#002D5A] text-sm md:text-base truncate pr-2">
+                        {item.nom}
+                      </h3>
+                      <button
+                        onClick={() => setCart(cart.filter(i => i.cartId !== item.cartId))}
+                        className="text-gray-400 hover:text-red-500 transition-colors p-1 -mt-1 -mr-1"
+                        aria-label="Supprimer l'article"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+
+                    {/* Catégorie et mode livraison */}
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider bg-gray-100 px-2 py-0.5 rounded-full">
+                        {item.categorie || 'Produit'}
+                      </span>
+                    
+                    </div>
+
+                    {/* Prix unitaire */}
+                    <p className="text-xs text-gray-500 mt-2">
+                      Prix unitaire : <span className="font-bold text-[#002D5A]">{item.finalPrice.toLocaleString()} F</span>
+                    </p>
+
+                    {/* Quantité et total article */}
+                    <div className="flex items-center justify-between mt-3">
+                      <div className="flex items-center gap-2 bg-gray-50 rounded-lg p-1 border border-gray-200">
+                        <button
+                          onClick={() => updateCartQty(item.cartId, -1)}
+                          className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-gray-200 transition-colors text-gray-600 disabled:opacity-50"
+                          disabled={item.quantity <= 1}
+                          aria-label="Diminuer la quantité"
+                        >
+                          <Minus size={12} />
+                        </button>
+                        <span className="w-6 text-center font-bold text-sm text-[#002D5A]">
+                          {item.quantity}
+                        </span>
+                        <button
+                          onClick={() => updateCartQty(item.cartId, 1)}
+                          className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-gray-200 transition-colors text-gray-600"
+                          aria-label="Augmenter la quantité"
+                        >
+                          <Plus size={12} />
+                        </button>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xs text-gray-400">Total article</p>
+                        <p className="font-black text-[#D4AF37] text-sm">
+                          {(item.finalPrice * item.quantity).toLocaleString()} F
+                        </p>
                       </div>
                     </div>
-                    <button onClick={() => setCart(cart.filter(i=>i.cartId!==item.cartId))} className="absolute -top-2 -right-2 bg-white text-red-500 p-2 rounded-full shadow-md border active:scale-90 transition-all"><X size={14}/></button>
                   </div>
-                ))}
-             </div>
-             {cart.length > 0 && (
-               <div className="pt-8 border-t border-gray-100 space-y-8">
-                  <div className="flex justify-between items-end">
-                    <span className="text-gray-400 font-black uppercase text-[10px] tracking-[0.5em]">Total Commande</span>
-                    <span className="text-3xl font-black text-[#002D5A] tracking-tighter">{(cart.reduce((s, i) => s + (i.finalPrice * i.quantity), 0)).toLocaleString()} F</span>
-                  </div>
-                  <button onClick={() => {setIsCartOpen(false); navigateTo('checkout'); window.scrollTo(0,0);}} className="w-full bg-[#002D5A] text-white py-6 rounded-[2rem] font-black text-xl border-b-8 border-black/20 active:scale-95 transition-all uppercase tracking-widest">Valider la Commande</button>
-               </div>
-             )}
-          </div>
-        </div>
-      )}
+                </div>
+              ))}
+            </div>
+
+            {/* Résumé de la commande - Sticky en bas */}
+            <div className="sticky bottom-0 bg-white pt-6 pb-4 border-t border-gray-200 mt-8">
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium text-gray-500">Sous-total</span>
+                  <span className="font-bold text-[#002D5A]">
+                    {cart.reduce((s, i) => s + i.finalPrice * i.quantity, 0).toLocaleString()} F
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium text-gray-500">Frais de livraison</span>
+                  <span className="text-sm text-gray-400 bg-gray-100 px-3 py-1 rounded-full">
+                    Calculés à l'étape suivante
+                  </span>
+                </div>
+                <div className="flex justify-between items-center pt-4 border-t border-gray-200">
+                  <span className="text-base font-black text-[#002D5A]">Total TTC</span>
+                  <span className="text-2xl font-black text-[#002D5A]">
+                    {cart.reduce((s, i) => s + i.finalPrice * i.quantity, 0).toLocaleString()} F
+                  </span>
+                </div>
+              </div>
+
+              {/* Bouton de validation */}
+              <button
+                onClick={() => {
+                  setIsCartOpen(false);
+                  navigateTo('checkout');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="w-full mt-6 bg-gradient-to-r from-[#002D5A] to-[#135290] text-white py-4 rounded-xl font-bold text-base hover:from-[#135290] hover:to-[#002D5A] transition-all hover:shadow-lg active:scale-[0.98] flex items-center justify-center gap-3"
+              >
+                <span>Passer la commande</span>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </button>
+
+              {/* Message de confiance */}
+              <p className="text-xs text-center text-gray-400 mt-4 flex items-center justify-center gap-1">
+                <svg className="w-4 h-4 text-[#D4AF37]" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                </svg>
+                Paiement sécurisé • Finalisation sur WhatsApp
+              </p>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  </div>
+)}
 
       <Nudge api={apiInstance} />
 

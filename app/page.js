@@ -216,7 +216,7 @@ const HeroSection = () => {
         }
       `}} />
 
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-400 via-blue-450 to-slate-500 py-8 lg:py-12 min-h-[60vh] flex items-center pt-100">
+      <section className="relative overflow-hidden bg-gradient-to-br from-slate-400 via-blue-450 to-slate-500 py-8 lg:py-12 min-h-[60vh] flex items-center pt-30">
         {/* Effets d'arrière-plan animés */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           <div className="absolute top-1/4 -left-20 w-72 h-72 bg-blue-600/10 rounded-full blur-3xl animate-float"></div>

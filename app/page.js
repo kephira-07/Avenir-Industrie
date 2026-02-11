@@ -2158,8 +2158,30 @@ function AppContent() {
                   </div>
                 </div>
               ))}
-            </div>
+               {/* Bouton de validation */}
+              <button
+                onClick={() => {
+                  setIsCartOpen(false);
+                  navigateTo('checkout');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="w-full mt-6 bg-gradient-to-r from-[#002D5A] to-[#135290] text-white py-4 rounded-xl font-bold text-base hover:from-[#135290] hover:to-[#002D5A] transition-all hover:shadow-lg active:scale-[0.98] flex items-center justify-center gap-3"
+              >
+                <span>Passer la commande</span>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </button>
 
+              {/* Message de confiance */}
+              <p className="text-xs text-center text-gray-400 mt-4 flex items-center justify-center gap-1">
+                <svg className="w-4 h-4 text-[#D4AF37]" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                </svg>
+                Paiement sécurisé • Finalisation sur WhatsApp
+              </p>
+            </div>
+             
           </>
         )}
       </div>

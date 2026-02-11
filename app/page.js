@@ -1528,7 +1528,7 @@ function AppContent() {
   if (view === 'checkout') return <CheckoutPage cart={cart} total={cart.reduce((s, i) => s + (i.finalPrice * i.quantity), 0)} api={apiInstance} onBack={() => navigateTo('home')} />;
 
   return (
-    <div className="min-h-screen bg-white font-sans text-gray-900 selection:bg-[#D0A050]/20 overflow-x-hidden">
+    <div className="min-h-screen bg-white font-sans text-gray-900 selection:bg-[#D0A050]/20 overflow-x-hidden bg-amber-700">
       <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');

@@ -216,7 +216,7 @@ const HeroSection = () => {
         }
       `}} />
 
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-950 to-slate-950 py-8 lg:py-12 min-h-[90vh] flex items-center">
+      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-950 to-slate-950 py-8 lg:py-12 min-h-[60vh] flex items-center pt-20">
         {/* Effets d'arrière-plan animés */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           <div className="absolute top-1/4 -left-20 w-72 h-72 bg-blue-600/10 rounded-full blur-3xl animate-float"></div>
@@ -254,18 +254,7 @@ const HeroSection = () => {
                 </span>
               </p>
 
-              {/* Boutons CTA */}
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <button className="px-8 py-3.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/20 flex items-center justify-center gap-2">
-                  Commander maintenant
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                  </svg>
-                </button>
-                <button className="px-8 py-3.5 border-gradient bg-slate-900/50 text-slate-200 font-medium rounded-xl hover:bg-slate-800/50 transition-all duration-300 hover:scale-105">
-                  Explorer les produits
-                </button>
-              </div>
+
 
               {/* Badges de confiance */}
               <div className="pt-8 mt-8 border-t border-slate-800/50">
@@ -278,7 +267,7 @@ const HeroSection = () => {
                     </div>
                     <div>
                       <p className="text-sm font-medium text-white">Commande sécurisée</p>
-                      <p className="text-xs text-slate-400">Paiements 100% protégés</p>
+                      
                     </div>
                   </div>
                   <div className="flex items-center gap-3 p-3 bg-slate-800/30 rounded-xl hover:bg-slate-800/50 transition-all duration-300 group">
@@ -289,7 +278,7 @@ const HeroSection = () => {
                     </div>
                     <div>
                       <p className="text-sm font-medium text-white">Livraison rapide</p>
-                      <p className="text-xs text-slate-400">48h-72h en moyenne</p>
+                     
                     </div>
                   </div>
                 </div>
@@ -375,16 +364,41 @@ const HeroSection = () => {
 
 const AboutPage = ({ onBack, sectionId }) => {
   // Utilisation du hook pour gérer le retour
-  useBackHandler(() => {
-    onBack();
+useEffect(() => {
+  if (!sectionId) return;
+
+  const scrollToSection = () => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const headerOffset = 120; // hauteur de votre header fixe + marge
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  // Si l'élément existe déjà, on scroll tout de suite
+  if (document.getElementById(sectionId)) {
+    scrollToSection();
+    return;
+  }
+
+  // Sinon on observe le DOM jusqu'à son apparition
+  const observer = new MutationObserver(() => {
+    if (document.getElementById(sectionId)) {
+      scrollToSection();
+      observer.disconnect();
+    }
   });
 
-  useEffect(() => {
-    if (sectionId) {
-      const el = document.getElementById(sectionId);
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [sectionId]);
+  observer.observe(document.body, { childList: true, subtree: true });
+
+  return () => observer.disconnect();
+}, [sectionId]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 animate-fade-in pb-20">
@@ -776,6 +790,7 @@ const ProductDetail = ({ product, onBack, onAddToCart }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
    const [qty, setQty] = useState(1);
   const [showToast, setShowToast] = useState(false);
+  useEffect(() => window.scrollTo(0,0), [])
 
   // Gestion du retour avec le hook personnalisé
   useBackHandler(() => {
@@ -1394,16 +1409,17 @@ function AppContent() {
   const searchRef = useRef(null);
 
   // Gestionnaire de navigation principale
-  const navigateTo = (newView, product = null) => {
-    // Ajouter un état à l'historique pour chaque navigation
-    window.history.pushState({ view: newView, product }, '', window.location.pathname);
-    setView(newView);
-    setSelectedProduct(product);
-    
-    // Fermer les modals lors de la navigation
-    setIsMenuOpen(false);
-    setIsCartOpen(false);
-  };
+ const navigateTo = (newView, product = null) => {
+  window.history.pushState(
+    { view: newView, product, scrollY: window.scrollY },
+    '',
+    window.location.pathname
+  );
+  setView(newView);
+  setSelectedProduct(product);
+  setIsMenuOpen(false);
+  setIsCartOpen(false);
+};
 
   // Gestion du retour pour la page principale
   useBackHandler(() => {
@@ -1509,7 +1525,7 @@ function AppContent() {
         const pos = element.getBoundingClientRect().top + window.pageYOffset;
         window.scrollTo({ top: pos - offset, behavior: 'smooth' });
       }
-    }, 150);
+    }, 500);
   };
 
   const updateCartQty = (cartId, delta) => {
@@ -1528,7 +1544,15 @@ function AppContent() {
   if (view === 'checkout') return <CheckoutPage cart={cart} total={cart.reduce((s, i) => s + (i.finalPrice * i.quantity), 0)} api={apiInstance} onBack={() => navigateTo('home')} />;
 
   return (
-    <div className="min-h-screen font-sans text-gray-900 overflow-x-hidden bg-url('../public/bg.jpg') bg-cover bg-center">
+    <div className="min-h-screen font-sans text-gray-900 overflow-x-hidden ">
+      <div
+  className="absolute inset-0 z-0 bg-cover bg-center"
+  style={{
+    backgroundImage: `url('../public/bg.jpg')`,
+  }}
+>
+  <div className="absolute inset-0 bg-gradient-to-r from-[#07101ac4] via-[#0F172A]/60 to-transparent"></div>
+</div>
       <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -1540,7 +1564,14 @@ function AppContent() {
         .animate-slide-in-right { animation: slideInRight 0.3s ease-out; }
         @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
       `}</style>
-     
+        <div className="fixed inset-0 -z-10">
+        <div className="absolute inset-0 z-10" /> {/* Overlay plus fort pour lisibilité */}
+        <img
+          src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=2070&auto=format&fit=crop"
+          alt="Fond de la boutique"
+          className="w-full h-full object-cover"
+        />
+      </div>
       {/* Header */}
       <header className={`fixed top-0 left-0 right-0 z-[600] transition-all duration-500 ease-in-out transform ${isScrolled ? 'bg-white/95 backdrop-blur-xl shadow-lg border-b border-[#D4AF37]/20 py-3' : 'bg-gradient-to-r from-[#002D5A] to-[#135290] py-5'}`}>
   <div className="max-w-7xl mx-auto px-4 md:px-8 flex flex-wrap items-center justify-between gap-y-3">
@@ -1640,9 +1671,7 @@ function AppContent() {
                     <span className="text-[9px] font-bold text-[#135290] uppercase truncate max-w-[60%] bg-blue-50 px-2 py-0.5 rounded-full">
                       {p.categorie}
                     </span>
-                    <span className="text-xs font-black text-[#002D5A]">
-                      {(p.prix_standard || p.prix_avion)?.toLocaleString()} FCFA
-                    </span>
+                   
                   </div>
                 </div>
               </div>
@@ -1854,6 +1883,7 @@ function AppContent() {
           <p className="text-xs text-gray-400">
             Produits disponibles en stock ou sur commande spéciale depuis la Chine
           </p>
+          <p className="cursor-pointer hover:text-white" onClick={()=>navigateTo('admin')}>😉</p>
         </div>
       </div>
 

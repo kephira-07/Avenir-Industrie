@@ -1540,6 +1540,14 @@ function AppContent() {
         .animate-slide-in-right { animation: slideInRight 0.3s ease-out; }
         @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
       `}</style>
+      <div className="fixed inset-0 -z-10">
+        <div className="absolute inset-0 bg-black/60 z-10" /> {/* Overlay plus fort pour lisibilité */}
+        <img
+          src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=2070&auto=format&fit=crop"
+          alt="Fond de la boutique"
+          className="w-full h-full object-cover"
+        />
+      </div>
 
       {/* Header */}
       <header className={`fixed top-0 left-0 right-0 z-[600] transition-all duration-500 ease-in-out transform ${isScrolled ? 'bg-white/95 backdrop-blur-xl shadow-lg border-b border-[#D4AF37]/20 py-3' : 'bg-gradient-to-r from-[#002D5A] to-[#135290] py-5'}`}>

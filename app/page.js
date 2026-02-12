@@ -1,8 +1,8 @@
 'use client';
 import React, { useState, useEffect, useRef,useMemo } from 'react';
 import { 
-  ShoppingBag, Plane, Ship, X, CheckCircle, ArrowRight, ShoppingCart, 
-  Menu, Search, Facebook, Instagram, ArrowLeft, Truck, Send, 
+  ShoppingBag,ShoppingCart, Plane, Ship, X, CheckCircle, ArrowRight, ShoppingCart, 
+  Menu, Search, FaFacebook, FaInstagram,FaWhatsapp , ArrowLeft, Truck, Send, 
   Loader2, Heart, Bell, Phone, MapPin, User, Mail, ShieldCheck, 
   History, FileText, ChevronDown, ListChecks, Globe, ChevronRight,
   Settings, Plus, Minus, Edit3, Image as ImageIcon, Save, Lock, Trash2, Info, LogOut,Sparkles,Zap,CircleQuestionMark,BookOpen, Laptop,Maximize2,ChevronLeft,Play,Icon,Star
@@ -94,7 +94,7 @@ const Nudge = ({ api }) => {
   useEffect(() => {
     const dismissed = localStorage.getItem('afri_nudge_dismissed');
     if (!dismissed) {
-      const timer = setTimeout(() => setVisible(true), 15000);
+      const timer = setTimeout(() => setVisible(true), 3000);
       return () => clearTimeout(timer);
     }
   }, []);
@@ -695,7 +695,7 @@ useEffect(() => {
                 <ul className="space-y-3 text-blue-100">
                   <li className="flex items-center gap-3">
                     <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-                    <span>Livraison en 15-25 jours</span>
+                    <span>Livraison en 5-15 jours</span>
                   </li>
                   <li className="flex items-center gap-3">
                     <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
@@ -1335,11 +1335,41 @@ const CheckoutPage = ({ cart, total, onBack, api }) => {
     else alert("Erreur de sauvegarde.");
   };
 
-  const handleWhatsApp = () => {
-    if(!form.nom || !form.tel) return alert("Veuillez remplir votre nom et numéro.");
-    const text = `*COMMANDE Industrie-Avenir*%0A-----------------%0A${cart.map(i => `• ${i.nom} (${i.mode}) x${i.quantity}`).join('%0A')}%0A-----------------%0A*TOTAL : ${total.toLocaleString()} FCFA*%0A%0A*Client :* ${form.nom}%0A*Tél :* ${form.tel}%0A*Lieu :* ${form.adresse}`;
-    window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${text}`;
-  };
+ const handleWhatsApp = () => {
+  if (!form.nom || !form.tel) 
+    return alert("Veuillez remplir votre nom et numéro.");
+
+  // Construction des lignes produit avec le lien d'image
+  const productLines = cart.map(item => {
+    let line = `• ${item.nom} (${item.mode || 'standard'}) x${item.quantity}`;
+    
+    // Ajout de l'URL de l'image si disponible
+    if (item.image_urls?.[0]) {
+      // Convertir le chemin relatif en URL absolue si nécessaire
+      const imageUrl = item.image_urls[0].startsWith('http')
+        ? item.image_urls[0]
+        : `${window.location.origin}${item.image_urls[0]}`;
+      
+      line += `\n   🖼️ ${imageUrl}`;
+    }
+    return line;
+  }).join('\n');
+
+  // Corps complet du message
+  const message = 
+    `*COMMANDE Industrie-Avenir*\n` +
+    `-----------------\n` +
+    `${productLines}\n` +
+    `-----------------\n` +
+    `*TOTAL : ${total.toLocaleString()} FCFA*\n\n` +
+    `*Client :* ${form.nom}\n` +
+    `*Tél :* ${form.tel}\n` +
+    `*Lieu :* ${form.adresse}`;
+
+  // Encodage sécurisé
+  const encoded = encodeURIComponent(message);
+  window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`;
+};
 
   if (done) return (
     <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-white font-sans text-center">
@@ -1800,7 +1830,7 @@ function AppContent() {
         className={`relative p-2.5 md:p-3 rounded-full shadow-lg transition-all active:scale-90 hover:scale-105 group ${isScrolled ? 'bg-gradient-to-r from-[#002D5A] to-[#135290] text-white border border-[#D4AF37]/30' : 'bg-white/20 backdrop-blur-md text-white border border-white/30 hover:border-white/50'}`}
         aria-label="Panier d'achat"
       >
-        <ShoppingBag size={18} className="md:w-5 md:h-5" />
+        <ShoppingCart size={18} className="md:w-5 md:h-5" />
         {cart.length > 0 && (
           <>
             <span className="absolute -top-1 -right-1 bg-gradient-to-br from-[#D4AF37] to-[#e8b969] text-[#002D5A] text-[10px] font-black w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center border-2 border-white shadow-lg animate-pulse">
@@ -1905,23 +1935,30 @@ function AppContent() {
         </p>
        
         <div className="flex gap-3 pt-4">
-          <a 
-            href="https://facebook.com" 
-            target="_blank" 
+            <a
+            href="https://facebook.com/Ahmad_Meselmani" // ← remplacez par votre page
+            target="_blank"
             rel="noopener noreferrer"
-            className="p-3 bg-white/5 hover:bg-[#D0A050] hover:scale-105 transition-all duration-300 rounded-xl shadow-lg hover:shadow-[#D0A050]/20 group"
-            aria-label="Facebook"
+            className="p-3 bg-white/5 hover:bg-[#D0A050] hover:scale-105 transition-all duration-300 rounded-xl shadow-lg hover:shadow-[#D0A050]/20 group flex items-center gap-2"
+            aria-label="Facebook Industrie de l'Avenir"
           >
-            <Facebook size={18} className="group-hover:scale-110 transition-transform" />
+            <FaFacebook size={18} className="group-hover:scale-110 transition-transform" />
+            <span className="text-xs text-white/70 group-hover:text-white hidden sm:inline">
+              /industrieavenir
+            </span>
           </a>
-          <a 
-            href="https://instagram.com" 
-            target="_blank" 
+
+          <a
+            href="https://instagram.com/meslmenehasn@" // ← remplacez par votre compte
+            target="_blank"
             rel="noopener noreferrer"
-            className="p-3 bg-white/5 hover:bg-gradient-to-r hover:from-pink-600 hover:to-purple-600 hover:scale-105 transition-all duration-300 rounded-xl shadow-lg hover:shadow-pink-500/20 group"
-            aria-label="Instagram"
+            className="p-3 bg-white/5 hover:bg-gradient-to-r hover:from-pink-600 hover:to-purple-600 hover:scale-105 transition-all duration-300 rounded-xl shadow-lg hover:shadow-pink-500/20 group flex items-center gap-2"
+            aria-label="Instagram Industrie de l'Avenir"
           >
-            <Instagram size={18} className="group-hover:scale-110 transition-transform" />
+            <FaInstagram size={18} className="group-hover:scale-110 transition-transform" />
+            <span className="text-xs text-white/70 group-hover:text-white hidden sm:inline">
+              @industrie_avenir
+            </span>
           </a>
           <a 
             href={`https://wa.me/${WHATSAPP_NUMBER}`}
@@ -1930,10 +1967,7 @@ function AppContent() {
             className="p-3 bg-white/5 hover:bg-green-500 hover:scale-105 transition-all duration-300 rounded-xl shadow-lg hover:shadow-green-500/20 group"
             aria-label="WhatsApp"
           >
-            <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M17.507 14.307l-.009.075c-2.199-1.096-2.429-1.242-2.713-.816-.197.295-.771.964-.944 1.162-.175.195-.349.21-.646.075-.3-.15-1.263-.465-2.403-1.485-.888-.795-1.484-1.77-1.66-2.07-.293-.506.32-.578.878-1.634.1-.21.049-.375-.025-.524-.075-.15-.672-1.62-.922-2.206-.24-.584-.487-.51-.672-.51-.576-.05-.997-.05-1.368.344-1.614 1.774-1.207 3.604.174 5.55 2.714 3.552 4.16 4.206 6.8 5.114.714.227 1.365.195 1.88.121.574-.091 1.754-.721 2-1.426.255-.705.255-1.29.18-1.425-.074-.135-.27-.21-.574-.346z"/>
-              <path d="M20.52 3.449C17.943.985 14.466 0 11.986 0 5.849 0 .453 4.989.087 11.13-.28 17.344 4.095 22.752 10.211 23.68c3.104.488 6.011-.258 8.625-2.115l4.355 1.423c.398.13.795-.198.924-.597.13-.398-.198-.795-.597-.924l-4.45-1.456c2.757-1.885 4.588-4.725 4.873-8.261.573-7.019-4.826-12.99-11.82-13.03zM12 22.165c-5.384 0-9.833-4.353-10.087-9.746-.254-5.393 4.064-9.885 9.449-9.885 5.385 0 9.834 4.353 10.087 9.746.253 5.393-4.064 9.885-9.449 9.885z"/>
-            </svg>
+            <FaWhatsapp size={18} className="group-hover:scale-110 transition-transform" />
           </a>
         </div>
       </div>
@@ -2045,7 +2079,7 @@ function AppContent() {
             </div>
             <div>
               <p className="text-xs text-gray-400">Email</p>
-              <p className="text-sm font-medium">contact@industrie-avenir.tg</p>
+              <p className="text-sm font-medium">meslmenehasn@gmail.com</p>
             </div>
           </div>
 

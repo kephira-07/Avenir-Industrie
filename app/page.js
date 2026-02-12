@@ -1,8 +1,8 @@
 'use client';
 import React, { useState, useEffect, useRef,useMemo } from 'react';
 import { 
-  ShoppingBag,ShoppingCart, Plane, Ship, X, CheckCircle, ArrowRight, ShoppingCart, 
-  Menu, Search, FaFacebook, FaInstagram,FaWhatsapp , ArrowLeft, Truck, Send, 
+ShoppingCart, Plane, Ship, X, CheckCircle, ArrowRight, Facebook, Instagram, 
+  Menu, Search, FaWhatsapp , ArrowLeft, Truck, Send, 
   Loader2, Heart, Bell, Phone, MapPin, User, Mail, ShieldCheck, 
   History, FileText, ChevronDown, ListChecks, Globe, ChevronRight,
   Settings, Plus, Minus, Edit3, Image as ImageIcon, Save, Lock, Trash2, Info, LogOut,Sparkles,Zap,CircleQuestionMark,BookOpen, Laptop,Maximize2,ChevronLeft,Play,Icon,Star
@@ -1942,7 +1942,7 @@ function AppContent() {
             className="p-3 bg-white/5 hover:bg-[#D0A050] hover:scale-105 transition-all duration-300 rounded-xl shadow-lg hover:shadow-[#D0A050]/20 group flex items-center gap-2"
             aria-label="Facebook Industrie de l'Avenir"
           >
-            <FaFacebook size={18} className="group-hover:scale-110 transition-transform" />
+            <Facebook size={18} className="group-hover:scale-110 transition-transform" />
             <span className="text-xs text-white/70 group-hover:text-white hidden sm:inline">
               /industrieavenir
             </span>
@@ -1955,19 +1955,22 @@ function AppContent() {
             className="p-3 bg-white/5 hover:bg-gradient-to-r hover:from-pink-600 hover:to-purple-600 hover:scale-105 transition-all duration-300 rounded-xl shadow-lg hover:shadow-pink-500/20 group flex items-center gap-2"
             aria-label="Instagram Industrie de l'Avenir"
           >
-            <FaInstagram size={18} className="group-hover:scale-110 transition-transform" />
+            <Instagram size={18} className="group-hover:scale-110 transition-transform" />
             <span className="text-xs text-white/70 group-hover:text-white hidden sm:inline">
               @industrie_avenir
             </span>
           </a>
-          <a 
+           <a 
             href={`https://wa.me/${WHATSAPP_NUMBER}`}
             target="_blank"
             rel="noopener noreferrer"
             className="p-3 bg-white/5 hover:bg-green-500 hover:scale-105 transition-all duration-300 rounded-xl shadow-lg hover:shadow-green-500/20 group"
             aria-label="WhatsApp"
           >
-            <FaWhatsapp size={18} className="group-hover:scale-110 transition-transform" />
+            <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M17.507 14.307l-.009.075c-2.199-1.096-2.429-1.242-2.713-.816-.197.295-.771.964-.944 1.162-.175.195-.349.21-.646.075-.3-.15-1.263-.465-2.403-1.485-.888-.795-1.484-1.77-1.66-2.07-.293-.506.32-.578.878-1.634.1-.21.049-.375-.025-.524-.075-.15-.672-1.62-.922-2.206-.24-.584-.487-.51-.672-.51-.576-.05-.997-.05-1.368.344-1.614 1.774-1.207 3.604.174 5.55 2.714 3.552 4.16 4.206 6.8 5.114.714.227 1.365.195 1.88.121.574-.091 1.754-.721 2-1.426.255-.705.255-1.29.18-1.425-.074-.135-.27-.21-.574-.346z"/>
+              <path d="M20.52 3.449C17.943.985 14.466 0 11.986 0 5.849 0 .453 4.989.087 11.13-.28 17.344 4.095 22.752 10.211 23.68c3.104.488 6.011-.258 8.625-2.115l4.355 1.423c.398.13.795-.198.924-.597.13-.398-.198-.795-.597-.924l-4.45-1.456c2.757-1.885 4.588-4.725 4.873-8.261.573-7.019-4.826-12.99-11.82-13.03zM12 22.165c-5.384 0-9.833-4.353-10.087-9.746-.254-5.393 4.064-9.885 9.449-9.885 5.385 0 9.834 4.353 10.087 9.746.253 5.393-4.064 9.885-9.449 9.885z"/>
+            </svg>
           </a>
         </div>
       </div>

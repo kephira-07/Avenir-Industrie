@@ -316,7 +316,7 @@ const HeroSection = () => {
         }
       `}} />
 
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-400 via-blue-450 to-slate-500 py-8 lg:py-12 min-h-[60vh] flex items-center pt-40">
+      <section className="relative overflow-hidden bg-[#317AC1] py-8 lg:py-12 min-h-[60vh] flex items-center pt-40">
         {/* Effets d'arrière-plan animés */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           <div className="absolute top-1/4 -left-20 w-72 h-72 bg-blue-600/10 rounded-full blur-3xl animate-float"></div>
@@ -456,6 +456,55 @@ const HeroSection = () => {
         </div>
       </section>
     </>
+  );
+};
+
+const WelcomeBanner = () => {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const dismissed = localStorage.getItem('afri_banner_dismissed');
+    if (!dismissed) {
+      setVisible(true);
+    }
+  }, []);
+
+  const dismiss = () => {
+    setVisible(false);
+    localStorage.setItem('afri_banner_dismissed', 'true');
+  };
+
+  if (!visible) return null;
+
+  return (
+    <div className="fixed bottom-6 left-6 right-6 md:left-auto md:right-6 md:max-w-sm z-[800] animate-slide-up">
+      <div className="bg-gradient-to-r from-[#002D5A] to-[#135290] rounded-2xl shadow-2xl border border-[#D0A050]/30 p-5 text-white backdrop-blur-sm">
+        <button
+          onClick={dismiss}
+          className="absolute top-3 right-3 p-1 bg-white/10 rounded-full hover:bg-white/20 transition"
+        >
+          <X size={14} />
+        </button>
+        <div className="flex items-start gap-4">
+          <div className="w-10 h-10 bg-[#D0A050]/20 rounded-xl flex items-center justify-center">
+            <span className="text-xl">🇹🇬</span>
+          </div>
+          <div className="flex-1">
+            <h4 className="font-bold text-base mb-1">Bienvenue chez Industrie de l’Avenir</h4>
+            <p className="text-xs text-blue-100 leading-relaxed">
+              Commandez nos produits, choisissez livraison <strong>avion</strong> ou <strong>bateau</strong>, 
+              et finalisez sur WhatsApp. Aucun paiement sur le site.
+            </p>
+            <button
+              onClick={dismiss}
+              className="mt-3 text-xs font-bold text-[#D0A050] uppercase tracking-wider hover:underline"
+            >
+              Découvrir →
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
@@ -879,7 +928,149 @@ useEffect(() => {
   );
 };
 
-// --- DÉTAIL PRODUIT AVEC GESTION DU RETOUR ---
+const OnboardingModal = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [step, setStep] = useState(1);
+
+  useEffect(() => {
+    const seen = localStorage.getItem('afri_onboarding_seen');
+    if (!seen) {
+      setIsOpen(true);
+      localStorage.setItem('afri_onboarding_seen', 'true');
+    }
+  }, []);
+
+  if (!isOpen) return null;
+
+  const steps = [
+    {
+      title: '🛍️ Parcourez nos catégories',
+      desc: 'Homme, Femme, Agricole, Fournitures… Trouvez la pépite qu’il vous faut.',
+      icon: '🔍',
+    },
+    {
+      title: '➕ Ajoutez au panier',
+      desc: 'Cliquez sur un produit, choisissez la quantité et ajoutez‑le. Aucun paiement immédiat.',
+      icon: '🛒',
+    },
+    {
+      title: '📲 Finalisez sur WhatsApp',
+      desc: 'Validez votre commande, discutez du mode de livraison (avion/bateau) et recevez votre devis personnalisé.',
+      icon: '💬',
+    },
+  ];
+
+  return (
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-[#002D5A]/60 backdrop-blur-sm">
+      <div className="relative bg-white rounded-3xl shadow-2xl max-w-md w-full border-2 border-[#D0A050]/30 overflow-hidden">
+        {/* Barre de progression */}
+        <div className="h-2 bg-gray-100 w-full">
+          <div
+            className="h-2 bg-gradient-to-r from-[#D0A050] to-[#135290] transition-all duration-300"
+            style={{ width: `${(step / steps.length) * 100}%` }}
+          />
+        </div>
+
+        <button
+          onClick={() => setIsOpen(false)}
+          className="absolute top-4 right-4 p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors z-10"
+          aria-label="Fermer"
+        >
+          <X size={18} />
+        </button>
+
+        <div className="p-6 md:p-8 text-center">
+          <div className="w-20 h-20 mx-auto bg-gradient-to-br from-[#D0A050]/20 to-[#135290]/20 rounded-3xl flex items-center justify-center text-3xl mb-5">
+            {steps[step - 1].icon}
+          </div>
+
+          <h3 className="text-xl font-black text-[#002D5A] mb-2">
+            {steps[step - 1].title}
+          </h3>
+          <p className="text-gray-500 text-sm mb-8 leading-relaxed">
+            {steps[step - 1].desc}
+          </p>
+
+          <div className="flex items-center justify-center gap-3">
+            {step > 1 && (
+              <button
+                onClick={() => setStep(step - 1)}
+                className="px-5 py-2.5 border border-gray-300 rounded-full text-sm font-bold text-gray-600 hover:bg-gray-50 transition"
+              >
+                Précédent
+              </button>
+            )}
+            {step < steps.length ? (
+              <button
+                onClick={() => setStep(step + 1)}
+                className="px-5 py-2.5 bg-[#002D5A] text-white rounded-full text-sm font-bold hover:bg-[#135290] transition shadow-md"
+              >
+                Suivant
+              </button>
+            ) : (
+              <button
+                onClick={() => setIsOpen(false)}
+                className="px-6 py-2.5 bg-[#D0A050] text-[#002D5A] rounded-full text-sm font-bold hover:bg-[#e0b060] transition shadow-md"
+              >
+                Commencer mes achats
+              </button>
+            )}
+          </div>
+
+          {/* Points indicateurs */}
+          <div className="flex justify-center gap-2 mt-6">
+            {steps.map((_, i) => (
+              <div
+                key={i}
+                className={`w-2 h-2 rounded-full transition-all ${
+                  i + 1 === step
+                    ? 'bg-[#D0A050] w-4'
+                    : 'bg-gray-300'
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+
+
+
+
+const Tooltip = ({ children, text, position = 'bottom', show }) => {
+  const [visible, setVisible] = useState(show);
+
+  if (!visible) return children;
+
+  return (
+    <div className="relative group">
+      {children}
+      <div
+        className={`absolute z-50 whitespace-nowrap bg-[#002D5A] text-white text-xs rounded-lg py-2 px-4 shadow-lg
+          ${position === 'bottom' ? 'top-full left-1/2 -translate-x-1/2 mt-2' : ''}
+          ${position === 'top' ? 'bottom-full left-1/2 -translate-x-1/2 mb-2' : ''}
+        `}
+      >
+        {text}
+        <div
+          className={`absolute w-2 h-2 bg-[#002D5A] rotate-45
+            ${position === 'bottom' ? '-top-1 left-1/2 -translate-x-1/2' : ''}
+            ${position === 'top' ? '-bottom-1 left-1/2 -translate-x-1/2' : ''}
+          `}
+        />
+        <button
+          onClick={() => setVisible(false)}
+          className="absolute -top-1 -right-1 w-4 h-4 bg-white rounded-full flex items-center justify-center shadow"
+        >
+          <X size={10} className="text-gray-600" />
+        </button>
+      </div>
+    </div>
+  );
+};
 
 
 const ProductDetail = ({ product, onBack, onAddToCart }) => {
@@ -1601,6 +1792,8 @@ function AppContent() {
     setLoading(false);
   };
 
+  
+
   useEffect(() => { if (apiInstance) loadData(); }, [apiInstance]);
 
   const searchSuggestions = useMemo(() => {
@@ -1661,6 +1854,22 @@ function AppContent() {
       return item;
     }));
   };
+  const useFirstVisit = (key = 'afri_tooltips_seen') => {
+  const [isFirstVisit, setIsFirstVisit] = useState(false);
+
+  useEffect(() => {
+    const seen = localStorage.getItem(key);
+    if (!seen) {
+      setIsFirstVisit(true);
+      localStorage.setItem(key, 'true');
+    }
+  }, [key]);
+
+  return isFirstVisit;
+};
+    const isFirstVisit = useFirstVisit();
+
+
 
   // Rendu conditionnel des vues
   if (view === 'admin') return <AdminDashboard products={products} categories={categories} api={apiInstance} sb={sb} onRefresh={loadData} onBack={() => navigateTo('home')} />;
@@ -1691,7 +1900,7 @@ function AppContent() {
         />
       </div>
       {/* Header */}
-      <header className={`fixed top-0 left-0 right-0 z-[600] transition-all duration-500 ease-in-out transform ${isScrolled ? 'bg-white/95 backdrop-blur-xl shadow-lg border-b border-[#D4AF37]/20 py-3' : 'bg-gradient-to-r from-[#002D5A] to-[#135290] py-5'}`}>
+      <header className={`fixed top-0 left-0 right-0 z-[600] transition-all duration-500 ease-in-out transform ${isScrolled ? 'bg-white/95 backdrop-blur-xl shadow-lg border-b border-[#D4AF37]/20 py-3' : 'bg-[#004792] py-5'}`}>
   <div className="max-w-7xl mx-auto px-4 md:px-8 flex flex-wrap items-center justify-between gap-y-3">
     
     {/* Partie gauche : Menu burger + Logo */}
@@ -1865,9 +2074,13 @@ function AppContent() {
   {isScrolled && (
     <div className="hidden md:block absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-[#D4AF37]/40 to-transparent"></div>
   )}
+
+
+
 </header>
 
       <HeroSection/>
+      <OnboardingModal />
 
       {/* Barre de Catégories */}
       <div className="border-b bg-white sticky top-[120px] sm:top-[81px] z-40 overflow-x-auto no-scrollbar transition-all">
@@ -1909,6 +2122,11 @@ function AppContent() {
             </section>
           )}
         </div>
+      
+
+         {isFirstVisit && (
+         <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#D0A050] rounded-full animate-ping" />
+            )}
       </main>
 
       <footer className="bg-gradient-to-b from-[#002D5A] to-[#001a3d] text-white pt-24 pb-12 px-4 sm:px-6 lg:px-8 rounded-t-[4rem] md:rounded-t-[6rem] font-sans mt-32 relative overflow-hidden">
@@ -2173,9 +2391,11 @@ function AppContent() {
       {/* Header fixe */}
       <div className="sticky top-0 bg-white/95 backdrop-blur-md z-10 px-6 py-5 md:px-8 md:py-6 border-b border-gray-100 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-[#D4AF37]/10 rounded-full flex items-center justify-center">
-            <ShoppingCart size={18} className="text-[#D4AF37]" />
-          </div>
+         <Tooltip show={isFirstVisit} text="Votre panier – ajoutez des produits ici" position="bottom">
+                <button onClick={() => setIsCartOpen(true)} className="...">
+              <ShoppingCart size={18} />
+  </button>
+</Tooltip>
           <h2 className="text-xl md:text-2xl font-black text-[#002D5A] tracking-tight">
             Mon panier
             {cart.length > 0 && (

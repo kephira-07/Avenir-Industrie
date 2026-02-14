@@ -242,7 +242,7 @@ const HeroSection = () => {
     "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=800&auto=format&fit=crop",
     "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=800&auto=format&fit=crop",
     "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=800&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1526170315870-efffd09636f7?q=80&w=800&auto=format&fit=crop"
+    
   ];
 
   const col2Images = [
@@ -458,6 +458,354 @@ const HeroSection = () => {
     </>
   );
 };
+const MyNav =()=>{
+    const [sb, setSb] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [view, setView] = useState('home');
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [activeCategory, setActiveCategory] = useState("Tout");
+  const [search, setSearch] = useState('');
+  const [sortOrder, setSortOrder] = useState('asc');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [cart, setCart] = useState([]);
+  const [showHeader, setShowHeader] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const searchRef = useRef(null);
+
+  // Gestionnaire de navigation principale
+ const navigateTo = (newView, product = null) => {
+  window.history.pushState(
+    { view: newView, product, scrollY: window.scrollY },
+    '',
+    window.location.pathname
+  );
+  setView(newView);
+  setSelectedProduct(product);
+  setIsMenuOpen(false);
+  setIsCartOpen(false);
+};
+
+  // Gestion du retour pour la page principale
+  useBackHandler(() => {
+    if (view !== 'home') {
+      setView('home');
+      setSelectedProduct(null);
+    }
+  }, [view]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      setIsScrolled(currentScrollY > 50);
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setShowHeader(false);
+      } else {
+        setShowHeader(true);
+      }
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
+
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7/dist/umd/supabase.js';
+    script.async = true;
+    script.onload = () => { 
+      if (window.supabase && SUPABASE_URL) {
+        setSb(window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY));
+      }
+    };
+    document.head.appendChild(script);
+    
+    const clickOutside = (e) => { if (searchRef.current && !searchRef.current.contains(e.target)) setShowSuggestions(false); };
+    document.addEventListener('mousedown', clickOutside);
+    
+    // Ajouter un état initial à l'historique
+    window.history.replaceState({ view: 'home', product: null }, '', window.location.pathname);
+    
+    return () => document.removeEventListener('mousedown', clickOutside);
+  }, []);
+
+  const apiInstance = useMemo(() => sb ? createApi(sb) : null, [sb]);
+
+  const loadData = async () => {
+    if (!apiInstance) return;
+    setLoading(true);
+    const [cats, prods] = await Promise.all([apiInstance.getCategories(), apiInstance.getProducts()]);
+    setCategories(cats);
+    setProducts(prods);
+    setLoading(false);
+  };
+
+  
+
+  useEffect(() => { if (apiInstance) loadData(); }, [apiInstance]);
+
+  const searchSuggestions = useMemo(() => {
+    if (search.length < 2) return [];
+    return products.filter(p => p.nom.toLowerCase().includes(search.toLowerCase())).slice(0, 6);
+  }, [search, products]);
+
+  const filtered = useMemo(() => {
+    let res = products.filter(p => (activeCategory === "Tout" || p.categorie === activeCategory) && p.nom.toLowerCase().includes(search.toLowerCase()));
+    return res.sort((a, b) => {
+      const pa = Number(a.prix_standard );
+      const pb = Number(b.prix_standard );
+      return sortOrder === 'asc' ? pa - pb : pb - pa;
+    });
+  }, [products, activeCategory, search, sortOrder]);
+
+  const addToCart = (product, mode, price, quantity = 1) => {
+    const existing = cart.find(i => i.id === product.id && i.mode === mode);
+    if (existing) {
+      setCart(cart.map(i => (i.id === product.id && i.mode === mode) ? { ...i, quantity: i.quantity + quantity } : i));
+    } else {
+      setCart([...cart, { ...product, mode, finalPrice: price, quantity: quantity, cartId: Date.now() }]);
+    }
+    setIsCartOpen(true);
+  };
+
+  const groupedProducts = useMemo(() => {
+    const groups = {};
+    const filtered = products.filter(p => p.nom.toLowerCase().includes(search.toLowerCase()));
+    categories.forEach(cat => { groups[cat.name] = filtered.filter(p => p.categorie === cat.name); });
+    return groups;
+  }, [products, categories, search]);
+
+  const filteredProducts = useMemo(() => {
+    return products.filter(p => p.categorie === activeCategory && p.nom.toLowerCase().includes(search.toLowerCase()));
+  }, [products, activeCategory, search]);
+
+  const scrollToCategory = (catName) => {
+    setActiveCategory(catName);
+    setIsMenuOpen(false);
+    setTimeout(() => {
+      const id = catName === "Tout" ? 'header-categories' : `section-${catName.replace(/\s+/g, '-').toLowerCase()}`;
+      const element = document.getElementById(id);
+      if (catName === "Tout") window.scrollTo({ top: 0, behavior: 'smooth' });
+      else if (element) {
+        const offset = 160;
+        const pos = element.getBoundingClientRect().top + window.pageYOffset;
+        window.scrollTo({ top: pos - offset, behavior: 'smooth' });
+      }
+    }, 500);
+  };
+
+  const updateCartQty = (cartId, delta) => {
+    setCart(prev => prev.map(item => {
+      if (item.cartId === cartId) {
+        return { ...item, quantity: Math.max(1, item.quantity + delta) };
+      }
+      return item;
+    }));
+  };
+  const useFirstVisit = (key = 'afri_tooltips_seen') => {
+  const [isFirstVisit, setIsFirstVisit] = useState(false);
+
+  useEffect(() => {
+    const seen = localStorage.getItem(key);
+    if (!seen) {
+      setIsFirstVisit(true);
+      localStorage.setItem(key, 'true');
+    }
+  }, [key]);
+
+  return isFirstVisit;
+};
+    const isFirstVisit = useFirstVisit();
+
+  return(
+    <>
+    <header className={`fixed top-0 left-0 right-0 z-[600] transition-all duration-500 ease-in-out transform ${isScrolled ? 'bg-white/95 backdrop-blur-xl shadow-lg border-b border-[#D4AF37]/20 py-3' : 'bg-[#004792] py-5'}`}>
+  <div className="max-w-7xl mx-auto px-4 md:px-8 flex flex-wrap items-center justify-between gap-y-3">
+    
+    {/* Partie gauche : Menu burger + Logo */}
+    <div className="flex items-center gap-3 md:gap-4 shrink-0">
+      <button 
+        onClick={() => setIsMenuOpen(true)} 
+        className={`p-2.5 rounded-full transition-all active:scale-90 hover:scale-105 ${isScrolled ? 'text-[#0A1A3A] hover:bg-gray-100/80' : 'text-white hover:bg-white/20'}`}
+        aria-label="Menu principal"
+      >
+        <Menu size={22} strokeWidth={2.5} />
+      </button>
+      <div 
+        className="flex items-center gap-2 cursor-pointer group" 
+        onClick={() => scrollToCategory("Tout")}
+      >
+        <div className="relative">
+          <img 
+            src="/logoah.jpeg" 
+            className="h-10 md:h-14 w-auto rounded-xl shadow-md border-2 border-[#D4AF37]/40 group-hover:scale-105 transition-transform duration-300" 
+            alt="Logo Industrie de l'Avenir" 
+          />
+          <div className="absolute -inset-1 bg-[#D4AF37]/10 rounded-xl blur-sm opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        </div>
+        {!isScrolled && (
+          <span className="hidden md:block text-sm font-bold text-white/90 tracking-tight">
+            Industrie<br/>de l'Avenir
+          </span>
+        )}
+      </div>
+    </div>
+
+    {/* Barre de recherche - Centre */}
+    <div className="order-last w-full sm:order-none sm:w-auto sm:flex-1 sm:max-w-[500px] lg:max-w-[600px] relative px-1 sm:px-0" ref={searchRef}>
+      <div className={`flex items-center rounded-[2rem] px-4 py-2.5 md:px-5 md:py-3 gap-3 transition-all duration-300 shadow-sm ${isScrolled ? 'bg-gray-50 border border-gray-200 hover:border-[#D4AF37]/40' : 'bg-white/10 backdrop-blur-md border border-white/30 hover:border-white/50'}`}>
+        <Search size={18} className={isScrolled ? 'text-gray-500' : 'text-white/70'} />
+        <input 
+          type="text" 
+          placeholder="Rechercher un produit, une catégorie..." 
+          className={`bg-transparent border-none text-xs md:text-sm w-full focus:ring-0 focus:outline-none p-0 font-medium placeholder:font-normal ${isScrolled ? 'text-[#0A1A3A] placeholder-gray-400' : 'text-white placeholder-white/60'}`} 
+          value={search} 
+          onChange={e => {setSearch(e.target.value); setShowSuggestions(true);}} 
+          onFocus={() => setShowSuggestions(true)}
+        />
+        {search && (
+          <button 
+            onClick={() => {setSearch(''); setShowSuggestions(false);}} 
+            className={`p-1 rounded-full hover:scale-110 transition-transform ${isScrolled ? 'bg-gray-200 text-gray-500 hover:bg-gray-300' : 'bg-white/20 text-white hover:bg-white/30'}`}
+            aria-label="Effacer la recherche"
+          >
+            <X size={14}/>
+          </button>
+        )}
+      </div>
+
+      {/* Suggestions de recherche */}
+      {showSuggestions && searchSuggestions.length > 0 && (
+        <div className="absolute top-[110%] left-0 right-0 bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_20px_60px_rgba(0,45,90,0.25)] border border-gray-100 overflow-hidden z-[800] animate-fade-in mx-1 sm:mx-0 p-4">
+          <div className="flex items-center justify-between mb-3 px-2">
+            <span className="text-xs font-bold text-[#002D5A] uppercase tracking-wider">
+              {searchSuggestions.length} résultat{searchSuggestions.length > 1 ? 's' : ''}
+            </span>
+            <button 
+              onClick={() => setShowSuggestions(false)} 
+              className="text-[10px] font-medium text-gray-400 hover:text-red-500 transition-colors flex items-center gap-1"
+            >
+              <X size={10} /> Fermer
+            </button>
+          </div>
+          
+          <div className="flex flex-row overflow-x-auto no-scrollbar gap-4 pb-3 scrollbar-thin">
+            {searchSuggestions.map(p => (
+              <div 
+                key={p.id} 
+                onClick={() => {
+                  navigateTo('detail', p); 
+                  setShowSuggestions(false); 
+                  setSearch(''); 
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }} 
+                className="flex-shrink-0 w-44 bg-gradient-to-br from-gray-50 to-white hover:from-white hover:to-gray-50 border border-gray-100 hover:border-[#D4AF37]/50 rounded-2xl p-3 transition-all duration-300 cursor-pointer group shadow-sm hover:shadow-md"
+              >
+                <div className="aspect-square w-full rounded-xl overflow-hidden mb-3 bg-gray-100 relative">
+                  <img 
+                    src={p.image_urls?.[0]} 
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                    alt={p.nom} 
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </div>
+                <div className="px-1 min-w-0">
+                  <p className="text-xs font-bold text-[#0A1A3A] truncate uppercase leading-tight tracking-tight">
+                    {p.nom}
+                  </p>
+                  <div className="flex items-center justify-between mt-2">
+                    <span className="text-[9px] font-bold text-[#135290] uppercase truncate max-w-[60%] bg-blue-50 px-2 py-0.5 rounded-full">
+                      {p.categorie}
+                    </span>
+                   
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+
+    {/* Partie droite : Boutons d'action */}
+    <div className="flex items-center gap-2 md:gap-4 shrink-0">
+      
+      {/* Bouton À Propos */}
+      <button 
+        onClick={() => navigateTo('about')}
+        className={`relative p-2.5 md:p-3 rounded-full transition-all active:scale-90 hover:scale-105 group ${isScrolled ? 'text-[#0A1A3A] hover:bg-gray-100/80' : 'text-white hover:bg-white/20'}`}
+        aria-label="À propos de nous"
+        title="À propos de notre entreprise"
+      >
+        <svg 
+          className={`w-5 h-5 md:w-6 md:h-6 transition-transform group-hover:rotate-12 ${isScrolled ? 'text-[#135290]' : 'text-white'}`}
+          fill="none" 
+          stroke="currentColor" 
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        {!isScrolled && (
+          <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-[8px] font-medium text-white/80 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+            À Propos
+          </span>
+        )}
+      </button>
+
+      {/* Bouton Panier */}
+      <button 
+        onClick={() => setIsCartOpen(true)} 
+        className={`relative p-2.5 md:p-3 rounded-full shadow-lg transition-all active:scale-90 hover:scale-105 group ${isScrolled ? 'bg-gradient-to-r from-[#002D5A] to-[#135290] text-white border border-[#D4AF37]/30' : 'bg-white/20 backdrop-blur-md text-white border border-white/30 hover:border-white/50'}`}
+        aria-label="Panier d'achat"
+      >
+        <ShoppingCart size={18} className="md:w-5 md:h-5" />
+        {cart.length > 0 && (
+          <>
+            <span className="absolute -top-1 -right-1 bg-gradient-to-br from-[#D4AF37] to-[#e8b969] text-[#002D5A] text-[10px] font-black w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center border-2 border-white shadow-lg animate-pulse">
+              {cart.length}
+            </span>
+            <div className="absolute -top-1 -right-1 w-5 h-5 md:w-6 md:h-6 rounded-full bg-[#D4AF37]/30 animate-ping"></div>
+          </>
+        )}
+        {!isScrolled && cart.length === 0 && (
+          <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-[8px] font-medium text-white/80 opacity-0 group-hover:opacity-100 transition-opacity">
+            Panier
+          </span>
+        )}
+      </button>
+
+      {/* Bouton WhatsApp (Optionnel - visible seulement en mobile ou selon besoin) */}
+      <a
+        href={`https://wa.me/${WHATSAPP_NUMBER}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`md:hidden p-2.5 rounded-full transition-all active:scale-90 hover:scale-105 ${isScrolled ? 'bg-green-500 text-white' : 'bg-green-500/90 text-white'}`}
+        aria-label="Contact WhatsApp"
+      >
+        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M17.507 14.307l-.009.075c-2.199-1.096-2.429-1.242-2.713-.816-.197.295-.771.964-.944 1.162-.175.195-.349.21-.646.075-.3-.15-1.263-.465-2.403-1.485-.888-.795-1.484-1.77-1.66-2.07-.293-.506.32-.578.878-1.634.1-.21.049-.375-.025-.524-.075-.15-.672-1.62-.922-2.206-.24-.584-.487-.51-.672-.51-.576-.05-.997-.05-1.368.344-1.614 1.774-1.207 3.604.174 5.55 2.714 3.552 4.16 4.206 6.8 5.114.714.227 1.365.195 1.88.121.574-.091 1.754-.721 2-1.426.255-.705.255-1.29.18-1.425-.074-.135-.27-.21-.574-.346z"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+
+  {/* Indicateur de scroll pour desktop */}
+  {isScrolled && (
+    <div className="hidden md:block absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-[#D4AF37]/40 to-transparent"></div>
+  )}
+
+
+
+</header>
+
+    </>
+  )
+}
 
 const WelcomeBanner = () => {
   const [visible, setVisible] = useState(false);
@@ -492,7 +840,7 @@ const WelcomeBanner = () => {
           <div className="flex-1">
             <h4 className="font-bold text-base mb-1">Bienvenue chez Industrie de l’Avenir</h4>
             <p className="text-xs text-blue-100 leading-relaxed">
-              Commandez nos produits, choisissez livraison <strong>avion</strong> ou <strong>bateau</strong>, 
+              Commandez nos produits, choisissez livraison <strong>avion</strong> ou <strong>bateau</strong> pour vos produits uniquement disponible sur commande , 
               et finalisez sur WhatsApp. Aucun paiement sur le site.
             </p>
             <button
@@ -945,7 +1293,7 @@ const OnboardingModal = () => {
   const steps = [
     {
       title: '🛍️ Parcourez nos catégories',
-      desc: 'Homme, Femme, Agricole, Fournitures… Trouvez la pépite qu’il vous faut.',
+      desc: 'Asseccoire Homme et Femme,Fourniture , Machine industrielle,… Trouvez la pépite qu’il vous faut.',
       icon: '🔍',
     },
     {
@@ -955,7 +1303,7 @@ const OnboardingModal = () => {
     },
     {
       title: '📲 Finalisez sur WhatsApp',
-      desc: 'Validez votre commande, discutez du mode de livraison (avion/bateau) et recevez votre devis personnalisé.',
+      desc: 'Validez votre commande, discutez du mode de livraison (avion/bateau) et recevez votre devis personnalisé si le produit est sur commande, et si elle est en stock vous aurez le produit imediatement',
       icon: '💬',
     },
   ];
@@ -1900,185 +2248,7 @@ function AppContent() {
         />
       </div>
       {/* Header */}
-      <header className={`fixed top-0 left-0 right-0 z-[600] transition-all duration-500 ease-in-out transform ${isScrolled ? 'bg-white/95 backdrop-blur-xl shadow-lg border-b border-[#D4AF37]/20 py-3' : 'bg-[#004792] py-5'}`}>
-  <div className="max-w-7xl mx-auto px-4 md:px-8 flex flex-wrap items-center justify-between gap-y-3">
-    
-    {/* Partie gauche : Menu burger + Logo */}
-    <div className="flex items-center gap-3 md:gap-4 shrink-0">
-      <button 
-        onClick={() => setIsMenuOpen(true)} 
-        className={`p-2.5 rounded-full transition-all active:scale-90 hover:scale-105 ${isScrolled ? 'text-[#0A1A3A] hover:bg-gray-100/80' : 'text-white hover:bg-white/20'}`}
-        aria-label="Menu principal"
-      >
-        <Menu size={22} strokeWidth={2.5} />
-      </button>
-      <div 
-        className="flex items-center gap-2 cursor-pointer group" 
-        onClick={() => scrollToCategory("Tout")}
-      >
-        <div className="relative">
-          <img 
-            src="/logoah.jpeg" 
-            className="h-10 md:h-14 w-auto rounded-xl shadow-md border-2 border-[#D4AF37]/40 group-hover:scale-105 transition-transform duration-300" 
-            alt="Logo Industrie de l'Avenir" 
-          />
-          <div className="absolute -inset-1 bg-[#D4AF37]/10 rounded-xl blur-sm opacity-0 group-hover:opacity-100 transition-opacity"></div>
-        </div>
-        {!isScrolled && (
-          <span className="hidden md:block text-sm font-bold text-white/90 tracking-tight">
-            Industrie<br/>de l'Avenir
-          </span>
-        )}
-      </div>
-    </div>
-
-    {/* Barre de recherche - Centre */}
-    <div className="order-last w-full sm:order-none sm:w-auto sm:flex-1 sm:max-w-[500px] lg:max-w-[600px] relative px-1 sm:px-0" ref={searchRef}>
-      <div className={`flex items-center rounded-[2rem] px-4 py-2.5 md:px-5 md:py-3 gap-3 transition-all duration-300 shadow-sm ${isScrolled ? 'bg-gray-50 border border-gray-200 hover:border-[#D4AF37]/40' : 'bg-white/10 backdrop-blur-md border border-white/30 hover:border-white/50'}`}>
-        <Search size={18} className={isScrolled ? 'text-gray-500' : 'text-white/70'} />
-        <input 
-          type="text" 
-          placeholder="Rechercher un produit, une catégorie..." 
-          className={`bg-transparent border-none text-xs md:text-sm w-full focus:ring-0 focus:outline-none p-0 font-medium placeholder:font-normal ${isScrolled ? 'text-[#0A1A3A] placeholder-gray-400' : 'text-white placeholder-white/60'}`} 
-          value={search} 
-          onChange={e => {setSearch(e.target.value); setShowSuggestions(true);}} 
-          onFocus={() => setShowSuggestions(true)}
-        />
-        {search && (
-          <button 
-            onClick={() => {setSearch(''); setShowSuggestions(false);}} 
-            className={`p-1 rounded-full hover:scale-110 transition-transform ${isScrolled ? 'bg-gray-200 text-gray-500 hover:bg-gray-300' : 'bg-white/20 text-white hover:bg-white/30'}`}
-            aria-label="Effacer la recherche"
-          >
-            <X size={14}/>
-          </button>
-        )}
-      </div>
-
-      {/* Suggestions de recherche */}
-      {showSuggestions && searchSuggestions.length > 0 && (
-        <div className="absolute top-[110%] left-0 right-0 bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_20px_60px_rgba(0,45,90,0.25)] border border-gray-100 overflow-hidden z-[800] animate-fade-in mx-1 sm:mx-0 p-4">
-          <div className="flex items-center justify-between mb-3 px-2">
-            <span className="text-xs font-bold text-[#002D5A] uppercase tracking-wider">
-              {searchSuggestions.length} résultat{searchSuggestions.length > 1 ? 's' : ''}
-            </span>
-            <button 
-              onClick={() => setShowSuggestions(false)} 
-              className="text-[10px] font-medium text-gray-400 hover:text-red-500 transition-colors flex items-center gap-1"
-            >
-              <X size={10} /> Fermer
-            </button>
-          </div>
-          
-          <div className="flex flex-row overflow-x-auto no-scrollbar gap-4 pb-3 scrollbar-thin">
-            {searchSuggestions.map(p => (
-              <div 
-                key={p.id} 
-                onClick={() => {
-                  navigateTo('detail', p); 
-                  setShowSuggestions(false); 
-                  setSearch(''); 
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }} 
-                className="flex-shrink-0 w-44 bg-gradient-to-br from-gray-50 to-white hover:from-white hover:to-gray-50 border border-gray-100 hover:border-[#D4AF37]/50 rounded-2xl p-3 transition-all duration-300 cursor-pointer group shadow-sm hover:shadow-md"
-              >
-                <div className="aspect-square w-full rounded-xl overflow-hidden mb-3 bg-gray-100 relative">
-                  <img 
-                    src={p.image_urls?.[0]} 
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
-                    alt={p.nom} 
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                </div>
-                <div className="px-1 min-w-0">
-                  <p className="text-xs font-bold text-[#0A1A3A] truncate uppercase leading-tight tracking-tight">
-                    {p.nom}
-                  </p>
-                  <div className="flex items-center justify-between mt-2">
-                    <span className="text-[9px] font-bold text-[#135290] uppercase truncate max-w-[60%] bg-blue-50 px-2 py-0.5 rounded-full">
-                      {p.categorie}
-                    </span>
-                   
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-
-    {/* Partie droite : Boutons d'action */}
-    <div className="flex items-center gap-2 md:gap-4 shrink-0">
-      
-      {/* Bouton À Propos */}
-      <button 
-        onClick={() => navigateTo('about')}
-        className={`relative p-2.5 md:p-3 rounded-full transition-all active:scale-90 hover:scale-105 group ${isScrolled ? 'text-[#0A1A3A] hover:bg-gray-100/80' : 'text-white hover:bg-white/20'}`}
-        aria-label="À propos de nous"
-        title="À propos de notre entreprise"
-      >
-        <svg 
-          className={`w-5 h-5 md:w-6 md:h-6 transition-transform group-hover:rotate-12 ${isScrolled ? 'text-[#135290]' : 'text-white'}`}
-          fill="none" 
-          stroke="currentColor" 
-          viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        {!isScrolled && (
-          <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-[8px] font-medium text-white/80 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-            À Propos
-          </span>
-        )}
-      </button>
-
-      {/* Bouton Panier */}
-      <button 
-        onClick={() => setIsCartOpen(true)} 
-        className={`relative p-2.5 md:p-3 rounded-full shadow-lg transition-all active:scale-90 hover:scale-105 group ${isScrolled ? 'bg-gradient-to-r from-[#002D5A] to-[#135290] text-white border border-[#D4AF37]/30' : 'bg-white/20 backdrop-blur-md text-white border border-white/30 hover:border-white/50'}`}
-        aria-label="Panier d'achat"
-      >
-        <ShoppingCart size={18} className="md:w-5 md:h-5" />
-        {cart.length > 0 && (
-          <>
-            <span className="absolute -top-1 -right-1 bg-gradient-to-br from-[#D4AF37] to-[#e8b969] text-[#002D5A] text-[10px] font-black w-5 h-5 md:w-6 md:h-6 rounded-full flex items-center justify-center border-2 border-white shadow-lg animate-pulse">
-              {cart.length}
-            </span>
-            <div className="absolute -top-1 -right-1 w-5 h-5 md:w-6 md:h-6 rounded-full bg-[#D4AF37]/30 animate-ping"></div>
-          </>
-        )}
-        {!isScrolled && cart.length === 0 && (
-          <span className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 text-[8px] font-medium text-white/80 opacity-0 group-hover:opacity-100 transition-opacity">
-            Panier
-          </span>
-        )}
-      </button>
-
-      {/* Bouton WhatsApp (Optionnel - visible seulement en mobile ou selon besoin) */}
-      <a
-        href={`https://wa.me/${WHATSAPP_NUMBER}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={`md:hidden p-2.5 rounded-full transition-all active:scale-90 hover:scale-105 ${isScrolled ? 'bg-green-500 text-white' : 'bg-green-500/90 text-white'}`}
-        aria-label="Contact WhatsApp"
-      >
-        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M17.507 14.307l-.009.075c-2.199-1.096-2.429-1.242-2.713-.816-.197.295-.771.964-.944 1.162-.175.195-.349.21-.646.075-.3-.15-1.263-.465-2.403-1.485-.888-.795-1.484-1.77-1.66-2.07-.293-.506.32-.578.878-1.634.1-.21.049-.375-.025-.524-.075-.15-.672-1.62-.922-2.206-.24-.584-.487-.51-.672-.51-.576-.05-.997-.05-1.368.344-1.614 1.774-1.207 3.604.174 5.55 2.714 3.552 4.16 4.206 6.8 5.114.714.227 1.365.195 1.88.121.574-.091 1.754-.721 2-1.426.255-.705.255-1.29.18-1.425-.074-.135-.27-.21-.574-.346z"/>
-        </svg>
-      </a>
-    </div>
-  </div>
-
-  {/* Indicateur de scroll pour desktop */}
-  {isScrolled && (
-    <div className="hidden md:block absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-[#D4AF37]/40 to-transparent"></div>
-  )}
-
-
-
-</header>
-
+      <MyNav/>
       <HeroSection/>
       <OnboardingModal />
 
